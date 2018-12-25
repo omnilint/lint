@@ -40,7 +40,7 @@ function checkIfEslintIsInstalled() {
 
 function runEslint(files, autofix, body, desiredFormat) {
   // var cmd = "which eslint";
-  // // console.log("==== Lint called ===");
+  // console.log("==== Lint called ===");
   if (autofix) {
     var cmd =
       "eslint --config " +
@@ -56,7 +56,7 @@ function runEslint(files, autofix, body, desiredFormat) {
       files.join(" ");
   }
   try {
-    // // console.log("==== Try ===");
+    // console.log("==== Try ===");
     var linter_command = execSync(cmd);
     if (linter_command) {
       // // console.log("linter_command.toString() WORKS");
@@ -217,6 +217,7 @@ function parseOutPoutForRuleCheckAsText(output) {
 
   output.forEach(function(file) {
     // console.log("- " + chalk.green(path.basename(file.filePath)));
+    console.log("");
     console.log("- " + chalk.green(file.filePath));
     console.log("--------------------------------------------------------------------------------------");
     // console.log(file);
@@ -299,7 +300,7 @@ function parseOutPoutForRuleCheckAsText(output) {
     }
     console.log(messageToPrint);
     console.log(messageToPrint2);
-    console.log("");
+    // console.log("");
 
     // console.log("errorCount: " + file.errorCount);
     // console.log("warningCount: " + file.warningCount);
@@ -316,7 +317,6 @@ function createESlintConfig(rules) {
         jsx: true
       }
     },
-    extends: ["prettier"],
     env: {
       es6: true,
       node: true

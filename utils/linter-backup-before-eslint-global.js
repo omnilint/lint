@@ -9,7 +9,7 @@ const dns = require("dns");
 var CliTable = require("cli-table");
 // var CLIEngine = require("eslint").CLIEngine;
 // var SourceCode = require("eslint").SourceCode;
-// var eslint = require("eslint");
+var eslint = require("eslint");
 // var { Linter, SourceCode } = require("eslint");
 const { execSync } = require("child_process");
 const prettier = require("prettier");
@@ -849,106 +849,106 @@ function lintStaged(
       //   "Linter is coming for " + jsFiles.length + " Javascript file(s):"
       // );
       // console.log(jsFiles);
-      javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat);
+      // javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat);
       // var linting = eslintCli.executeOnFiles(jsFiles);
-      //
-      // const dotOmnilintDirectory = getDotOmnilintDirectory();
-      // const enclosingGitRepository = getEnclosingGitRepository();
-      // var configFile = JSON.parse(
-      //   fs.readFileSync(dotOmnilintDirectory + "/tmp/eslintrc")
-      // );
-      //
-      // var linter = new eslint.Linter();
-      // // var output = [];
+
+      const dotOmnilintDirectory = getDotOmnilintDirectory();
+      const enclosingGitRepository = getEnclosingGitRepository();
+      var configFile = JSON.parse(
+        fs.readFileSync(dotOmnilintDirectory + "/tmp/eslintrc")
+      );
+
+      var linter = new eslint.Linter();
       // var output = [];
-      // // var output = linting.results;
-      // jsFiles.forEach(file => {
-      //   var fileContent = fs.readFileSync(enclosingGitRepository + "/" + file);
-      //   var rulesResultForFile;
-      //   if (autofix) {
-      //     rulesResultForFile = linter.verifyAndFix(
-      //       fileContent.toString(),
-      //       configFile,
-      //       {
-      //         filename: file
-      //       }
-      //     );
-      //     var errorCount = 0;
-      //     var warningCount = 0;
-      //     var fixableErrorCount = 0;
-      //     var fixableWarningCount = 0;
-      //     rulesResultForFile.messages.forEach(result => {
-      //       if (result.severity == 1) {
-      //         warningCount += 1;
-      //       }
-      //       if (result.severity == 2) {
-      //         errorCount += 1;
-      //       }
-      //       if (result.fix) {
-      //         if (result.severity == 1) {
-      //           fixableWarningCount += 1;
-      //         }
-      //         if (result.severity == 2) {
-      //           fixableErrorCount += 1;
-      //         }
-      //       }
-      //     });
-      //     fs.writeFileSync(file, rulesResultForFile.output, "utf8");
-      //   } else {
-      //     rulesResultForFile = linter.verify(
-      //       fileContent.toString(),
-      //       configFile,
-      //       {
-      //         filename: file
-      //       }
-      //     );
-      //     var errorCount = 0;
-      //     var warningCount = 0;
-      //     var fixableErrorCount = 0;
-      //     var fixableWarningCount = 0;
-      //     // console.log(rulesResultForFile);
-      //     rulesResultForFile.forEach(result => {
-      //       if (result.severity == 1) {
-      //         warningCount += 1;
-      //       }
-      //       if (result.severity == 2) {
-      //         errorCount += 1;
-      //       }
-      //       if (result.fix) {
-      //         if (result.severity == 1) {
-      //           fixableWarningCount += 1;
-      //         }
-      //         if (result.severity == 2) {
-      //           fixableErrorCount += 1;
-      //         }
-      //       }
-      //     });
-      //   }
-      //   var messages;
-      //   if (autofix) {
-      //     messages = rulesResultForFile.messages;
-      //   } else {
-      //     messages = rulesResultForFile;
-      //   }
-      //   var resultForFile = {
-      //     filePath: file,
-      //     messages: messages,
-      //     errorCount: errorCount,
-      //     warningCount: warningCount,
-      //     fixableErrorCount: fixableErrorCount,
-      //     fixableWarningCount: fixableWarningCount
-      //   };
-      //   output.push(resultForFile);
-      // });
+      var output = [];
+      // var output = linting.results;
+      jsFiles.forEach(file => {
+        var fileContent = fs.readFileSync(enclosingGitRepository + "/" + file);
+        var rulesResultForFile;
+        if (autofix) {
+          rulesResultForFile = linter.verifyAndFix(
+            fileContent.toString(),
+            configFile,
+            {
+              filename: file
+            }
+          );
+          var errorCount = 0;
+          var warningCount = 0;
+          var fixableErrorCount = 0;
+          var fixableWarningCount = 0;
+          rulesResultForFile.messages.forEach(result => {
+            if (result.severity == 1) {
+              warningCount += 1;
+            }
+            if (result.severity == 2) {
+              errorCount += 1;
+            }
+            if (result.fix) {
+              if (result.severity == 1) {
+                fixableWarningCount += 1;
+              }
+              if (result.severity == 2) {
+                fixableErrorCount += 1;
+              }
+            }
+          });
+          fs.writeFileSync(file, rulesResultForFile.output, "utf8");
+        } else {
+          rulesResultForFile = linter.verify(
+            fileContent.toString(),
+            configFile,
+            {
+              filename: file
+            }
+          );
+          var errorCount = 0;
+          var warningCount = 0;
+          var fixableErrorCount = 0;
+          var fixableWarningCount = 0;
+          // console.log(rulesResultForFile);
+          rulesResultForFile.forEach(result => {
+            if (result.severity == 1) {
+              warningCount += 1;
+            }
+            if (result.severity == 2) {
+              errorCount += 1;
+            }
+            if (result.fix) {
+              if (result.severity == 1) {
+                fixableWarningCount += 1;
+              }
+              if (result.severity == 2) {
+                fixableErrorCount += 1;
+              }
+            }
+          });
+        }
+        var messages;
+        if (autofix) {
+          messages = rulesResultForFile.messages;
+        } else {
+          messages = rulesResultForFile;
+        }
+        var resultForFile = {
+          filePath: file,
+          messages: messages,
+          errorCount: errorCount,
+          warningCount: warningCount,
+          fixableErrorCount: fixableErrorCount,
+          fixableWarningCount: fixableWarningCount
+        };
+        output.push(resultForFile);
+      });
 
       // console.log(output);
       // var output = linter.verify(code, configFile, { filename: "foo.js" });
-      // var javascriptReports = parseEslintResults(javascriptReports, body);
-      // if (desiredFormat == "simple") {
-      //   parseOutPoutForRuleCheckAsText(output);
-      // } else {
-      //   parseOutPoutForRuleCheckAsTable(output);
-      // }
+      var javascriptReports = parseEslintResults(output, body);
+      if (desiredFormat == "simple") {
+        parseOutPoutForRuleCheckAsText(output);
+      } else {
+        parseOutPoutForRuleCheckAsTable(output);
+      }
 
       // console.log(javascriptReports.results);
 
@@ -1087,6 +1087,7 @@ function postReport(report, time) {
   const reportSpinner = ora("Creating report...");
   reportSpinner.start();
   const token = getTokenFromLocalDevice();
+  // const token = "v5NnNqL3C9bQyrzUfzDxTnmvztPr8PMheTebeF8zr7VKozq1uQ";
   var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
   var reportStartTime = new Date();
   return new Promise((resolve, reject) => {
@@ -1270,6 +1271,7 @@ function printLinters(linters) {
 }
 
 function preCommit(keep, time) {
+
   if (checkIfEslintIsInstalled()) {
     // console.log("Eslint is installed.");
   } else {
