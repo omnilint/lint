@@ -124,7 +124,7 @@ function askToInstallRubocop() {
 
 function installRubocop() {
   try {
-    console.log("==== Instaling ===");
+    console.log("==== Instaling Rubocop ===");
     var install_cmd = execSync("gem install rubocop", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());

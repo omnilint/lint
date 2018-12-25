@@ -11,6 +11,18 @@ const {
   getDotOmnilintDirectory,
   rimraf
 } = require("./filesHandler");
+const {
+  checkIfEslintIsInstalled,
+  installEslint
+} = require('./linters/eslint');
+const {
+  checkIfRubocopIsInstalled,
+  installRubocop
+} = require('./linters/rubocop');
+const {
+  checkIfPrettierIsInstalled,
+  installPrettier
+} = require('./linters/prettier');
 
 var momentjs = require("moment");
 
@@ -60,12 +72,40 @@ function install() {
     process.exit(0);
   }
 
+
+  if(checkIfEslintIsInstalled()) {
+    // console.log("Eslint is installed.")
+  } else {
+    console.log("Eslint is not installed. Installing...")
+    installEslint();
+    console.log("Eslint is now installed.")
+  }
+
+
+  if(checkIfPrettierIsInstalled()) {
+    // console.log("Prettier is installed.")
+  } else {
+    console.log("Prettier is not installed. Installing...")
+    installPrettier();
+    console.log("Prettier is now installed.")
+  }
+
+  if(checkIfRubocopIsInstalled()) {
+    // console.log("Rubocop is installed.")
+  } else {
+    console.log("Rubocop is not installed. Installing...")
+    installRubocop();
+    console.log("Rubocop is now installed.")
+  }
+
+
   if (!isOmnilintFilePresent()) {
     init();
   } else {
     process.exit(0);
   }
 }
+
 function removeOmnilintHook(hooksDirectory, hook) {
   if (!fs.existsSync(hooksDirectory + hook)) {
     console.log(hook + " not found");

@@ -137,6 +137,28 @@ function checkIfPrettierIsInstalled() {
   return false
 }
 
+
+function installPrettier() {
+  try {
+    console.log("==== Instaling Prettier ===");
+    var install_cmd = execSync("npm install -g prettier", { stdio: [0, 1, 2] });
+    if (install_cmd) {
+      console.log(install_cmd.toString());
+      // process.exit(0);
+    }
+  } catch (err) {
+    console.log("==== Catch ===");
+    console.log(err);
+    if (err.stdout) {
+      // console.log("==== Catch stdout ===");
+      console.log(err.stdout.toString());
+    }
+    process.exit(1);
+    // console.log("==== Catch after ===");
+  }
+}
+
+
 function formatPrettierRules(prettier_rules, policy_rule) {
   var name = policy_rule.rule.content.slug
   var prettier_rules = prettier_rules
@@ -324,5 +346,7 @@ module.exports = {
   askToRunPrettier,
   runPrettierOnProject,
   selectFilesForPrettier,
-  setParser
+  setParser,
+  installPrettier,
+  checkIfPrettierIsInstalled
 }

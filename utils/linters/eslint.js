@@ -25,11 +25,14 @@ const DEV_API_BASE_URL = "http://localhost:3000";
 
 function checkIfEslintIsInstalled() {
   try {
-    var res = execSync("which eslint");
+    var res = execSync("which eslint")
     if (res) {
+      // console.log(res.toString())
       return true;
     }
   } catch (err) {
+    // console.log('Error')
+    // console.log(err)
     return false;
   }
   return false;
@@ -493,13 +496,23 @@ function prepareRequestAfterLint(passed, body, exitCode, output) {
 }
 
 function installEslint() {
-  exec("npm i -g eslint", (err, stdout, stderr) => {
-    if (err) {
-      throw err;
-      // node couldn't execute the command
-      return;
+  try {
+    console.log("==== Instaling ESLint ===");
+    var install_cmd = execSync("npm install -g eslint", { stdio: [0, 1, 2] });
+    if (install_cmd) {
+      console.log(install_cmd.toString());
+      // process.exit(0);
     }
-  });
+  } catch (err) {
+    console.log("==== Catch ===");
+    console.log(err);
+    if (err.stdout) {
+      // console.log("==== Catch stdout ===");
+      console.log(err.stdout.toString());
+    }
+    process.exit(1);
+    // console.log("==== Catch after ===");
+  }
 }
 
 function parseEslintResults(output, body) {

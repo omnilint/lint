@@ -254,8 +254,8 @@ program
   });
 
 program
-  .command("eslintNoConfig")
-  .description("Set config file for EsLint")
+  .command("eslint-no-config")
+  .description("Launch ESLint without configuration file.")
   .action(() => {
     eslintNoConfig();
   });

@@ -23,7 +23,8 @@ const {
   checkIfEslintIsInstalled,
   parseOutPoutForRuleCheckAsText,
   parseOutPoutForRuleCheckAsTable,
-  parseEslintResults
+  parseEslintResults,
+  installEslint
 } = require("./linters/eslint");
 
 const {
@@ -32,7 +33,9 @@ const {
   askToRunPrettier,
   runPrettierOnStagedFiles,
   selectFilesForPrettier,
-  setParser
+  setParser,
+  checkIfPrettierIsInstalled,
+  installPrettier
 } = require("./linters/prettier");
 
 const {
@@ -41,8 +44,9 @@ const {
   createRubocopConfig,
   enableRule,
   runRubocop,
+  runRubocopJson,
   checkIfRubocopIsInstalled,
-  runRubocopJson
+  installRubocop
 } = require("./linters/rubocop");
 
 const {
@@ -166,18 +170,28 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
         if (body.policy && body.policy.content.name) {
           if (time) {
-            spinner.succeed("Policy fetched in "  + (new Date() - executionStartTime) + "ms: " + chalk.bold.magenta(body.policy.content.name));
+            spinner.succeed(
+              "Policy fetched in " +
+                (new Date() - executionStartTime) +
+                "ms: " +
+                chalk.bold.magenta(body.policy.content.name)
+            );
           } else {
-            spinner.succeed("Policy fetched: " + chalk.bold.magenta(body.policy.content.name));
+            spinner.succeed(
+              "Policy fetched: " + chalk.bold.magenta(body.policy.content.name)
+            );
           }
         } else {
           if (time) {
-            spinner.succeed("No policy - Fetched in "  + (new Date() - executionStartTime) + "ms.");
+            spinner.succeed(
+              "No policy - Fetched in " +
+                (new Date() - executionStartTime) +
+                "ms."
+            );
           } else {
             spinner.succeed("No policy.");
           }
         }
-
 
         spinner.start("Writing linter configuration...");
         var filterRulesStartTime = new Date();
@@ -398,7 +412,11 @@ function lintingPreCommit(desiredFormat, keep, time) {
           createPrettierConfig(prettier_rules);
         }
         if (time) {
-          spinner.succeed("Configuration set in " + (new Date() - filterRulesStartTime) + "ms.");
+          spinner.succeed(
+            "Configuration set in " +
+              (new Date() - filterRulesStartTime) +
+              "ms."
+          );
         } else {
           spinner.succeed("Configuration set.");
         }
@@ -422,7 +440,13 @@ function lintingPreCommit(desiredFormat, keep, time) {
                 // var executionEndTime = new Date() - executionStartTime;
                 // console.log("");
                 if (time) {
-                  console.log( chalk.grey("Total execution time: " + (new Date() - executionStartTime) + "ms.") );
+                  console.log(
+                    chalk.grey(
+                      "Total execution time: " +
+                        (new Date() - executionStartTime) +
+                        "ms."
+                    )
+                  );
                 }
                 if (!report.passed) {
                   spinner.fail("Commit aborted. Please fix your code first.");
@@ -639,7 +663,7 @@ function getDeletedStagedFiles() {
 
 function getStagedFiles(time) {
   try {
-    var stagedFilesSpinner = ora('Checking git staged files.').start()
+    var stagedFilesSpinner = ora("Checking git staged files.").start();
     var stagedFilesStartTime = new Date();
     // spinner.succeed("Policy fetched in "  + (new Date() - executionStartTime) + "ms: " + chalk.bold.magenta(body.policy.content.name));
 
@@ -678,13 +702,18 @@ function getStagedFiles(time) {
     // });
     // var displayTime = false;
     if (stagedFilePaths.length > 0) {
-      if(time) {
-        stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files fetched in "  + (new Date() - stagedFilesStartTime) + "ms.");
+      if (time) {
+        stagedFilesSpinner.succeed(
+          stagedFilePaths.length +
+            " staged files fetched in " +
+            (new Date() - stagedFilesStartTime) +
+            "ms."
+        );
       } else {
         stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files.");
       }
     } else {
-      stagedFilesSpinner.stop()
+      stagedFilesSpinner.stop();
     }
 
     return stagedFilePaths;
@@ -999,7 +1028,7 @@ function lintStaged(
     //   report.rule_checks_attributes = [];
     // }
 
-    var ruleChecks = {}
+    var ruleChecks = {};
     if (
       javascriptReports.rule_checks_attributes &&
       rubyReports.rule_checks_attributes
@@ -1011,7 +1040,8 @@ function lintStaged(
         rubyReports.rule_checks_attributes
       );
     } else if (javascriptReports.rule_checks_attributes) {
-      ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes;
+      ruleChecks.rule_checks_attributes =
+        javascriptReports.rule_checks_attributes;
     } else if (rubyReports.rule_checks_attributes) {
       ruleChecks.rule_checks_attributes = rubyReports.rule_checks_attributes;
     } else {
@@ -1024,7 +1054,9 @@ function lintStaged(
     // console.log("ruleChecks.rule_checks_attributes");
     // console.log(ruleChecks.rule_checks_attributes);
 
-    report.report = { rule_checks_attributes: ruleChecks.rule_checks_attributes }
+    report.report = {
+      rule_checks_attributes: ruleChecks.rule_checks_attributes
+    };
     //
     // console.log("report.report");
     // console.log(report.report);
@@ -1069,9 +1101,10 @@ function postReport(report, time) {
       function(error, response, policy_check) {
         if (response) {
           if (!error && response.statusCode === 201) {
-
-            if(time) {
-              reportSpinner.succeed("Report saved in "  + (new Date() - reportStartTime) + "ms.");
+            if (time) {
+              reportSpinner.succeed(
+                "Report saved in " + (new Date() - reportStartTime) + "ms."
+              );
             } else {
               reportSpinner.succeed("Report Saved.");
             }
@@ -1216,7 +1249,6 @@ function printLinters(linters) {
         chalk.cyan("Installed"),
         chalk.cyan("language"),
         chalk.cyan("Command")
-        // chalk.cyan('Updated'),
       ],
       // colWidths: [30, 45, 12, 12, 12, 16, 16],
       colWidths: [35, 15, 19, 30]
@@ -1239,6 +1271,31 @@ function printLinters(linters) {
 }
 
 function preCommit(keep, time) {
+
+  if (checkIfEslintIsInstalled()) {
+    // console.log("Eslint is installed.");
+  } else {
+    console.log("Eslint is not installed. Installing...");
+    installEslint();
+    console.log("Eslint is now installed.");
+  }
+
+  if (checkIfPrettierIsInstalled()) {
+    // console.log("Prettier is installed.");
+  } else {
+    console.log("Prettier is not installed. Installing...");
+    installPrettier();
+    console.log("Prettier is now installed.");
+  }
+
+  if (checkIfRubocopIsInstalled()) {
+    // console.log("Rubocop is installed.");
+  } else {
+    console.log("Rubocop is not installed. Installing...");
+    installRubocop();
+    console.log("Rubocop is now installed.");
+  }
+
   lintingPreCommit("simple", keep, time);
 }
 
