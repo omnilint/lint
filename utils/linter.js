@@ -710,7 +710,11 @@ function getStagedFiles(time) {
             "ms."
         );
       } else {
-        stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files.");
+        if (stagedFilePaths.length == 1) {
+          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged file.");
+        } else {
+          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files.");
+        }
       }
     } else {
       stagedFilesSpinner.stop();
@@ -1105,7 +1109,7 @@ function postReport(report, time) {
                 "Report saved in " + (new Date() - reportStartTime) + "ms."
               );
             } else {
-              reportSpinner.succeed("Report Saved.");
+              reportSpinner.succeed("Report saved.");
             }
             // console.log( chalk.grey("Execution time: " + (new Date() - executionStartTime) + "ms.") );
 

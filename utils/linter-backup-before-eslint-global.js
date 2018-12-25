@@ -1106,7 +1106,7 @@ function postReport(report, time) {
                 "Report saved in " + (new Date() - reportStartTime) + "ms."
               );
             } else {
-              reportSpinner.succeed("Report Saved.");
+              reportSpinner.succeed("Report saved.");
             }
             // console.log( chalk.grey("Execution time: " + (new Date() - executionStartTime) + "ms.") );
 
