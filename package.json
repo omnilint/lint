@@ -1,0 +1,40 @@
+{
+  "name": "omnilint-cli",
+  "version": "0.0.1",
+  "description": "Omnilint CLI.",
+  "main": "index.js",
+  "scripts": {
+    "build": "nexe index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Omnilint",
+  "license": "UNLICENSED",
+  "preferGlobal": true,
+  "bin": {
+    "omnilint": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "chalk-animation": "^1.6.0",
+    "cli-table": "^0.3.1",
+    "commander": "^2.17.1",
+    "eslint": "^5.9.0",
+    "inquirer": "^6.1.0",
+    "js-yaml": "^3.12.0",
+    "lint-staged": "^7.3.0",
+    "load-json-file": "^5.0.0",
+    "moment": "^2.22.2",
+    "ora": "^3.0.0",
+    "prettier": "^1.15.3",
+    "replace-in-file": "^3.4.2",
+    "request": "^2.87.0",
+    "simple-git": "^1.96.0",
+    "write-yaml": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-flowtype": "^2.50.3",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
