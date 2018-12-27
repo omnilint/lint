@@ -148,7 +148,6 @@ function uninstall() {
   var removedPreCommit = removeOmnilintHook(hooksDirectory, "/pre-commit");
   var removedPrepareCommitMsg = removeOmnilintHook( hooksDirectory, "/prepare-commit-msg" );
   var removedPostCommit = removeOmnilintHook(hooksDirectory, "/post-commit");
-  var removedPostMerge = removeOmnilintHook(hooksDirectory, "/post-merge");
 
   if (!removedPrepareCommitMsg || !removedPostCommit) {
     console.log("Something went wrong");
