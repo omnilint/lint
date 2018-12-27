@@ -157,8 +157,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
       process.exit(0);
       return;
     } else {
-      console.log(stagedFilePaths.length + ' staged files')
-      
+      spinner.succeed(stagedFilePaths.length + ' staged files')
+
       spinner.start();
       setTimeout(() => {
         spinner.color = "yellow";
