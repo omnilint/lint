@@ -138,7 +138,10 @@ function lintingPreCommit(desiredFormat, keep, time) {
       console.log("Not connected to the Internet.");
       process.exit(1);
     }
-    var stagedFilePaths = getStagedFiles(time);
+    // var stagedFilePaths = getStagedFiles(time);
+    var stagedFilePaths = getStagedFilesAddedAndModifiedOnly(time);
+    console.log(stagedFilePaths);
+    console.log(stagedFilePaths.length + ' staged files')
     var removedFiles = getDeletedStagedFiles();
     // console.log("stagedFilePaths");
     // console.log(stagedFilePaths);
@@ -727,6 +730,36 @@ function getStagedFiles(time) {
     process.exit(1);
   }
 }
+
+
+function getStagedFilesAddedAndModifiedOnly(time) {
+  try {
+    var git_staged_result = execSync(
+      "git diff --name-only --cached"
+    );
+    if (git_staged_result) {
+      var stagedFilePaths = git_staged_result
+        .toString()
+        .replace(/[\r]+/g, "")
+        .split("\n")
+        .slice(0, -1);
+    }
+    var addedAndModifiedFiles = [];
+    stagedFilePaths.forEach(file => {
+      if (fs.existsSync(file)) {
+        addedAndModifiedFiles.push(file);
+      }
+    });
+    return addedAndModifiedFiles;
+  } catch (err) {
+    console.log("Error getting Staged Files in linter.js.");
+    console.log(err);
+    process.exit(1);
+  }
+}
+
+
+
 
 function lintStaged(
   autofix,
