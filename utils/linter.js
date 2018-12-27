@@ -157,14 +157,13 @@ function lintingPreCommit(desiredFormat, keep, time) {
       process.exit(0);
       return;
     } else {
+      console.log(stagedFilePaths.length + ' staged files')
+      
       spinner.start();
       setTimeout(() => {
         spinner.color = "yellow";
       }, 2000);
       savePaths(stagedFilePaths);
-    }
-    if (stagedFilePaths.length > 0) {
-      console.log(stagedFilePaths.length + ' staged files')
     }
     var jsFiles = selectFilesForESLint(stagedFilePaths);
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
