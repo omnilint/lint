@@ -140,8 +140,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
     }
     // var stagedFilePaths = getStagedFiles(time);
     var stagedFilePaths = getStagedFilesAddedAndModifiedOnly(time);
-    console.log(stagedFilePaths);
-    console.log(stagedFilePaths.length + ' staged files')
+    // console.log(stagedFilePaths);
+
     var removedFiles = getDeletedStagedFiles();
     // console.log("stagedFilePaths");
     // console.log(stagedFilePaths);
@@ -162,6 +162,9 @@ function lintingPreCommit(desiredFormat, keep, time) {
         spinner.color = "yellow";
       }, 2000);
       savePaths(stagedFilePaths);
+    }
+    if (stagedFilePaths.length > 0) {
+      console.log(stagedFilePaths.length + ' staged files')
     }
     var jsFiles = selectFilesForESLint(stagedFilePaths);
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
