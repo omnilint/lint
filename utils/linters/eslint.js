@@ -65,7 +65,7 @@ function runEslint(files, autofix, body, desiredFormat) {
       // console.log(linter_command.stdout);
       // console.log(linter_command);
       var output = JSON.parse(linter_command);
-      // console.log(output);
+
       if (desiredFormat == "simple") {
         parseOutPoutForRuleCheckAsText(output);
       } else {
@@ -397,16 +397,15 @@ function createRuleCheckJson(output, body) {
   // console.log(output);
   console.log("");
   // console.log("createRuleCheckJson");
+    var dict = [];
+
   body.policy.policy_rules.forEach(function(policy_rule) {
+
     output.forEach(function(file) {
       file.messages.forEach(function(message) {
         var fileReport = {};
         if (message.ruleId == policy_rule.rule.content.slug) {
           fileReport.file_path = file.filePath;
-          fileReport.file_name = file.filePath.substring(
-            file.filePath.lastIndexOf("/") + 1
-          );
-
           fileReport.line = message.line;
           fileReport.column = message.column;
           fileReport.line_end = message.endLine;
@@ -424,6 +423,10 @@ function createRuleCheckJson(output, body) {
           // console.log("");
           fileReport.language_id = policy_rule.rule.content.language_id;
 
+          var lines = getOffenseLine(file.filePath, message.line)
+          fileReport.source = lines
+          // console.log(fileReport);
+            // console.log(line);
           rule_checks_attributes.push(fileReport);
         }
       });
@@ -432,6 +435,20 @@ function createRuleCheckJson(output, body) {
 
   return rule_checks_attributes;
 }
+
+function getOffenseLine(file, lineStart){
+  var offenseLines = []
+  var allLines = fs.readFileSync(file).toString().split('\n')
+  for (var i = lineStart-2; i < lineStart+2; i++) {
+    if (i > 0) {
+      if (typeof allLines[i] !== 'undefined') {
+        offenseLines.push({line:i+1, code:allLines[i]})
+      }
+    }
+  }
+  return offenseLines
+  }
+
 
 function createPolicyCheckJson(passed, output, body) {
   var totalError = 0;
