@@ -436,7 +436,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
           prettier_rules,
           jsFiles,
           rubyFiles,
-          prettierFiles
+          prettierFiles,
+          stagedFilePaths
         )
           .then(report => {
             saveReport(report);
@@ -762,6 +763,28 @@ function getStagedFilesAddedAndModifiedOnly(time) {
 
 
 
+function arr_diff (a1, a2) {
+
+    var a = [], diff = [];
+
+    for (var i = 0; i < a1.length; i++) {
+        a[a1[i]] = true;
+    }
+
+    for (var i = 0; i < a2.length; i++) {
+        if (a[a2[i]]) {
+            delete a[a2[i]];
+        } else {
+            a[a2[i]] = true;
+        }
+    }
+
+    for (var k in a) {
+        diff.push(k);
+    }
+
+    return diff;
+}
 
 function lintStaged(
   autofix,
@@ -770,7 +793,8 @@ function lintStaged(
   prettier_rules,
   jsFiles,
   rubyFiles,
-  prettierFiles
+  prettierFiles,
+  stagedFilePaths
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
@@ -796,7 +820,7 @@ function lintStaged(
 
     var javascriptReports = {};
     var rubyReports = {};
-
+    var filesMadePrettier = []
     var prettierHasSucceed = true;
 
     if (prettierFiles.length > 0) {
@@ -821,6 +845,7 @@ function lintStaged(
       var configFile = dotOmnilintDirectory + "/tmp/prettierrc";
       try {
         var prettier_fails = 0;
+
         prettierFiles.forEach(filePath => {
           var parser = setParser(filePath);
 
@@ -843,9 +868,12 @@ function lintStaged(
             config: configFile, // or parser: "php"
             parser: parser
           });
+
           if (fileFormatted) {
             console.log("- " + chalk.green(filePath) + " is prettier");
             // console.log("----------------------------------------------");
+            filesMadePrettier.push(filePath)
+
           } else {
             prettier_fails = prettier_fails + 1;
             console.log("Did not made " + filePath + " prettier");
@@ -1092,9 +1120,18 @@ function lintStaged(
     //
     // console.log("ruleChecks.rule_checks_attributes");
     // console.log(ruleChecks.rule_checks_attributes);
+    var inspectedFiles = jsFiles.concat(rubyFiles)
+
+    var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
 
     report.report = {
-      rule_checks_attributes: ruleChecks.rule_checks_attributes
+      rule_checks_attributes: ruleChecks.rule_checks_attributes,
+      staged_files: stagedFilePaths.count,
+      javascript_files: jsFiles.count,
+      ruby_files: rubyFiles.count,
+      formatted_files:filesMadePrettier.count,
+      inspected_files: inspectedFiles.count,
+      notInspected_files: notInspectedFiles.count
     };
     //
     // console.log("report.report");
