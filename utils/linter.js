@@ -1114,12 +1114,7 @@ function lintStaged(
     } else {
       ruleChecks.rule_checks_attributes = [];
     }
-    // console.log("ruleChecks");
-    // console.log(ruleChecks);
-    //
-    //
-    // console.log("ruleChecks.rule_checks_attributes");
-    // console.log(ruleChecks.rule_checks_attributes);
+    
     var inspectedFiles = jsFiles.concat(rubyFiles)
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
