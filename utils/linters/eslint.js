@@ -218,7 +218,10 @@ function parseOutPoutForRuleCheckAsText(output) {
   output.forEach(function(file) {
     // console.log("- " + chalk.green(path.basename(file.filePath)));
     console.log("");
-    console.log("- " + chalk.green(file.filePath));
+    // console.log("- " + chalk.green(file.filePath));
+    console.log("- " + chalk.green(file.filePath.substring(
+      file.filePath.lastIndexOf("/") + 1
+    )))
     console.log("--------------------------------------------------------------------------------------");
     // console.log(file);
     if (file.messages.length == 0) {
@@ -406,6 +409,9 @@ function createRuleCheckJson(output, body) {
         var fileReport = {};
         if (message.ruleId == policy_rule.rule.content.slug) {
           fileReport.file_path = file.filePath;
+          fileReport.file_name = file.filePath.substring(
+            file.filePath.lastIndexOf("/") + 1
+          );
           fileReport.line = message.line;
           fileReport.column = message.column;
           fileReport.line_end = message.endLine;
@@ -439,8 +445,8 @@ function createRuleCheckJson(output, body) {
 function getOffenseLine(file, lineStart){
   var offenseLines = []
   var allLines = fs.readFileSync(file).toString().split('\n')
-  for (var i = lineStart-2; i < lineStart+2; i++) {
-    if (i > 0) {
+  for (var i = lineStart-3; i < lineStart+2; i++) {
+    if (i > -1) {
       if (typeof allLines[i] !== 'undefined') {
         offenseLines.push({line:i+1, code:allLines[i]})
       }
