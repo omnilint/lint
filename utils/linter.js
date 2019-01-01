@@ -1126,12 +1126,12 @@ function lintStaged(
 
     report.report = {
       rule_checks_attributes: ruleChecks.rule_checks_attributes,
-      staged_files: stagedFilePaths.count,
-      javascript_files: jsFiles.count,
-      ruby_files: rubyFiles.count,
-      formatted_files:filesMadePrettier.count,
-      inspected_files: inspectedFiles.count,
-      notInspected_files: notInspectedFiles.count
+      staged_files: stagedFilePaths,
+      javascript_files: jsFiles,
+      ruby_files: rubyFiles,
+      formatted_files:filesMadePrettier,
+      inspected_files: inspectedFiles,
+      not_inspected_files: notInspectedFiles
     };
     //
     // console.log("report.report");
