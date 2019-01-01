@@ -216,12 +216,19 @@ function parseOutPoutForRuleCheckAsText(output) {
   const spinner = ora("No offense, bravo!");
 
   output.forEach(function(file) {
-    // console.log("- " + chalk.green(path.basename(file.filePath)));
     console.log("");
-    // console.log("- " + chalk.green(file.filePath));
-    console.log("- " + chalk.green(file.filePath.substring(
-      file.filePath.lastIndexOf("/") + 1
-    )))
+    // console.log("- " + chalk.green(file.filePath.substring(
+    //   file.filePath.lastIndexOf("/") + 1
+    // )))
+    var relativePath = file.filePath.replace(process.cwd() + '/', "");
+
+
+    // console.log(file.filePath.indexOf(directory));
+
+    // console.log(file.filePath.substring(file.filePath.indexOf(process.cwd())))
+
+    console.log("- " + chalk.green(relativePath));
+
     console.log("--------------------------------------------------------------------------------------");
     // console.log(file);
     if (file.messages.length == 0) {
@@ -408,10 +415,13 @@ function createRuleCheckJson(output, body) {
       file.messages.forEach(function(message) {
         var fileReport = {};
         if (message.ruleId == policy_rule.rule.content.slug) {
-          fileReport.file_path = file.filePath;
+          // fileReport.file_path = file.filePath;
+          var relativePath = file.filePath.replace(process.cwd() + '/', "");
+          fileReport.file_path = relativePath
           fileReport.file_name = file.filePath.substring(
             file.filePath.lastIndexOf("/") + 1
           );
+
           fileReport.line = message.line;
           fileReport.column = message.column;
           fileReport.line_end = message.endLine;
