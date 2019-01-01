@@ -272,17 +272,13 @@ function runRubocop(files, autofix) {
 function getOffenseLine(file, lineStart){
   var offenseLines = []
   var allLines = fs.readFileSync(file).toString().split('\n')
-  console.log(lineStart);
   for (var i = lineStart-3; i < lineStart+2; i++) {
-    console.log(i);
     if (i > -1) {
-      console.log(allLines[i]);
       if (typeof allLines[i] !== 'undefined') {
         offenseLines.push({line:i+1, code:allLines[i]})
       }
     }
   }
-  console.log(offenseLines);
 
   return offenseLines
 }
@@ -633,9 +629,6 @@ function createRuleCheckJson(output, body) {
           }
 
           var lines = getOffenseLine(file.path, offense.location.line)
-          console.log("lines");
-
-          console.log(lines);
           fileReport.source = lines
 
           fileReport.language_id = policy_rule.rule.content.language_id;
