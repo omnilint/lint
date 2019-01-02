@@ -431,6 +431,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
         if (pythonFiles.length > 0) {
           var testPython = sortPylintConfig(pythonRules)
           createPylintConfig(testPython)
+          console.log("Config created");
         }
 
         if (jsFiles.length > 0) {
