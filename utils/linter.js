@@ -50,6 +50,13 @@ const {
 } = require("./linters/rubocop");
 
 const {
+  selectFilesForPylint,
+  createPylintConfig,
+  sortPylintConfig,
+  runPylintOntStagedFiles
+} = require("./linters/pylint");
+
+const {
   getUsernameFromLocalDevice,
   getTokenFromLocalDevice
 } = require("./user");
@@ -168,6 +175,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
     var jsFiles = selectFilesForESLint(stagedFilePaths);
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
     var prettierFiles = selectFilesForPrettier(stagedFilePaths);
+    var pythonFiles = selectFilesForPylint(stagedFilePaths)
+
     // connected to the internet
     createCommitAttempt(repositoryUUID)
       .then(body => {
@@ -205,6 +214,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
         // console.log(fetchSHA());
         var prettier_rules = {};
+        var pythonRules = []
+
         saveCommitAttemptId(body.content.id);
         if (
           body.policy &&
@@ -224,6 +235,16 @@ function lintingPreCommit(desiredFormat, keep, time) {
             var es_lint_selected_options = {};
             var rubocopSelectedOptions = {};
             var name = policy_rule.rule.content.slug;
+            if (
+              policy_rule.rule.linter &&
+              policy_rule.rule.linter.command == "pylint" && pythonFiles.length > 0
+            ) {
+              pythonRules.push({
+                rule: policy_rule.rule,
+                options: policy_rule.options
+              })
+
+            }
 
             if (
               policy_rule.rule.linter &&
@@ -407,6 +428,11 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
         // var writeConfigurationFilesSpinner = ora("Writing configuration files...").start();
         // var writeConfigurationFilesTime = new Date();
+        if (pythonFiles.length > 0) {
+          var testPython = sortPylintConfig(pythonRules)
+          createPylintConfig(testPython)
+        }
+
         if (jsFiles.length > 0) {
           createESlintConfig(eslintRules);
         }
@@ -437,7 +463,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
           jsFiles,
           rubyFiles,
           prettierFiles,
-          stagedFilePaths
+          stagedFilePaths,
+          pythonFiles
         )
           .then(report => {
             saveReport(report);
@@ -558,9 +585,9 @@ function createCommitAttempt(repositoryUUID) {
   // console.log("createCommitAttempt");
   return new Promise((resolve, reject) => {
     const currentUser = getUsernameFromLocalDevice();
-    const token = getTokenFromLocalDevice();
-    // const token = "v5NnNqL3C9bQyrzUfzDxTnmvztPr8PMheTebeF8zr7VKozq1uQ";
-
+    // const token = getTokenFromLocalDevice();
+    const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
+    // console.log("WHY");
     if (!repositoryUUID) {
       reject(new Error("Unable to get repositoryUUID."));
       process.exit(1);
@@ -571,7 +598,9 @@ function createCommitAttempt(repositoryUUID) {
       process.exit(1);
     }
 
-    const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
+    // const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
+    const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
+
     // console.log(url);
     request.post(
       url,
@@ -593,8 +622,8 @@ function createCommitAttempt(repositoryUUID) {
             // console.log(stringify);
             resolve(body);
           } else {
-            // console.log("No request");
-            // console.log(url);
+            console.log("No request");
+            console.log(url);
 
             console.log(response.statusCode);
             console.log(error);
@@ -628,7 +657,7 @@ function fetchbranch() {
   try {
     var git_result = execSync("git rev-parse --abbrev-ref HEAD");
     if (git_result) {
-      return git_result.toString();
+      return git_result.toString().replace(/\n/g, '');
     }
   } catch (err) {
     console.log(err);
@@ -794,7 +823,8 @@ function lintStaged(
   jsFiles,
   rubyFiles,
   prettierFiles,
-  stagedFilePaths
+  stagedFilePaths,
+  pythonFiles
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
@@ -807,6 +837,7 @@ function lintStaged(
     //    process.exit(0);
     //   return;
     // }
+
     if (!body.policy) {
       report.passed = true;
       resolve(report);
@@ -822,6 +853,13 @@ function lintStaged(
     var rubyReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
+
+    if (pythonFiles.length > 0) {
+      console.log(chalk.bold.cyan("Running Pylint..."));
+      runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
+
+    }
+
 
     if (prettierFiles.length > 0) {
       // console.log("Before prettierFiles");
@@ -1158,8 +1196,10 @@ function postReport(report, time) {
   // console.log("");
   const reportSpinner = ora("Creating report...");
   reportSpinner.start();
-  const token = getTokenFromLocalDevice();
-  var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
+
+  // const token = getTokenFromLocalDevice();
+  const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
+  var postUrl = `${DEV_API_BASE_URL}/policy_checks.json?user_token=${token}`;
   var reportStartTime = new Date();
   return new Promise((resolve, reject) => {
     request.post(
@@ -1461,9 +1501,9 @@ function editCommitAttempt(repositoryUUID, sha) {
     }
     // console.log(sha);
     const currentUser = getUsernameFromLocalDevice();
-    const token = getTokenFromLocalDevice();
-    // const token = "v5NnNqL3C9bQyrzUfzDxTnmvztPr8PMheTebeF8zr7VKozq1uQ";
 
+    // const token = getTokenFromLocalDevice();
+    const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
     if (!repositoryUUID) {
       reject(new Error("Unable to get repositoryUUID."));
       process.exit(1);
@@ -1483,7 +1523,7 @@ function editCommitAttempt(repositoryUUID, sha) {
     // console.log(commitMessage);
     // console.log(sha);
 
-    const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
+    const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
     // console.log(url);
     request.put(
       url,
