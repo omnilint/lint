@@ -460,7 +460,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
                   //   chalk.red("Commit Aborded. Fix your code first.")
                   // );
                 }
-                var stringifyReport = readReport();
+                // var stringifyReport = readReport();
                 // console.log(stringifyReport);
               })
               .catch(error => {
@@ -820,7 +820,7 @@ function lintStaged(
 
     var javascriptReports = {};
     var rubyReports = {};
-    var filesMadePrettier = []
+    var filesMadePrettier = [];
     var prettierHasSucceed = true;
 
     if (prettierFiles.length > 0) {
@@ -1051,9 +1051,10 @@ function lintStaged(
       // console.log("About to lint " + rubyFiles.length + " Ruby file(s):");
 
       // console.log(rubyFiles);
-
       rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat);
       // runRubocop(rubyFiles, autofix);
+
+      // console.log(rubyReports);
       // console.log("Linting Done");
     } else {
       rubyReports.error_count = 0;
@@ -1062,7 +1063,7 @@ function lintStaged(
       rubyReports.fixable_warning_count = 0;
       rubyReports.rule_checks_attributes = [];
     }
-
+    // console.log(rubyReports);
     report.name = body.content.message;
     report.commit_attempt_id = body.content.id;
     report.policy_id = body.policy.content.id;
@@ -1114,7 +1115,7 @@ function lintStaged(
     } else {
       ruleChecks.rule_checks_attributes = [];
     }
-    
+
     var inspectedFiles = jsFiles.concat(rubyFiles)
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
@@ -1189,6 +1190,9 @@ function postReport(report, time) {
             console.log(error);
             reject(new Error("Unable to create Policy Check."));
           } else {
+            if (response.statusCode !== 201) {
+              console.log(response.statusCode);
+            }
             reject(new Error("Unable to create Policy Check."));
           }
         } else {

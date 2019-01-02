@@ -174,25 +174,14 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
       var linter_command = execSync(cmd);
       if (linter_command) {
         var output = JSON.parse(linter_command);
-        // console.log(output);
-
         if (desiredFormat == "simple") {
           parseOutPoutForRuleCheckAsText(output);
         } else {
           parseOutPoutForRuleCheckAsTable(output);
         }
-        return parseRubocopResults(output, body);
-        // console.log("Output");
-        // console.log(output);
 
-        // parseOutPoutForRuleCheckAsTable(output)
-        // console.error(linter_command);
-        // prepareRequestAfterLint(true, body, 0, output);
-        // process.stdout.write(linter_command);
-        // console.log(linter_command.stdout);
-        // console.log(linter_command);
-        // process.exit(0);
-        // return linter_command;
+        return parseRubocopResults(output, body);
+
       }
     } catch (err) {
       // console.log("==== Catch ===");
@@ -226,6 +215,7 @@ function runRubocop(files, autofix) {
   // console.log("Launching Rubocop");
   if (checkIfRubocopIsInstalled()) {
     // console.log("Rubocop is installed.");
+
     if (autofix) {
       var cmd =
         "rubocop --config .rubocop.yml --color --fix --format simple " +
@@ -286,39 +276,58 @@ function getOffenseLine(file, lineStart){
 
 function parseRubocopResults(output, body) {
   var rubocopReport = {};
-
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
   var totalfixableWarnCount = 0;
+  var fileInfo = []
 
   output.files.forEach(function(file) {
-    file.offenses.forEach(function(offense) {
-      // console.log(offense);
-      if (offense.severity == "warning") {
-        totalWarn = totalWarn + 1;
-        if (offense.corrected == true) {
-          totalfixableWarnCount = totalfixableWarnCount + 1;
+    if (file.offenses.length == 0) {
+      totalError = 0;
+      totalWarn = 0;
+      totalfixableErrorCount = 0;
+      totalfixableWarnCount = 0;
+      fileInfo.push({
+        file_name: file.path.substring( file.path.lastIndexOf("/") + 1 ),
+        file_path: file.path
+      })
+    } else {
+      file.offenses.forEach(function(offense) {
+        // console.log(offense);
+        if (offense.severity == "warning") {
+          totalWarn = totalWarn + 1;
+          if (offense.corrected == true) {
+            totalfixableWarnCount = totalfixableWarnCount + 1;
+          }
+        } else if (offense.severity == "error") {
+          totalError = totalError + 1;
+          if (offense.corrected == true) {
+            totalfixableErrorCount = totalfixableErrorCount + 1;
+          }
         }
-      } else if (offense.severity == "error") {
-        totalError = totalError + 1;
-        if (offense.corrected == true) {
-          totalfixableErrorCount = totalfixableErrorCount + 1;
-        }
-      }
-    });
+      });
+    }
   });
 
-    (rubocopReport.name = body.content.message),
-    (rubocopReport.commit_attempt_id = body.content.id),
-    (rubocopReport.repository_id = body.content.repository_id),
-    (rubocopReport.user_id = body.content.user_id),
-    (rubocopReport.policy_id = body.policy.content.id),
-    (rubocopReport.error_count = totalError),
-    (rubocopReport.warning_count = totalWarn),
-    (rubocopReport.fixable_error_count = totalfixableErrorCount),
-    (rubocopReport.fixable_warning_count = totalfixableWarnCount),
-    (rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body));
+
+  rubocopReport.name = body.content.message
+  rubocopReport.commit_attempt_id = body.content.id
+  rubocopReport.repository_id = body.content.repository_id
+  rubocopReport.user_id = body.content.user_id
+  rubocopReport.policy_id = body.policy.content.id
+  rubocopReport.error_count = totalError
+  rubocopReport.warning_count = totalWarn
+  rubocopReport.fixable_error_count = totalfixableErrorCount
+  rubocopReport.fixable_warning_count = totalfixableWarnCount
+  if (output.summary.offense_count !== 0) {
+    rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  } else {
+
+    rubocopReport.rule_checks_attributes = fileInfo
+  }
+
+
   return rubocopReport;
 }
 
@@ -600,7 +609,6 @@ function createPolicyCheckJson(passed, output, body) {
 function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
-
   console.log("");
   body.policy.policy_rules.forEach(function(policy_rule) {
     output.files.forEach(function(file) {

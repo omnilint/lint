@@ -233,7 +233,7 @@ function parseOutPoutForRuleCheckAsText(output) {
     // console.log(file);
     if (file.messages.length == 0) {
       spinner.succeed();
-      console.log("");
+      // console.log("");
       // console.log(chalk.green("No offense in file"));
       return;
     }
@@ -404,6 +404,8 @@ function createRuleCheckJson(output, body) {
   var file_rule_checks = [];
   // console.log("Output createRuleCheckJson");
   //
+  //
+
   // console.log(output);
   console.log("");
   // console.log("createRuleCheckJson");
@@ -412,40 +414,49 @@ function createRuleCheckJson(output, body) {
   body.policy.policy_rules.forEach(function(policy_rule) {
 
     output.forEach(function(file) {
-      file.messages.forEach(function(message) {
-        var fileReport = {};
-        if (message.ruleId == policy_rule.rule.content.slug) {
-          // fileReport.file_path = file.filePath;
-          var relativePath = file.filePath.replace(process.cwd() + '/', "");
-          fileReport.file_path = relativePath
-          fileReport.file_name = file.filePath.substring(
-            file.filePath.lastIndexOf("/") + 1
-          );
+      var relativePath = file.filePath.replace(process.cwd() + '/', "");
 
-          fileReport.line = message.line;
-          fileReport.column = message.column;
-          fileReport.line_end = message.endLine;
-          fileReport.column_end = message.endColumn;
-
-          fileReport.message = message.message;
-
-          // console.log(policy_rule.rule.content.slug);
-          fileReport.rule_id = policy_rule.rule.content.id;
-
-          fileReport.name = message.ruleId;
-
-          fileReport.severity_level = message.severity;
-          // console.log(fileReport);
-          // console.log("");
-          fileReport.language_id = policy_rule.rule.content.language_id;
-
-          var lines = getOffenseLine(file.filePath, message.line)
-          fileReport.source = lines
-          // console.log(fileReport);
-            // console.log(line);
-          rule_checks_attributes.push(fileReport);
+      if (file.messages.length == 0) {
+        var fileReport = {
+          file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+          file_path: relativePath
         }
-      });
+        rule_checks_attributes.push(fileReport);
+      } else {
+        file.messages.forEach(function(message) {
+          var fileReport = {};
+          if (message.ruleId == policy_rule.rule.content.slug) {
+            // fileReport.file_path = file.filePath;
+            fileReport.file_path = relativePath
+            fileReport.file_name = file.filePath.substring(
+              file.filePath.lastIndexOf("/") + 1
+            );
+
+            fileReport.line = message.line;
+            fileReport.column = message.column;
+            fileReport.line_end = message.endLine;
+            fileReport.column_end = message.endColumn;
+
+            fileReport.message = message.message;
+
+            // console.log(policy_rule.rule.content.slug);
+            fileReport.rule_id = policy_rule.rule.content.id;
+
+            fileReport.name = message.ruleId;
+
+            fileReport.severity_level = message.severity;
+            // console.log(fileReport);
+            // console.log("");
+            fileReport.language_id = policy_rule.rule.content.language_id;
+
+            var lines = getOffenseLine(file.filePath, message.line)
+            fileReport.source = lines
+            // console.log(fileReport);
+              // console.log(line);
+            rule_checks_attributes.push(fileReport);
+          }
+        });
+      }
     });
   });
 
@@ -549,32 +560,37 @@ function installEslint() {
 }
 
 function parseEslintResults(output, body) {
-  // console.log(output);
   var eslintReport = {};
-  // console.log("eslintReport");
-
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
   var totalfixableWarnCount = 0;
+  var fileInfo = []
 
   output.forEach(function(file) {
-    // console.log(file);
+
+
     totalError += file.errorCount;
     totalWarn += file.warningCount;
     totalfixableErrorCount += file.fixableErrorCount;
     totalfixableWarnCount += file.fixableWarningCount;
-  });
-  (eslintReport.name = body.content.message),
-    (eslintReport.commit_attempt_id = body.content.id),
-    (eslintReport.repository_id = body.content.repository_id),
-    (eslintReport.user_id = body.content.user_id),
-    (eslintReport.policy_id = body.policy.content.id),
-    (eslintReport.error_count = totalError),
-    (eslintReport.warning_count = totalWarn),
-    (eslintReport.fixable_error_count = totalfixableErrorCount),
-    (eslintReport.fixable_warning_count = totalfixableWarnCount),
-    (eslintReport.rule_checks_attributes = createRuleCheckJson(output, body));
+  })
+
+
+  eslintReport.name = body.content.message
+  eslintReport.commit_attempt_id = body.content.id
+  eslintReport.repository_id = body.content.repository_id
+  eslintReport.user_id = body.content.user_id
+  eslintReport.policy_id = body.policy.content.id
+  eslintReport.error_count = totalError
+  eslintReport.warning_count = totalWarn
+  eslintReport.fixable_error_count = totalfixableErrorCount
+  eslintReport.fixable_warning_count = totalfixableWarnCount
+
+
+
+  eslintReport.rule_checks_attributes = createRuleCheckJson(output, body);
+
   // console.log(eslintReport);
   return eslintReport;
 }
