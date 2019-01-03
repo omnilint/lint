@@ -184,7 +184,7 @@ function createRuleCheckJson(output, body) {
 
   var dict = [];
 
-  body.policy.policy_rules.forEach(function(policy_rule) {
+  // body.policy.policy_rules.forEach(function(policy_rule) {
     var parseableOutput = Object.keys(output)
 
     parseableOutput.forEach(function(file) {
@@ -200,7 +200,7 @@ function createRuleCheckJson(output, body) {
       } else {
         output[file].forEach(function(offense){
           // console.log(offense);
-          if (policy_rule.rule.linter.command == "pylint") {
+          // if (policy_rule.rule.linter.command == "pylint") {
             // console.log("Pylint")
             // console.log("offense");
 
@@ -235,8 +235,9 @@ function createRuleCheckJson(output, body) {
               var lines = getOffenseLine(relativePath, offense.line)
               fileReport.source = lines
               // console.log(lines);
+              // console.log(fileReport);
               rule_checks_attributes.push(fileReport);
-            }
+            // }
             // else{
             //   console.log(chalk.red(offense.symbol + " != " + policy_rule.rule.content.slug));
             // }
@@ -246,7 +247,7 @@ function createRuleCheckJson(output, body) {
 
     })
 
-  });
+  // });
 
   return rule_checks_attributes;
 }
@@ -270,9 +271,10 @@ function parsePylinResults(output, body) {
 
 
     }
-    totalWarn += output[file].length
+    totalWarn == output[file].length
 
   })
+
 
 
 
