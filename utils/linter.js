@@ -872,6 +872,7 @@ function lintStaged(
     var javascriptReports = {};
     var rubyReports = {};
     var pythonReports = {};
+    var erbLintReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
 
@@ -1139,7 +1140,14 @@ function lintStaged(
 
       console.log("");
       console.log(chalk.bold.cyan("Running ERB Lint..."));
-      runErbLint(erbFiles)
+      erbLintReports = runErbLint(erbFiles, body)
+    } else {
+
+      erbLintReports.error_count = 0;
+      erbLintReports.warning_count = 0;
+      erbLintReports.fixable_error_count = 0;
+      erbLintReports.fixable_warning_count = 0;
+      erbLintReports.rule_checks_attributes = [];
     }
 
     // console.log(rubyReports);
@@ -1150,21 +1158,21 @@ function lintStaged(
     report.user_id = body.content.user_id;
 
     report.error_count =
-      javascriptReports.error_count + rubyReports.error_count + pythonReports.error_count;
+      javascriptReports.error_count + rubyReports.error_count + pythonReports.error_count + erbLintReports.error_count;
     report.warning_count =
-      javascriptReports.warning_count + rubyReports.warning_count + pythonReports.warning_count;
+      javascriptReports.warning_count + rubyReports.warning_count + pythonReports.warning_count + erbLintReports.error_count;
     report.fixable_error_count =
-      javascriptReports.fixable_error_count + rubyReports.fixable_error_count + pythonReports.fixable_error_count;
+      javascriptReports.fixable_error_count + rubyReports.fixable_error_count + pythonReports.fixable_error_count + erbLintReports.error_count;
     report.fixable_warning_count =
       javascriptReports.fixable_warning_count +
-      rubyReports.fixable_warning_count + pythonReports.fixable_warning_count;
+      rubyReports.fixable_warning_count + pythonReports.fixable_warning_count + erbLintReports.error_count;
 
 
     var ruleChecks = {};
 
-    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat( rubyReports.rule_checks_attributes.concat(pythonReports.rule_checks_attributes) )
+    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat( rubyReports.rule_checks_attributes.concat(pythonReports.rule_checks_attributes).concat(erbLintReports.rule_checks_attributes) )
 
-    var inspectedFiles = jsFiles.concat(rubyFiles).concat(pythonFiles)
+    var inspectedFiles = jsFiles.concat(rubyFiles).concat(pythonFiles).concat(erbFiles)
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
 
