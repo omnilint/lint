@@ -2,11 +2,14 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const yaml = require("js-yaml");
 var _ = require('lodash');
+const chalk = require("chalk");
+
 const {
   getEnclosingGitRepository,
   isOmnilintFilePresent,
   getDotOmnilintDirectory
 } = require("../filesHandler");
+const ora = require("ora");
 
 const dotOmnilintDirectory = getDotOmnilintDirectory();
 
@@ -179,52 +182,6 @@ function getRelevantSource(file, lineStart) {
   return offenseLines
 }
 
-//
-// function createRuleCheckJson(offensesGroups, body) {
-//   var rule_checks_attributes = [];
-//   var file_rule_checks = [];
-//
-//
-//
-//   offensesGroups.forEach(function(offense) {
-//     var relativePath = offense.file_path
-//     console.log("offense");
-//
-//     console.log(offense);
-//
-//
-//
-//     if (offensesGroups.length == 0) {
-//       var fileReport = {
-//         file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-//         file_path: relativePath
-//       }
-//       rule_checks_attributes.push(fileReport);
-//     } else {
-//
-//       var fileReport = {};
-//
-//       fileReport.file_path = relativePath
-//       fileReport.file_name = relativePath.substring(
-//         relativePath.lastIndexOf("/") + 1
-//       );
-//
-//       fileReport.line = offense.line;
-//       // fileReport.column = offense.column;
-//       // fileReport.long_message = offense.message
-//       fileReport.message = offense.message
-//       fileReport.name = offense.name;
-//       fileReport.severity_level = 1;
-//       var lines = getOffenseLine(relativePath, offense.line)
-//       fileReport.source = lines
-//       rule_checks_attributes.push(fileReport);
-//     }
-//
-//   })
-//
-//   return rule_checks_attributes;
-// }
-
 
 function parseErbLintResults(offenses, body) {
 
@@ -253,12 +210,61 @@ function parseErbLintResults(offenses, body) {
 
 }
 
+
+function parseOutPoutForRuleCheckAsText(offenses) {
+  var output =  _.mapValues(_.groupBy(offenses, "file_path"));
+
+  var parseableOutput = Object.keys(output)
+
+  const spinner = ora("No offense, bravo!");
+
+
+  parseableOutput.forEach(function(file) {
+    console.log("");
+
+    var relativePath = file
+
+    console.log("- " + chalk.green(relativePath));
+    console.log("--------------------------------------------------------------------------------------");
+
+    if (output[file].length == 0) {
+      spinner.succeed();
+      return;
+    }
+    output[file].forEach(function(error){
+      // console.log(error);
+      if (error.name != null) {
+        var ruleName = error.name
+      }
+      var codeCoordinate = error.line
+      var shortMessage = error.message
+      if (ruleName) {
+        console.log( chalk.grey(codeCoordinate) + " " + ruleName + " " + chalk.grey(shortMessage) );
+
+      } else {
+        console.log( chalk.grey(codeCoordinate) + " " + chalk.grey(shortMessage) );
+
+      }
+    })
+  })
+  console.log("")
+  
+}
+
 function runErbLint(files, body) {
+  console.log("")
+
   var cmd = "erblint --config "+ dotOmnilintDirectory + "/tmp/.erb-lint.yml "+ files.join(" ")
   try {
     var erbLintRunner = execSync(cmd)
     if (erbLintRunner) {
-      console.log(erbLintRunner.toString());
+
+      var offenses = parseErbLintOutput(erbLintRunner.toString())
+
+      parseOutPoutForRuleCheckAsText(offenses);
+
+      return parseErbLintResults(offenses, body);
+
     }
   } catch (e) {
     // console.log("Error maison");
@@ -267,11 +273,11 @@ function runErbLint(files, body) {
       // console.log(output);
       // console.log('-------------------');
       var offenses = parseErbLintOutput(output)
-      console.log('offenses');
-      console.log(offenses);
+      // console.log('offenses');
+      // console.log(offenses);
 
       // if (desiredFormat == "simple") {
-      //   parseOutPoutForRuleCheckAsText(offenses);
+        parseOutPoutForRuleCheckAsText(offenses);
       // } else {
       //   parseOutPoutForRuleCheckAsTable(offenses);
       // }

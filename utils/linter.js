@@ -865,7 +865,7 @@ function lintStaged(
     }
 
     if (autofix) {
-      console.log("");
+      // console.log("");
       var autofixEnabled = ora("Autofix enabled.").succeed();
     }
 
