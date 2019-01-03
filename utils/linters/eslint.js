@@ -6,6 +6,7 @@ const request = require("request");
 const { exec, execSync, spawn } = require("child_process");
 var CliTable = require("cli-table");
 const ora = require("ora");
+var _ = require('lodash');
 
 const {
   getUsernameFromLocalDevice,
@@ -418,6 +419,12 @@ function createRuleCheckJson(output, body) {
           file_path: relativePath
         }
         rule_checks_attributes.push(fileReport);
+        _.union(rule_checks_attributes, fileReport);
+        // console.log("twice");
+        //
+        // if (_.findWhere(rule_checks_attributes, fileReport) == null) {
+        //   console.log("Once");
+        // }
       } else {
         file.messages.forEach(function(message) {
           var fileReport = {};

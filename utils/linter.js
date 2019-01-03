@@ -856,18 +856,7 @@ function lintStaged(
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
 
-    if (pythonFiles.length > 0) {
-      console.log(chalk.bold.cyan("Running Pylint..."));
-      pythonReports = runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
 
-    } else {
-      pythonReports.error_count = 0;
-      pythonReports.warning_count = 0;
-      pythonReports.fixable_error_count = 0;
-      pythonReports.fixable_warning_count = 0;
-      pythonReports.rule_checks_attributes = [];
-
-    }
 
     if (prettierFiles.length > 0) {
       // console.log("Before prettierFiles");
@@ -943,6 +932,23 @@ function lintStaged(
       }
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
     }
+
+
+    if (pythonFiles.length > 0) {
+      console.log("");
+
+      console.log(chalk.bold.cyan("Running Pylint..."));
+      pythonReports = runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
+
+    } else {
+      pythonReports.error_count = 0;
+      pythonReports.warning_count = 0;
+      pythonReports.fixable_error_count = 0;
+      pythonReports.fixable_warning_count = 0;
+      pythonReports.rule_checks_attributes = [];
+
+    }
+
     if (jsFiles.length > 0) {
       console.log("");
       // console.log(

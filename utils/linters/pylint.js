@@ -184,7 +184,7 @@ function createRuleCheckJson(output, body) {
 
   var dict = [];
 
-  // body.policy.policy_rules.forEach(function(policy_rule) {
+  body.policy.policy_rules.forEach(function(policy_rule) {
     var parseableOutput = Object.keys(output)
 
     parseableOutput.forEach(function(file) {
@@ -199,34 +199,54 @@ function createRuleCheckJson(output, body) {
         rule_checks_attributes.push(fileReport);
       } else {
         output[file].forEach(function(offense){
-          console.log("offense");
-          console.log(offense);
-          var fileReport = {};
+          // console.log(offense);
+          if (policy_rule.rule.linter.command == "pylint") {
+            // console.log("Pylint")
+            // console.log("offense");
 
-          fileReport.file_path = relativePath
-          fileReport.file_name = relativePath.substring(
-            relativePath.lastIndexOf("/") + 1
-          );
+            // if (offense.symbol == policy_rule.rule.content.slug) {
+              // console.log(chalk.green(offense.symbol + " == " + policy_rule.rule.content.slug));
 
-          fileReport.line = offense.line;
-          fileReport.column = offense.column;
-          fileReport.long_message = offense.message
-          fileReport.message = offense.message.split("\n")[0];
-          // console.log(policy_rule.rule.content.slug);
+              // console.log("Offense");
 
-          fileReport.name = offense.symbol;
-          // fileReport.language_id = policy_rule.rule.content.language_id;
-          fileReport.severity_level = 1;
-          var lines = getOffenseLine(relativePath, offense.line)
-          fileReport.source = lines
-          console.log(lines);
-          rule_checks_attributes.push(fileReport);
+                // console.log(offense.symbol);
+                // console.log(policy_rule.rule.content.slug);
+
+              // console.log("offense");
+              // console.log(offense);
+              var fileReport = {};
+
+              fileReport.file_path = relativePath
+              fileReport.file_name = relativePath.substring(
+                relativePath.lastIndexOf("/") + 1
+              );
+
+              fileReport.line = offense.line;
+              fileReport.column = offense.column;
+              fileReport.long_message = offense.message
+              fileReport.message = offense.message.split("\n")[0];
+              // fileReport.rule_id = policy_rule.rule.content.id;
+
+              // console.log(policy_rule.rule.content.slug);
+
+              fileReport.name = offense.symbol;
+              // fileReport.language_id = policy_rule.rule.content.language_id;
+              fileReport.severity_level = 1;
+              var lines = getOffenseLine(relativePath, offense.line)
+              fileReport.source = lines
+              // console.log(lines);
+              rule_checks_attributes.push(fileReport);
+            }
+            // else{
+            //   console.log(chalk.red(offense.symbol + " != " + policy_rule.rule.content.slug));
+            // }
+          // }
         })
       }
 
     })
 
-  // });
+  });
 
   return rule_checks_attributes;
 }
@@ -278,20 +298,18 @@ function parsePylinResults(output, body) {
 
 function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFormat) {
 
-  var cmd = "pylint --output-format json " + pythonFiles.join(" ");
+  // var cmd = "pylint --output-format json " + pythonFiles.join(" ");
+  var cmd = "pylint --rcfile " + dotOmnilintDirectory + "/tmp/.pylintrc --output-format json " + pythonFiles.join(" ");
+
 
   try {
     // console.log("==== Try ===");
     var linter_command = execSync(cmd);
     if (linter_command) {
 
-      var pylintOutPut = JSON.parse(err.stdout);
+      var pylintOutPut = JSON.parse(linter_command.stdout);
       var output = _.mapValues(_.groupBy(pylintOutPut, "path"));
 
-      var files2 = Object.keys(output)
-
-      console.log('files2');
-      console.log(files2);
 
       if (desiredFormat == "simple") {
         parseOutPoutForRuleCheckAsText(output);
@@ -303,8 +321,6 @@ function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFor
 
     }
   } catch (err) {
-
-
 
     if (err.stdout) {
 
