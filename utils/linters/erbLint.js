@@ -13,6 +13,27 @@ const ora = require("ora");
 
 const dotOmnilintDirectory = getDotOmnilintDirectory();
 
+function installErbLint() {
+  try {
+    console.log("==== Instaling ErbLint ===");
+    var install_cmd = execSync("gem install erblint", { stdio: [0, 1, 2] });
+    if (install_cmd) {
+      console.log(install_cmd.toString());
+      // process.exit(0);
+    }
+  } catch (err) {
+    console.log("==== Catch ===");
+    console.log(err);
+    if (err.stdout) {
+      // console.log("==== Catch stdout ===");
+      console.log(err.stdout.toString());
+    }
+    process.exit(1);
+    // console.log("==== Catch after ===");
+  }
+}
+
+
 function checkIfRubyIsInstalled() {
   try {
     var res = execSync("ruby -v");
@@ -248,7 +269,7 @@ function parseOutPoutForRuleCheckAsText(offenses) {
     })
   })
   console.log("")
-  
+
 }
 
 function runErbLint(files, body) {
@@ -292,5 +313,7 @@ function runErbLint(files, body) {
 module.exports = {
   createErbLintConfig,
   selectFilesForErbLint,
-  runErbLint
+  runErbLint,
+  installErbLint,
+  checkIfErbLintIsInstalled
 }

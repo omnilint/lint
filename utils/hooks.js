@@ -25,8 +25,13 @@ const {
 } = require('./linters/prettier');
 
 const {
-  checkForRequirement
+  checkForPyLintRequirement
 } = require('./linters/pylint');
+
+const {
+  installErbLint,
+  checkIfErbLintIsInstalled
+} = require('./linters/erbLint');
 
 var momentjs = require("moment");
 
@@ -37,16 +42,16 @@ function install() {
 
 
   if(checkIfEslintIsInstalled()) {
-    // console.log("Eslint is installed.")
+    console.log("Eslint is installed.")
   } else {
-    console.log("Eslint is not installed. Installing...")
+    console.log("ESLint is not installed. Installing...")
     installEslint();
-    console.log("Eslint is now installed.")
+    console.log("ESLint is now installed.")
   }
 
 
   if(checkIfPrettierIsInstalled()) {
-    // console.log("Prettier is installed.")
+    console.log("Prettier is installed.")
   } else {
     console.log("Prettier is not installed. Installing...")
     installPrettier();
@@ -54,14 +59,23 @@ function install() {
   }
 
   if(checkIfRubocopIsInstalled()) {
-    // console.log("Rubocop is installed.")
+    console.log("Rubocop is installed.")
   } else {
     console.log("Rubocop is not installed. Installing...")
     installRubocop();
     console.log("Rubocop is now installed.")
   }
 
-  checkForRequirement()
+
+  if(checkIfErbLintIsInstalled()) {
+    console.log("ERBLint is installed.")
+  } else {
+    console.log("ERBLint is not installed. Installing...")
+    installErbLint();
+    console.log("ERBLint is now installed.")
+  }
+
+  checkForPyLintRequirement()
 
   if (
     !enclosingGitRepository ||

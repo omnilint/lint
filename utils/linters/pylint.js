@@ -96,7 +96,7 @@ function installPytlint(){
 }
 
 
-function checkForRequirement(){
+function checkForPyLintRequirement(){
   var pythonInstalled = checkIfPythonIsInstalled()
   var pipInstalled = checkIfPipIsInstalled()
   var pylintInstalled = checkIfPylintIsInstalled()
@@ -117,6 +117,8 @@ function checkForRequirement(){
 
     console.log("Pylint is now installed.")
 
+  } else {
+    console.log("Pylint is installed.")
   }
 
 }
@@ -401,5 +403,5 @@ module.exports = {
   sortPylintConfig,
   createPylintConfig,
   runPylintOntStagedFiles,
-  checkForRequirement
+  checkForPyLintRequirement
 }
