@@ -586,8 +586,8 @@ function createCommitAttempt(repositoryUUID) {
   // console.log("createCommitAttempt");
   return new Promise((resolve, reject) => {
     const currentUser = getUsernameFromLocalDevice();
-    // const token = getTokenFromLocalDevice();
-    const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
+    const token = getTokenFromLocalDevice();
+    // const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
     // console.log("WHY");
     if (!repositoryUUID) {
       reject(new Error("Unable to get repositoryUUID."));
@@ -599,8 +599,8 @@ function createCommitAttempt(repositoryUUID) {
       process.exit(1);
     }
 
-    // const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
-    const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
+    const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
+    // const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
 
     // console.log(url);
     request.post(
@@ -1180,9 +1180,9 @@ function postReport(report, time) {
   const reportSpinner = ora("Creating report...");
   reportSpinner.start();
 
-  // const token = getTokenFromLocalDevice();
-  const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
-  var postUrl = `${DEV_API_BASE_URL}/policy_checks.json?user_token=${token}`;
+  const token = getTokenFromLocalDevice();
+  // const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
+  var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
   var reportStartTime = new Date();
   return new Promise((resolve, reject) => {
     request.post(
@@ -1485,8 +1485,8 @@ function editCommitAttempt(repositoryUUID, sha) {
     // console.log(sha);
     const currentUser = getUsernameFromLocalDevice();
 
-    // const token = getTokenFromLocalDevice();
-    const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
+    const token = getTokenFromLocalDevice();
+    // const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
     if (!repositoryUUID) {
       reject(new Error("Unable to get repositoryUUID."));
       process.exit(1);
@@ -1506,7 +1506,7 @@ function editCommitAttempt(repositoryUUID, sha) {
     // console.log(commitMessage);
     // console.log(sha);
 
-    const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
+    const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
     // console.log(url);
     request.put(
       url,
