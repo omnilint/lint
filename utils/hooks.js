@@ -24,6 +24,10 @@ const {
   installPrettier
 } = require('./linters/prettier');
 
+const {
+  checkForRequirement
+} = require('./linters/pylint');
+
 var momentjs = require("moment");
 
 // let hooksDirectory = getHooksDirectory();
@@ -98,6 +102,7 @@ function install() {
     console.log("Rubocop is now installed.")
   }
 
+  checkForRequirement()
 
   if (!isOmnilintFilePresent()) {
     init();
@@ -207,17 +212,23 @@ function createHooks() {
   fs.writeFileSync(hooksDirectory + "/pre-commit", preCommit);
   fs.writeFileSync(hooksDirectory + "/prepare-commit-msg", prepareCommitMsg);
   fs.writeFileSync(hooksDirectory + "/post-commit", postCommit);
-  makeHookExecutable(hooksDirectory + "/prepare-commit-msg");
-  makeHookExecutable(hooksDirectory + "/post-commit");
-  makeHookExecutable(hooksDirectory + "/pre-commit");
+  makeHookExecutable(hooksDirectory, "/prepare-commit-msg");
+  makeHookExecutable(hooksDirectory, "/post-commit");
+  makeHookExecutable(hooksDirectory, "/pre-commit");
   return true;
 }
 
-function makeHookExecutable(hookPath) {
+function makeHookExecutable(hooksDirectory, hookName) {
   try {
+
+    var hookPath = hooksDirectory + hookName;
+    // console.log(hookPath);
     var res = execSync("chmod +x " + hookPath);
     if (res) {
-      console.log("Hook saved successfully to: " + chalk.green(hookPath));
+      // console.log("Hook saved successfully to: " + chalk.green(hookPath));
+      console.log("Hook saved successfully to: " + chalk.green(".git/hooks"+hookName));
+
+
     }
   } catch (err) {
     console.log(err);

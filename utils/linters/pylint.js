@@ -49,6 +49,53 @@ function checkIfPylintIsInstalled() {
   return false;
 }
 
+function installPip(){
+  try {
+    console.log("==== Instaling Pip ===");
+    execSync("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
+    var install_cmd = execSync("python get-pip.py", { stdio: [0, 1, 2] });
+    if (install_cmd) {
+      console.log(install_cmd.toString());
+
+      // process.exit(0);
+    }
+  } catch (err) {
+    console.log("==== Catch ===");
+    console.log(err);
+    if (err.stdout) {
+      // console.log("==== Catch stdout ===");
+      console.log(err.stdout.toString());
+    }
+    process.exit(1);
+    // console.log("==== Catch after ===");
+  }
+
+}
+
+
+function installPytlint(){
+  try {
+    console.log("==== Instaling Pytlint ===");
+    var install_cmd = execSync("pip install pylint", { stdio: [0, 1, 2] });
+    if (install_cmd) {
+      console.log(install_cmd.toString());
+
+      // process.exit(0);
+    }
+  } catch (err) {
+    console.log("==== Catch ===");
+    console.log(err);
+    if (err.stdout) {
+      // console.log("==== Catch stdout ===");
+      console.log(err.stdout.toString());
+    }
+    process.exit(1);
+    // console.log("==== Catch after ===");
+  }
+
+}
+
+
 function checkForRequirement(){
   var pythonInstalled = checkIfPythonIsInstalled()
   var pipInstalled = checkIfPipIsInstalled()
@@ -60,12 +107,16 @@ function checkForRequirement(){
   }
 
   if (!pipInstalled) {
-    console.log("Please install pip first");
-    return
+    console.log("Pip is not installed. Installing...")
+    installPip()
+    console.log("Pip is now installed.")
   }
   if (!pylintInstalled) {
-    console.log("Please install pylint first");
-    return
+    console.log("Pylint is not installed. Installing...");
+    installPytlint()
+
+    console.log("Pylint is now installed.")
+
   }
 
 }
@@ -349,5 +400,6 @@ module.exports = {
   selectFilesForPylint,
   sortPylintConfig,
   createPylintConfig,
-  runPylintOntStagedFiles
+  runPylintOntStagedFiles,
+  checkForRequirement
 }
