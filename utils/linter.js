@@ -852,15 +852,22 @@ function lintStaged(
 
     var javascriptReports = {};
     var rubyReports = {};
+    var pythonReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
 
     if (pythonFiles.length > 0) {
       console.log(chalk.bold.cyan("Running Pylint..."));
-      runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
+      pythonReports = runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
+
+    } else {
+      pythonReports.error_count = 0;
+      pythonReports.warning_count = 0;
+      pythonReports.fixable_error_count = 0;
+      pythonReports.fixable_warning_count = 0;
+      pythonReports.rule_checks_attributes = [];
 
     }
-
 
     if (prettierFiles.length > 0) {
       // console.log("Before prettierFiles");
@@ -1110,52 +1117,21 @@ function lintStaged(
     report.user_id = body.content.user_id;
 
     report.error_count =
-      javascriptReports.error_count + rubyReports.error_count;
+      javascriptReports.error_count + rubyReports.error_count + pythonReports.error_count;
     report.warning_count =
-      javascriptReports.warning_count + rubyReports.warning_count;
+      javascriptReports.warning_count + rubyReports.warning_count + pythonReports.warning_count;
     report.fixable_error_count =
-      javascriptReports.fixable_error_count + rubyReports.fixable_error_count;
+      javascriptReports.fixable_error_count + rubyReports.fixable_error_count + pythonReports.fixable_error_count;
     report.fixable_warning_count =
       javascriptReports.fixable_warning_count +
-      rubyReports.fixable_warning_count;
-    //
-    // if (
-    //   javascriptReports.rule_checks_attributes &&
-    //   rubyReports.rule_checks_attributes
-    // ) {
-    //
-    //   report.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat(
-    //     rubyReports.rule_checks_attributes
-    //   );
-    // } else if (javascriptReports.rule_checks_attributes) {
-    //   report.rule_checks_attributes = javascriptReports.rule_checks_attributes;
-    // } else if (rubyReports.rule_checks_attributes) {
-    //   report.rule_checks_attributes = rubyReports.rule_checks_attributes;
-    // } else {
-    //   report.rule_checks_attributes = [];
-    // }
+      rubyReports.fixable_warning_count + pythonReports.fixable_warning_count;
+
 
     var ruleChecks = {};
-    if (
-      javascriptReports.rule_checks_attributes &&
-      rubyReports.rule_checks_attributes
-    ) {
-      // console.log("javascriptReports.rule_checks_attributes");
-      // console.log(javascriptReports.rule_checks_attributes);
 
-      ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat(
-        rubyReports.rule_checks_attributes
-      );
-    } else if (javascriptReports.rule_checks_attributes) {
-      ruleChecks.rule_checks_attributes =
-        javascriptReports.rule_checks_attributes;
-    } else if (rubyReports.rule_checks_attributes) {
-      ruleChecks.rule_checks_attributes = rubyReports.rule_checks_attributes;
-    } else {
-      ruleChecks.rule_checks_attributes = [];
-    }
+    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat( rubyReports.rule_checks_attributes.concat(pythonReports.rule_checks_attributes) )
 
-    var inspectedFiles = jsFiles.concat(rubyFiles)
+    var inspectedFiles = jsFiles.concat(rubyFiles).concat(pythonFiles)
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
 

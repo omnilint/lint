@@ -96,13 +96,9 @@ function runEslint(files, autofix, body, desiredFormat) {
       }
 
       return parseEslintResults(output, body);
-      // prepareRequestAfterLint(false, body, 1)
+
     }
-    // prepareRequestAfterLint(passed, body)
-    // process.exit(1);
-    // // console.log("==== Catch after ===");
   }
-  // // console.log("Linting Done");
 }
 
 function parseOutPoutForRuleCheckAsTable(output) {
