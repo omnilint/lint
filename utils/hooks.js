@@ -34,47 +34,6 @@ var momentjs = require("moment");
 function install() {
   const moment = momentjs();
   const enclosingGitRepository = getEnclosingGitRepository();
-  if (
-    !enclosingGitRepository ||
-    enclosingGitRepository == "" ||
-    enclosingGitRepository == " "
-  ) {
-    console.log();
-    console.log("Can't find .git, skipping Git hooks installation");
-    console.log(
-      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall omnilint"
-    );
-    console.log();
-    process.exit(0);
-  }
-  if (fs.existsSync(enclosingGitRepository)) {
-    if (
-      !fs.existsSync(
-        enclosingGitRepository +
-          "/.git/hooks_backup_" +
-          moment.format("YYYY-MM-DD_HH:mm:ss")
-      )
-    ) {
-      fs.mkdirSync(
-        enclosingGitRepository +
-          "/.git/hooks_backup_" +
-          moment.format("YYYY-MM-DD_HH:mm:ss")
-      );
-      copyFolderRecursiveSync(
-        enclosingGitRepository + "/.git/hooks",
-        enclosingGitRepository +
-          "/.git/hooks_backup_" +
-          moment.format("YYYY-MM-DD_HH:mm:ss")
-      );
-    }
-  } else {
-    fs.mkdirSync(enclosingGitRepository + "/hooks");
-  }
-
-  const hooksCreated = createHooks();
-  if (!hooksCreated) {
-    process.exit(0);
-  }
 
 
   if(checkIfEslintIsInstalled()) {
@@ -103,6 +62,51 @@ function install() {
   }
 
   checkForRequirement()
+
+  if (
+    !enclosingGitRepository ||
+    enclosingGitRepository == "" ||
+    enclosingGitRepository == " "
+  ) {
+    console.log();
+    console.log("Can't find .git, skipping Git hooks installation");
+    console.log(
+      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall omnilint"
+    );
+    console.log();
+    process.exit(0);
+  }
+
+
+
+  if (fs.existsSync(enclosingGitRepository)) {
+    if (
+      !fs.existsSync(
+        enclosingGitRepository +
+          "/.git/hooks_backup_" +
+          moment.format("YYYY-MM-DD_HH:mm:ss")
+      )
+    ) {
+      fs.mkdirSync(
+        enclosingGitRepository +
+          "/.git/hooks_backup_" +
+          moment.format("YYYY-MM-DD_HH:mm:ss")
+      );
+      copyFolderRecursiveSync(
+        enclosingGitRepository + "/.git/hooks",
+        enclosingGitRepository +
+          "/.git/hooks_backup_" +
+          moment.format("YYYY-MM-DD_HH:mm:ss")
+      );
+    }
+  } else {
+    fs.mkdirSync(enclosingGitRepository + "/hooks");
+  }
+
+  const hooksCreated = createHooks();
+  if (!hooksCreated) {
+    process.exit(0);
+  }
 
   if (!isOmnilintFilePresent()) {
     init();
