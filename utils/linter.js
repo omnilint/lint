@@ -50,6 +50,13 @@ const {
 } = require("./linters/rubocop");
 
 const {
+  createErbLintConfig,
+  selectFilesForErbLint,
+  runErbLint
+} = require("./linters/erbLint");
+
+
+const {
   selectFilesForPylint,
   createPylintConfig,
   sortPylintConfig,
@@ -176,6 +183,9 @@ function lintingPreCommit(desiredFormat, keep, time) {
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
     var prettierFiles = selectFilesForPrettier(stagedFilePaths);
     var pythonFiles = selectFilesForPylint(stagedFilePaths)
+    var erbFiles = selectFilesForErbLint(stagedFilePaths)
+
+
 
     // connected to the internet
     createCommitAttempt(repositoryUUID)
@@ -326,7 +336,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
             if (
               policy_rule.rule.linter &&
               policy_rule.rule.linter.command == "rubocop" &&
-              rubyFiles.length > 0
+              (rubyFiles.length > 0 || erbFiles.length > 0)
+
             ) {
               if (policy_rule.options.length == 0) {
                 if (policy_rule.status == "warn") {
@@ -437,9 +448,15 @@ function lintingPreCommit(desiredFormat, keep, time) {
         if (jsFiles.length > 0) {
           createESlintConfig(eslintRules);
         }
-        if (rubyFiles.length > 0) {
+        if (rubyFiles.length > 0 || erbFiles.length > 0) {
           createRubocopConfig(rubocopRules);
+
         }
+        if (erbFiles.length > 0) {
+          createErbLintConfig();
+        }
+
+
         if (prettierFiles.length > 0) {
           createPrettierConfig(prettier_rules);
         }
@@ -465,7 +482,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
           rubyFiles,
           prettierFiles,
           stagedFilePaths,
-          pythonFiles
+          pythonFiles,
+          erbFiles
         )
           .then(report => {
             saveReport(report);
@@ -825,7 +843,8 @@ function lintStaged(
   rubyFiles,
   prettierFiles,
   stagedFilePaths,
-  pythonFiles
+  pythonFiles,
+  erbFiles
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
@@ -1115,6 +1134,14 @@ function lintStaged(
       rubyReports.fixable_warning_count = 0;
       rubyReports.rule_checks_attributes = [];
     }
+
+    if (erbFiles.length > 0) {
+
+      console.log("");
+      console.log(chalk.bold.cyan("Running ERB Lint..."));
+      runErbLint(erbFiles)
+    }
+
     // console.log(rubyReports);
     report.name = body.content.message;
     report.commit_attempt_id = body.content.id;
