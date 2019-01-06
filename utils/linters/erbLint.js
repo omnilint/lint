@@ -255,11 +255,11 @@ function parseOutPoutForRuleCheckAsText(offenses) {
   var parseableOutput = Object.keys(output)
 
   const spinner = ora("No offense, bravo!");
-
+  // console.log("parseOutPoutForRuleCheckAsText");
   // console.log(parseableOutput);
 
   parseableOutput.forEach(function(file) {
-    // console.log("");
+    console.log("");
 
     var relativePath = file
 
@@ -300,6 +300,8 @@ function runErbLint(files, body) {
   var cmd = "erblint --config "+ dotOmnilintDirectory + "/tmp/.erb-lint.yml "+ files.join(" ")
   var statusCode = 0
   try {
+    // console.log("merde1");
+
     var erbLintRunner = execSync(cmd)
 
     if (erbLintRunner) {
@@ -343,6 +345,7 @@ function runErbLint(files, body) {
     statusCode = e.status
 
     if (e.stdout && statusCode === 1) {
+
       var output = e.stdout.toString();
       // console.log(output);
       // console.log('-------------------');
@@ -360,6 +363,7 @@ function runErbLint(files, body) {
 
       return parseErbLintResults(offenses, body);
     } else {
+      console.log("Error");
       console.log(e);
     }
 
