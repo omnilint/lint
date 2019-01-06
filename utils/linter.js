@@ -56,6 +56,11 @@ const {
 } = require("./linters/erbLint");
 
 const {
+  runStyleLint,
+  selectFilesForStyleLint
+} = require("./linters/stylelint");
+
+const {
   selectFilesForPylint,
   createPylintConfig,
   sortPylintConfig,
@@ -183,7 +188,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
     var prettierFiles = selectFilesForPrettier(stagedFilePaths);
     var pythonFiles = selectFilesForPylint(stagedFilePaths);
     var erbFiles = selectFilesForErbLint(stagedFilePaths);
-
+    var styleLintCompatibleFiles = selectFilesForStyleLint(stagedFilePaths)
+    // console.log(styleLintCompatibleFiles);
     // connected to the internet
     createCommitAttempt(repositoryUUID)
       .then(body => {
@@ -477,7 +483,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
           prettierFiles,
           stagedFilePaths,
           pythonFiles,
-          erbFiles
+          erbFiles,
+          styleLintCompatibleFiles
         )
           .then(report => {
             saveReport(report);
@@ -833,7 +840,8 @@ function lintStaged(
   prettierFiles,
   stagedFilePaths,
   pythonFiles,
-  erbFiles
+  erbFiles,
+  styleLintCompatibleFiles
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
@@ -940,6 +948,12 @@ function lintStaged(
         var prettierHasSucceed = false;
       }
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
+    }
+
+    if (styleLintCompatibleFiles.length > 0) {
+        console.log("");
+        console.log(chalk.bold.cyan("Running Style Line..."));
+        runStyleLint(styleLintCompatibleFiles, autofix, body, desiredFormat)
     }
 
     if (pythonFiles.length > 0) {
