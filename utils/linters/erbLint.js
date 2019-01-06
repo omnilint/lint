@@ -231,9 +231,14 @@ function parseErbLintResults(offenses, body) {
   erbLintReport.policy_id = body.policy.content.id
   erbLintReport.error_count = totalError
 
+  offenses.forEach(function(offense) {
+    if (offense.message) {
+      totalWarn += 1
+    }
 
+  })
   if (offenses.length > 0) {
-    erbLintReport.warning_count = offenses.length
+    erbLintReport.warning_count = totalWarn
     erbLintReport.rule_checks_attributes = offenses
   } else{
     erbLintReport.warning_count = totalWarn
@@ -350,6 +355,20 @@ function runErbLint(files, body) {
       // console.log(output);
       // console.log('-------------------');
       var offenses = parseErbLintOutput(output, statusCode)
+      var output =  _.mapValues(_.groupBy(offenses, "file_path"));
+      var parseableOutput = Object.keys(output)
+
+      files.forEach(function(file){
+        if (parseableOutput.indexOf(file) === -1 ) {
+          // console.log("No error");
+          var offense = {
+            file_path: file,
+            file_name: file.substring(file.lastIndexOf("/") + 1)
+          }
+
+          offenses.push(offense);
+        }
+      })
       // console.log('offenses');
       // console.log(offenses);
 

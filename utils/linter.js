@@ -1155,7 +1155,7 @@ function lintStaged(
       javascriptReports.warning_count +
       rubyReports.warning_count +
       pythonReports.warning_count +
-      erbReports.error_count;
+      erbReports.warning_count;
     report.fixable_error_count =
       javascriptReports.fixable_error_count +
       rubyReports.fixable_error_count +
