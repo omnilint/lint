@@ -24,6 +24,12 @@ const {
   installPrettier
 } = require('./linters/prettier');
 
+
+const {
+  checkIfStyleLintIsInstalled,
+  installStyleLint
+} = require('./linters/stylelint');
+
 const {
   checkForPyLintRequirement
 } = require('./linters/pylint');
@@ -73,6 +79,14 @@ function install() {
     console.log("ERBLint is not installed. Installing...")
     installErbLint();
     console.log("ERBLint is now installed.")
+  }
+
+  if(checkIfStyleLintIsInstalled()) {
+    console.log("StyleLint is installed.")
+  } else {
+    console.log("StyleLint is not installed. Installing...")
+    installStyleLint();
+    console.log("StyleLint is now installed.")
   }
 
   checkForPyLintRequirement()
