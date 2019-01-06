@@ -643,10 +643,12 @@ function createCommitAttempt(repositoryUUID) {
             resolve(body);
           } else {
             console.log("No request");
-            console.log(url);
+            // console.log(url);
 
             console.log(response.statusCode);
-            console.log(error);
+            if (error) {
+              console.log(error);
+            }
             // console.log(body);
             reject(new Error("Unable to post to server."));
             process.exit(1);
@@ -869,6 +871,7 @@ function lintStaged(
     var javascriptReports = {};
     var rubyReports = {};
     var pythonReports = {};
+    var styleFilesReport = {};
     var erbReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
@@ -952,8 +955,14 @@ function lintStaged(
 
     if (styleLintCompatibleFiles.length > 0) {
         console.log("");
-        console.log(chalk.bold.cyan("Running Style Line..."));
-        runStyleLint(styleLintCompatibleFiles, autofix, body, desiredFormat)
+        console.log(chalk.bold.cyan("Running Style Lint..."));
+        styleFilesReport = runStyleLint(styleLintCompatibleFiles, autofix, body, desiredFormat)
+    } else {
+      styleFilesReport.error_count = 0;
+      styleFilesReport.warning_count = 0;
+      styleFilesReport.fixable_error_count = 0;
+      styleFilesReport.fixable_warning_count = 0;
+      styleFilesReport.rule_checks_attributes = [];
     }
 
     if (pythonFiles.length > 0) {
@@ -1163,36 +1172,45 @@ function lintStaged(
     report.error_count =
       javascriptReports.error_count +
       rubyReports.error_count +
+      styleFilesReport.error_count +
       pythonReports.error_count +
       erbReports.error_count;
     report.warning_count =
       javascriptReports.warning_count +
       rubyReports.warning_count +
+      styleFilesReport.warning_count +
       pythonReports.warning_count +
       erbReports.warning_count;
     report.fixable_error_count =
       javascriptReports.fixable_error_count +
       rubyReports.fixable_error_count +
+      styleFilesReport.fixable_error_count +
       pythonReports.fixable_error_count +
       erbReports.error_count;
     report.fixable_warning_count =
       javascriptReports.fixable_warning_count +
       rubyReports.fixable_warning_count +
+      styleFilesReport.fixable_warning_count +
       pythonReports.fixable_warning_count +
       erbReports.error_count;
 
     var ruleChecks = {};
 
+
     ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat(
       rubyReports.rule_checks_attributes
         .concat(pythonReports.rule_checks_attributes)
         .concat(erbReports.rule_checks_attributes)
+        .concat(styleFilesReport.rule_checks_attributes)
+
     );
 
     var inspectedFiles = jsFiles
       .concat(rubyFiles)
       .concat(pythonFiles)
-      .concat(erbFiles);
+      .concat(erbFiles)
+      .concat(styleLintCompatibleFiles)
+
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles);
 

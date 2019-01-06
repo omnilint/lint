@@ -2,6 +2,7 @@ const fs = require("fs");
 const { exec, execSync, spawn } = require("child_process");
 const ora = require("ora");
 const chalk = require("chalk");
+var _ = require('lodash');
 
 const {
   getEnclosingGitRepository,
@@ -165,17 +166,14 @@ function parseOutPoutForRuleCheckAsText(output) {
       // console.log(message);
 
       var ruleName = message.rule;
-      var linterMessage;
       var severity;
       if (message.severity == 'warning') {
-        linterMessage = message.message;
         severity = chalk.yellow("Warning");
       } else if (message.severity == 'error') {
-        linterMessage = message.message;
         severity = chalk.red("Error");
       }
       var codeCoordinate = message.line + ":" + message.column;
-
+      // console.log(message.text.split(/[()]+/)[0]);
       console.log(
         chalk.grey(codeCoordinate) +
           " " +
@@ -183,7 +181,7 @@ function parseOutPoutForRuleCheckAsText(output) {
           " " +
           ruleName +
           " " +
-          chalk.grey(message.text)
+          chalk.grey(message.text.split(/[()]+/)[0])
       );
 
     })
@@ -198,7 +196,7 @@ function parseOutPoutForRuleCheckAsText(output) {
       );
     }
 
-    // console.log("");
+    // console.log("");text
     var messageToPrint = "Found ";
     var messageToPrint2 = "Found ";
 
@@ -221,8 +219,85 @@ function parseOutPoutForRuleCheckAsText(output) {
 
 }
 
+function getOffenseLine(file, lineStart){
+  var offenseLines = []
+  var allLines = fs.readFileSync(file).toString().split('\n')
+  for (var i = lineStart-3; i < lineStart+2; i++) {
+    if (i > -1) {
+      if (typeof allLines[i] !== 'undefined') {
+        offenseLines.push({line:i+1, code:allLines[i]})
+      }
+    }
+  }
+  return offenseLines
+  }
+
+function createRuleCheckJson(output, body) {
+  var rule_checks_attributes = [];
+  var file_rule_checks = [];
+
+  console.log("");
+
+  output.forEach(function(file) {
+    var relativePath = file.source.replace(process.cwd() + '/', "");
+
+    if (file.warnings.length == 0) {
+      var fileReport = {
+        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+        file_path: relativePath
+      }
+      rule_checks_attributes.push(fileReport);
+      _.union(rule_checks_attributes, fileReport);
+
+
+    } else {
+      file.warnings.forEach(function(message) {
+        // console.log(message);
+        var fileReport = {};
+
+
+        fileReport.file_path = relativePath
+        fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
+        fileReport.line = message.line;
+        fileReport.column = message.column;
+
+
+        fileReport.message = message.text.split(/[()]+/)[0];
+
+        // console.log(policy_rule.rule.content.slug);
+        // fileReport.rule_id = message.rule
+
+        fileReport.name = message.rule;
+
+        if (message.severity == "warning") {
+          fileReport.severity_level = 1;
+
+        } else if (message.severity == "error") {
+          fileReport.severity_level = 2;
+
+
+        }
+
+
+
+        var lines = getOffenseLine(file.source, message.line)
+        fileReport.source = lines
+
+
+
+        rule_checks_attributes.push(fileReport);
+
+      });
+    }
+  });
+
+  // console.log(rule_checks_attributes);
+  return rule_checks_attributes;
+}
+
+
 function parseStyleLintResults(output, body) {
-  var eslintReport = {};
+  var stylintReport = {};
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
@@ -230,31 +305,27 @@ function parseStyleLintResults(output, body) {
   var fileInfo = []
 
   output.forEach(function(file) {
-
-
-    totalError += file.errorCount;
-    totalWarn += file.warningCount;
-    totalfixableErrorCount += file.fixableErrorCount;
-    totalfixableWarnCount += file.fixableWarningCount;
+    file.warnings.forEach(function(message) {
+      if (message.severity == 'warning') {
+      totalWarn++
+      } else if (message.severity == 'error') {
+      totalError++
+      }
+    })
   })
 
 
-  eslintReport.name = body.content.message
-  eslintReport.commit_attempt_id = body.content.id
-  eslintReport.repository_id = body.content.repository_id
-  eslintReport.user_id = body.content.user_id
-  eslintReport.policy_id = body.policy.content.id
-  eslintReport.error_count = totalError
-  eslintReport.warning_count = totalWarn
-  eslintReport.fixable_error_count = totalfixableErrorCount
-  eslintReport.fixable_warning_count = totalfixableWarnCount
-
-
-
-  eslintReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  stylintReport.name = body.content.message
+  stylintReport.commit_attempt_id = body.content.id
+  stylintReport.repository_id = body.content.repository_id
+  stylintReport.user_id = body.content.user_id
+  stylintReport.policy_id = body.policy.content.id
+  stylintReport.error_count = totalError
+  stylintReport.warning_count = totalWarn
+  stylintReport.rule_checks_attributes = createRuleCheckJson(output, body);
 
   // console.log(eslintReport);
-  return eslintReport;
+  return stylintReport;
 }
 
 
@@ -266,9 +337,20 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
   try {
     var styleLintRunner =  execSync(cmd)
     if (styleLintRunner) {
-      console.log("styleLintRunner Success");
+      // console.log("styleLintRunner Success");
 
-      console.log(styleLintRunner.toString());
+
+
+      var output = JSON.parse(styleLintRunner.toString());
+
+      if (desiredFormat == "simple") {
+        parseOutPoutForRuleCheckAsText(output);
+      } else {
+        parseOutPoutForRuleCheckAsTable(output);
+      }
+      // console.log("Error");
+      // console.log(parseEslintResults(output, body));
+      return parseStyleLintResults(output, body);
     }
   } catch (e) {
     // if (e) {
