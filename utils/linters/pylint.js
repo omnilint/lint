@@ -60,13 +60,13 @@ function installPip(){
       // process.exit(0);
     }
   } catch (err) {
-    console.log("==== Catch ===");
+    // console.log("==== Catch ===");
     console.log(err);
     if (err.stdout) {
       // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
-    process.exit(1);
+    // process.exit(1);
     // console.log("==== Catch after ===");
   }
 
@@ -89,7 +89,7 @@ function installPytlint(){
       // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
-    process.exit(1);
+    // process.exit(1);
     // console.log("==== Catch after ===");
   }
 
