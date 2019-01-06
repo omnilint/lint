@@ -129,7 +129,7 @@ function selectFilesForErbLint(stagedFilePaths) {
 }
 
 
-function parseErbLintOutput(output) {
+function parseErbLintOutput(output, statusCode) {
   // console.log(output);
   var result = output.split("\n")
   result.shift()
@@ -142,7 +142,7 @@ function parseErbLintOutput(output) {
 
   var offenses = []
 
-  if (result == 'No errors were found in ERB files') {
+  if (statusCode === 0) {
     // console.log(tmpOffenses);
     // console.log("No offenses");
 
@@ -298,20 +298,23 @@ function runErbLint(files, body) {
   console.log("")
 
   var cmd = "erblint --config "+ dotOmnilintDirectory + "/tmp/.erb-lint.yml "+ files.join(" ")
+  var statusCode = 0
   try {
     var erbLintRunner = execSync(cmd)
 
     if (erbLintRunner) {
       // console.log("no offenses");
+      // console.log(erbLintRunner);
 
-      var offenses = parseErbLintOutput(erbLintRunner.toString())
+      // console.log(erbLintRunner.toString());
+
+      var offenses = parseErbLintOutput(erbLintRunner.toString(), statusCode)
       // console.log("BBBBBBB");
       // console.log(offenses);
       // console.log(offenses.length);
 
       if (offenses.length == 0) {
         // console.log("no offenses");
-
         files.forEach(function(file){
           var offense = {
             file_path: file,
@@ -329,17 +332,21 @@ function runErbLint(files, body) {
       }
       parseOutPoutForRuleCheckAsText(offenses);
 
+      // console.log("Status Code");
+      // console.log(statusCode);
       return parseErbLintResults(offenses, body);
 
     }
   } catch (e) {
-    console.log("Error maison");
-    console.log(e);
-    if (e.stdout) {
+    // console.log("Error maison");
+    // console.log(e);
+    statusCode = e.status
+
+    if (e.stdout && statusCode === 1) {
       var output = e.stdout.toString();
       // console.log(output);
       // console.log('-------------------');
-      var offenses = parseErbLintOutput(output)
+      var offenses = parseErbLintOutput(output, statusCode)
       // console.log('offenses');
       // console.log(offenses);
 
@@ -348,12 +355,16 @@ function runErbLint(files, body) {
       // } else {
       //   parseOutPoutForRuleCheckAsTable(offenses);
       // }
+      // console.log("Status Code");
+      // console.log(statusCode);
 
       return parseErbLintResults(offenses, body);
+    } else {
+      console.log(e);
     }
-    // console.log(e);
 
   }
+
 }
 
 module.exports = {
