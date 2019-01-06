@@ -130,6 +130,7 @@ function selectFilesForErbLint(stagedFilePaths) {
 
 
 function parseErbLintOutput(output) {
+  // console.log(output);
   var result = output.split("\n")
   result.shift()
   result.shift()
@@ -139,6 +140,14 @@ function parseErbLintOutput(output) {
   // var offenses = result.split("\n")
   var tmpOffenses = []
 
+  var offenses = []
+
+  if (result == 'No errors were found in ERB files') {
+    // console.log(tmpOffenses);
+    // console.log("No offenses");
+
+    return offenses
+  }
   var i,j,temparray,chunk = 3;
   for (i=0,j=result.length; i<j; i+=chunk) {
       temparray = result.slice(i,i+chunk);
@@ -146,10 +155,12 @@ function parseErbLintOutput(output) {
       tmpOffenses.push(temparray)
   }
 
-  var offenses = []
+
+
 
 
   tmpOffenses.forEach(function(tmpOffense) {
+
     var filePath = tmpOffense[1].split(":")[1];
     if (filePath) {
       filePath = filePath.substr(1)
@@ -205,27 +216,34 @@ function getRelevantSource(file, lineStart) {
 
 
 function parseErbLintResults(offenses, body) {
-
   var erbLintReport = {};
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
   var totalfixableWarnCount = 0;
+  // console.log("offenses");
 
-
+  // console.log(offenses);
   erbLintReport.name = body.content.message
   erbLintReport.commit_attempt_id = body.content.id
   erbLintReport.repository_id = body.content.repository_id
   erbLintReport.user_id = body.content.user_id
   erbLintReport.policy_id = body.policy.content.id
   erbLintReport.error_count = totalError
-  erbLintReport.warning_count = offenses.count
+
+
+  if (offenses.length > 0) {
+    erbLintReport.warning_count = offenses.length
+    erbLintReport.rule_checks_attributes = offenses
+  } else{
+    erbLintReport.warning_count = totalWarn
+    erbLintReport.rule_checks_attributes = []
+  }
   erbLintReport.fixable_error_count = totalfixableErrorCount
   erbLintReport.fixable_warning_count = totalfixableWarnCount
   // erbLintReport.rule_checks_attributes = createRuleCheckJson(offensesGroups, body)
-  erbLintReport.rule_checks_attributes = offenses
 
-
+  // console.log(erbLintReport);
   return erbLintReport
 
 
@@ -234,41 +252,45 @@ function parseErbLintResults(offenses, body) {
 
 function parseOutPoutForRuleCheckAsText(offenses) {
   var output =  _.mapValues(_.groupBy(offenses, "file_path"));
-
   var parseableOutput = Object.keys(output)
 
   const spinner = ora("No offense, bravo!");
 
+  // console.log(parseableOutput);
 
   parseableOutput.forEach(function(file) {
-    console.log("");
+    // console.log("");
 
     var relativePath = file
 
     console.log("- " + chalk.green(relativePath));
     console.log("--------------------------------------------------------------------------------------");
+    // console.log(output);
 
-    if (output[file].length == 0) {
-      spinner.succeed();
-      return;
+    if (output[file]) {
+      output[file].forEach(function(error){
+
+        if (!error.message) {
+          spinner.succeed();
+          return
+        }
+        if (error.name != null) {
+          var ruleName = error.name
+        }
+        var codeCoordinate = error.line
+        var shortMessage = error.message
+        if (ruleName) {
+          console.log( chalk.grey(codeCoordinate) + " " + ruleName + " " + chalk.grey(shortMessage) );
+
+        } else {
+          console.log( chalk.grey(codeCoordinate) + " " + chalk.grey(shortMessage) );
+
+        }
+      })
     }
-    output[file].forEach(function(error){
-      // console.log(error);
-      if (error.name != null) {
-        var ruleName = error.name
-      }
-      var codeCoordinate = error.line
-      var shortMessage = error.message
-      if (ruleName) {
-        console.log( chalk.grey(codeCoordinate) + " " + ruleName + " " + chalk.grey(shortMessage) );
-
-      } else {
-        console.log( chalk.grey(codeCoordinate) + " " + chalk.grey(shortMessage) );
-
-      }
-    })
   })
-  console.log("")
+  console.log("");
+
 
 }
 
@@ -278,17 +300,41 @@ function runErbLint(files, body) {
   var cmd = "erblint --config "+ dotOmnilintDirectory + "/tmp/.erb-lint.yml "+ files.join(" ")
   try {
     var erbLintRunner = execSync(cmd)
+
     if (erbLintRunner) {
+      // console.log("no offenses");
 
       var offenses = parseErbLintOutput(erbLintRunner.toString())
+      // console.log("BBBBBBB");
+      // console.log(offenses);
+      // console.log(offenses.length);
 
+      if (offenses.length == 0) {
+        // console.log("no offenses");
+
+        files.forEach(function(file){
+          var offense = {
+            file_path: file,
+            file_name: file.substring(file.lastIndexOf("/") + 1)
+          }
+          // console.log("Loop");
+
+          // console.log(offenses);
+          offenses.push(offense);
+
+        })
+        // offenses.push(offense);
+
+
+      }
       parseOutPoutForRuleCheckAsText(offenses);
 
       return parseErbLintResults(offenses, body);
 
     }
   } catch (e) {
-    // console.log("Error maison");
+    console.log("Error maison");
+    console.log(e);
     if (e.stdout) {
       var output = e.stdout.toString();
       // console.log(output);
@@ -298,7 +344,7 @@ function runErbLint(files, body) {
       // console.log(offenses);
 
       // if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(offenses);
+      parseOutPoutForRuleCheckAsText(offenses);
       // } else {
       //   parseOutPoutForRuleCheckAsTable(offenses);
       // }

@@ -55,7 +55,6 @@ const {
   runErbLint
 } = require("./linters/erbLint");
 
-
 const {
   selectFilesForPylint,
   createPylintConfig,
@@ -171,7 +170,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
       process.exit(0);
       return;
     } else {
-      spinner.succeed(stagedFilePaths.length + ' staged files')
+      spinner.succeed(stagedFilePaths.length + " staged files");
 
       spinner.start();
       setTimeout(() => {
@@ -182,10 +181,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
     var jsFiles = selectFilesForESLint(stagedFilePaths);
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
     var prettierFiles = selectFilesForPrettier(stagedFilePaths);
-    var pythonFiles = selectFilesForPylint(stagedFilePaths)
-    var erbFiles = selectFilesForErbLint(stagedFilePaths)
-
-
+    var pythonFiles = selectFilesForPylint(stagedFilePaths);
+    var erbFiles = selectFilesForErbLint(stagedFilePaths);
 
     // connected to the internet
     createCommitAttempt(repositoryUUID)
@@ -224,8 +221,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
         // console.log(fetchSHA());
         var prettier_rules = {};
-        var pythonRules = []
-
+        var pythonRules = [];
+        var options = [];
         saveCommitAttemptId(body.content.id);
         if (
           body.policy &&
@@ -247,13 +244,13 @@ function lintingPreCommit(desiredFormat, keep, time) {
             var name = policy_rule.rule.content.slug;
             if (
               policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "pylint" && pythonFiles.length > 0
+              policy_rule.rule.linter.command == "pylint" &&
+              pythonFiles.length > 0
             ) {
               pythonRules.push({
                 rule: policy_rule.rule,
                 options: policy_rule.options
-              })
-
+              });
             }
 
             if (
@@ -337,7 +334,6 @@ function lintingPreCommit(desiredFormat, keep, time) {
               policy_rule.rule.linter &&
               policy_rule.rule.linter.command == "rubocop" &&
               (rubyFiles.length > 0 || erbFiles.length > 0)
-
             ) {
               if (policy_rule.options.length == 0) {
                 if (policy_rule.status == "warn") {
@@ -440,8 +436,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
         // var writeConfigurationFilesSpinner = ora("Writing configuration files...").start();
         // var writeConfigurationFilesTime = new Date();
         if (pythonFiles.length > 0) {
-          var testPython = sortPylintConfig(pythonRules)
-          createPylintConfig(testPython)
+          var testPython = sortPylintConfig(pythonRules);
+          createPylintConfig(testPython);
           console.log("Config created");
         }
 
@@ -450,12 +446,10 @@ function lintingPreCommit(desiredFormat, keep, time) {
         }
         if (rubyFiles.length > 0 || erbFiles.length > 0) {
           createRubocopConfig(rubocopRules);
-
         }
         if (erbFiles.length > 0) {
           createErbLintConfig();
         }
-
 
         if (prettierFiles.length > 0) {
           createPrettierConfig(prettier_rules);
@@ -676,7 +670,7 @@ function fetchbranch() {
   try {
     var git_result = execSync("git rev-parse --abbrev-ref HEAD");
     if (git_result) {
-      return git_result.toString().replace(/\n/g, '');
+      return git_result.toString().replace(/\n/g, "");
     }
   } catch (err) {
     console.log(err);
@@ -782,12 +776,9 @@ function getStagedFiles(time) {
   }
 }
 
-
 function getStagedFilesAddedAndModifiedOnly(time) {
   try {
-    var git_staged_result = execSync(
-      "git diff --name-only --cached"
-    );
+    var git_staged_result = execSync("git diff --name-only --cached");
     if (git_staged_result) {
       var stagedFilePaths = git_staged_result
         .toString()
@@ -809,29 +800,27 @@ function getStagedFilesAddedAndModifiedOnly(time) {
   }
 }
 
+function arr_diff(a1, a2) {
+  var a = [],
+    diff = [];
 
+  for (var i = 0; i < a1.length; i++) {
+    a[a1[i]] = true;
+  }
 
-function arr_diff (a1, a2) {
-
-    var a = [], diff = [];
-
-    for (var i = 0; i < a1.length; i++) {
-        a[a1[i]] = true;
+  for (var i = 0; i < a2.length; i++) {
+    if (a[a2[i]]) {
+      delete a[a2[i]];
+    } else {
+      a[a2[i]] = true;
     }
+  }
 
-    for (var i = 0; i < a2.length; i++) {
-        if (a[a2[i]]) {
-            delete a[a2[i]];
-        } else {
-            a[a2[i]] = true;
-        }
-    }
+  for (var k in a) {
+    diff.push(k);
+  }
 
-    for (var k in a) {
-        diff.push(k);
-    }
-
-    return diff;
+  return diff;
 }
 
 function lintStaged(
@@ -872,11 +861,9 @@ function lintStaged(
     var javascriptReports = {};
     var rubyReports = {};
     var pythonReports = {};
-    var erbLintReports = {};
+    var erbReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
-
-
 
     if (prettierFiles.length > 0) {
       // console.log("Before prettierFiles");
@@ -907,12 +894,14 @@ function lintStaged(
           const text = fs.readFileSync(filePath, "utf8");
 
           prettier.resolveConfig.sync(filePath, {
-            config: configFile, // or parser: "php"
+            config: configFile,
+            // or parser: "php"
             parser: parser
           });
 
           var formatted = prettier.format(text, {
-            config: configFile, // or parser: "php"
+            config: configFile,
+            // or parser: "php"
             parser: parser
           });
           // console.log(formatted);
@@ -920,15 +909,15 @@ function lintStaged(
 
           fs.writeFileSync(filePath, formatted, "utf8");
           var fileFormatted = prettier.check(formatted, {
-            config: configFile, // or parser: "php"
+            config: configFile,
+            // or parser: "php"
             parser: parser
           });
 
           if (fileFormatted) {
             console.log("- " + chalk.green(filePath) + " is prettier");
             // console.log("----------------------------------------------");
-            filesMadePrettier.push(filePath)
-
+            filesMadePrettier.push(filePath);
           } else {
             prettier_fails = prettier_fails + 1;
             console.log("Did not made " + filePath + " prettier");
@@ -953,20 +942,22 @@ function lintStaged(
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
     }
 
-
     if (pythonFiles.length > 0) {
       console.log("");
 
       console.log(chalk.bold.cyan("Running Pylint..."));
-      pythonReports = runPylintOntStagedFiles(pythonFiles, autofix, body, desiredFormat)
-
+      pythonReports = runPylintOntStagedFiles(
+        pythonFiles,
+        autofix,
+        body,
+        desiredFormat
+      );
     } else {
       pythonReports.error_count = 0;
       pythonReports.warning_count = 0;
       pythonReports.fixable_error_count = 0;
       pythonReports.fixable_warning_count = 0;
       pythonReports.rule_checks_attributes = [];
-
     }
 
     if (jsFiles.length > 0) {
@@ -1137,17 +1128,15 @@ function lintStaged(
     }
 
     if (erbFiles.length > 0) {
-
       console.log("");
       console.log(chalk.bold.cyan("Running ERB Lint..."));
-      erbLintReports = runErbLint(erbFiles, body)
+      erbReports = runErbLint(erbFiles, body);
     } else {
-
-      erbLintReports.error_count = 0;
-      erbLintReports.warning_count = 0;
-      erbLintReports.fixable_error_count = 0;
-      erbLintReports.fixable_warning_count = 0;
-      erbLintReports.rule_checks_attributes = [];
+      erbReports.error_count = 0;
+      erbReports.warning_count = 0;
+      erbReports.fixable_error_count = 0;
+      erbReports.fixable_warning_count = 0;
+      erbReports.rule_checks_attributes = [];
     }
 
     // console.log(rubyReports);
@@ -1158,30 +1147,47 @@ function lintStaged(
     report.user_id = body.content.user_id;
 
     report.error_count =
-      javascriptReports.error_count + rubyReports.error_count + pythonReports.error_count + erbLintReports.error_count;
+      javascriptReports.error_count +
+      rubyReports.error_count +
+      pythonReports.error_count +
+      erbReports.error_count;
     report.warning_count =
-      javascriptReports.warning_count + rubyReports.warning_count + pythonReports.warning_count + erbLintReports.error_count;
+      javascriptReports.warning_count +
+      rubyReports.warning_count +
+      pythonReports.warning_count +
+      erbReports.error_count;
     report.fixable_error_count =
-      javascriptReports.fixable_error_count + rubyReports.fixable_error_count + pythonReports.fixable_error_count + erbLintReports.error_count;
+      javascriptReports.fixable_error_count +
+      rubyReports.fixable_error_count +
+      pythonReports.fixable_error_count +
+      erbReports.error_count;
     report.fixable_warning_count =
       javascriptReports.fixable_warning_count +
-      rubyReports.fixable_warning_count + pythonReports.fixable_warning_count + erbLintReports.error_count;
-
+      rubyReports.fixable_warning_count +
+      pythonReports.fixable_warning_count +
+      erbReports.error_count;
 
     var ruleChecks = {};
 
-    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat( rubyReports.rule_checks_attributes.concat(pythonReports.rule_checks_attributes).concat(erbLintReports.rule_checks_attributes) )
+    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat(
+      rubyReports.rule_checks_attributes
+        .concat(pythonReports.rule_checks_attributes)
+        .concat(erbReports.rule_checks_attributes)
+    );
 
-    var inspectedFiles = jsFiles.concat(rubyFiles).concat(pythonFiles).concat(erbFiles)
+    var inspectedFiles = jsFiles
+      .concat(rubyFiles)
+      .concat(pythonFiles)
+      .concat(erbFiles);
 
-    var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles)
+    var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles);
 
     report.report = {
       rule_checks_attributes: ruleChecks.rule_checks_attributes,
       staged_files: stagedFilePaths,
       javascript_files: jsFiles,
       ruby_files: rubyFiles,
-      formatted_files:filesMadePrettier,
+      formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
       not_inspected_files: notInspectedFiles
     };
