@@ -57,7 +57,9 @@ const {
 
 const {
   runStyleLint,
-  selectFilesForStyleLint
+  selectFilesForStyleLint,
+  sortstyleLintRules,
+  createStyleLintConfig
 } = require("./linters/stylelint");
 
 const {
@@ -227,7 +229,10 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
         // console.log(fetchSHA());
         var prettier_rules = {};
+        var styleLintRules = {};
+
         var pythonRules = [];
+
         var options = [];
         saveCommitAttemptId(body.content.id);
         if (
@@ -248,6 +253,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
             var es_lint_selected_options = {};
             var rubocopSelectedOptions = {};
             var name = policy_rule.rule.content.slug;
+
             if (
               policy_rule.rule.linter &&
               policy_rule.rule.linter.command == "pylint" &&
@@ -257,6 +263,16 @@ function lintingPreCommit(desiredFormat, keep, time) {
                 rule: policy_rule.rule,
                 options: policy_rule.options
               });
+            }
+
+            if (
+              policy_rule.rule.linter &&
+              policy_rule.rule.linter.command == "stylelint" &&
+              styleLintCompatibleFiles.length > 0
+            ) {
+
+              styleLintRules = sortstyleLintRules(policy_rule, styleLintRules)
+
             }
 
             if (
@@ -457,6 +473,10 @@ function lintingPreCommit(desiredFormat, keep, time) {
           createErbLintConfig();
         }
 
+        if (styleLintCompatibleFiles.length > 0) {
+          createStyleLintConfig(styleLintRules);
+        }
+
         if (prettierFiles.length > 0) {
           createPrettierConfig(prettier_rules);
         }
@@ -507,8 +527,9 @@ function lintingPreCommit(desiredFormat, keep, time) {
                   //   chalk.red("Commit Aborded. Fix your code first.")
                   // );
                 }
-                // var stringifyReport = readReport();
-                // console.log(stringifyReport);
+                if (!keep) {
+                  rimraf("./.omnilint/tmp/");
+                }
               })
               .catch(error => {
                 console.log(error);
@@ -955,7 +976,7 @@ function lintStaged(
 
     if (styleLintCompatibleFiles.length > 0) {
         console.log("");
-        console.log(chalk.bold.cyan("Running Style Lint..."));
+        console.log(chalk.bold.cyan("Running Stylelint..."));
         styleFilesReport = runStyleLint(styleLintCompatibleFiles, autofix, body, desiredFormat)
     } else {
       styleFilesReport.error_count = 0;
@@ -1256,6 +1277,8 @@ function postReport(report, time) {
   const token = getTokenFromLocalDevice();
   // const token = "NVN8XcayivqpmyN_GnwWFfvgryzab68MBPZVWuDk1KqF91eRbw";
   var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
+  // var postUrl = `${DEV_API_BASE_URL}/policy_checks.json?user_token=${token}`;
+
   var reportStartTime = new Date();
   return new Promise((resolve, reject) => {
     request.post(
@@ -1580,6 +1603,8 @@ function editCommitAttempt(repositoryUUID, sha) {
     // console.log(sha);
 
     const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
+    // const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts/${commit_attempt_id}.json?user_token=${token}`;
+
     // console.log(url);
     request.put(
       url,
