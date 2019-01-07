@@ -221,7 +221,7 @@ function sortErrorsToDisplay(file) {
     // var errorsToDisplay = file.messages.sort((a, b) =>
     //   b.severity > a.severity ? 1 : a.severity > b.severity ? -1 : 0
     // );
-    var errorsToDisplay = file.messages.sort(function(a, b) {
+    var errorsToDisplay = file.warnings.sort(function(a, b) {
       if (a.severity === b.severity) {
         // Line is only important when severities are the same
         if (a.line === b.line) {
@@ -444,7 +444,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
   try {
     var styleLintRunner =  execSync(cmd)
     if (styleLintRunner) {
-      // console.log("styleLintRunner Success");
+      console.log("styleLintRunner Success");
 
 
 
@@ -460,11 +460,11 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
       return parseStyleLintResults(output, body);
     }
   } catch (e) {
-    // if (e) {
-    //   console.log("error");
-    //
-    //   console.log(e);
-    // }
+    if (e) {
+      console.log("error");
+
+      console.log(e);
+    }
     if (e.stdout) {
       // console.log("e.stdout");
       // console.log(e.stdout.toString());
