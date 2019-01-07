@@ -51,6 +51,115 @@ function installStyleLint() {
 }
 
 
+function sortstyleLintRules(policy_rule, styleLintRules) {
+  var name = policy_rule.rule.content.slug
+  var styleLintSelectedOptions = {};
+  var styleLintRules = styleLintRules
+  var options = [];
+
+  if (
+    policy_rule.rule.linter &&
+    policy_rule.rule.linter.command == "stylelint"
+  ) {
+
+    if (policy_rule.status == "warn") {
+      styleLintSelectedOptions["severity"] = "warning"
+    } else if (policy_rule.status == "error") {
+      styleLintSelectedOptions["severity"] = "error"
+    }
+
+    if (policy_rule.options.length == 0) {
+
+      if (policy_rule.status == "warn") {
+        styleLintRules[name] = [true, {severity: "warning"}]
+      } else if (policy_rule.status == "error") {
+        styleLintRules[name] = [true, {severity: "error"}]
+      }
+    } else {
+      policy_rule.options.forEach(function(option) {
+        var rule_option = option.rule_option;
+        if (rule_option) {
+          switch (rule_option.value_type) {
+            case "integer":
+              // console.log("integer");
+              styleLintSelectedOptions[rule_option.slug] = parseInt(
+                option.selected.value
+              );
+              break;
+            case "boolean":
+              // console.log("Boolean");
+              var isTrueSet = option.selected.value == "true";
+              styleLintSelectedOptions[rule_option.slug] = isTrueSet;
+              break;
+            case "string":
+              // console.log("String");
+              styleLintSelectedOptions[rule_option.slug] =
+                option.selected.value;
+              break;
+            case "array-single":
+              styleLintRules[name] = [
+                policy_rule.status,
+                option.selected.value
+              ];
+              break;
+            case "array-multiple":
+              // console.log("array-multiple");
+              if (option.rule_option_options.length == 0) {
+                // console.log("0 choice");
+                styleLintRules[name] = policy_rule.status;
+              } else if (option.rule_option_options.length == 1) {
+                // console.log("1 choice");
+                options.push(option.rule_option_options[0].value);
+                styleLintSelectedOptions[rule_option.slug] = options;
+              } else if (option.rule_option_options.length > 1) {
+                // console.log("More than 1 choice");
+                option.rule_option_options.forEach(function(
+                  rule_option_option
+                ) {
+                  options.push(rule_option_option.value);
+                });
+                styleLintSelectedOptions[rule_option.slug] = options;
+              }
+              break;
+            default:
+          }
+
+          // Check if options are selected
+          if (Object.keys(styleLintSelectedOptions).length > 0) {
+            styleLintRules[name] = [
+              true,
+              styleLintSelectedOptions
+            ];
+          }
+        } else {
+          styleLintRules[name] = policy_rule.status;
+          // console.log(name);
+          // console.log(policy_rule.status);
+        }
+      });
+    }
+  }
+  // console.log(styleLintRules);
+  return styleLintRules
+}
+
+
+function createStyleLintConfig(rules) {
+  rules = { rules:
+    rules
+  };
+  var json = JSON.stringify(rules)
+
+  if (!fs.existsSync(dotOmnilintDirectory)) {
+    fs.mkdirSync(dotOmnilintDirectory);
+  }
+  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
+    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  }
+  fs.writeFileSync(dotOmnilintDirectory + "/tmp/.stylelintrc", json);
+  // console.log("ESLint configuration file successfully updated.");
+}
+
 
 function getExtension(file) {
   return file.split(".").pop();
@@ -238,59 +347,57 @@ function createRuleCheckJson(output, body) {
 
   console.log("");
 
-  output.forEach(function(file) {
-    var relativePath = file.source.replace(process.cwd() + '/', "");
+  body.policy.policy_rules.forEach(function(policy_rule) {
+    output.forEach(function(file) {
+      var relativePath = file.source.replace(process.cwd() + '/', "");
 
-    if (file.warnings.length == 0) {
-      var fileReport = {
-        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-        file_path: relativePath
-      }
-      rule_checks_attributes.push(fileReport);
-      _.union(rule_checks_attributes, fileReport);
-
-
-    } else {
-      file.warnings.forEach(function(message) {
-        // console.log(message);
-        var fileReport = {};
-
-
-        fileReport.file_path = relativePath
-        fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
-        fileReport.line = message.line;
-        fileReport.column = message.column;
-
-
-        fileReport.message = message.text.split(/[()]+/)[0];
-
-        // console.log(policy_rule.rule.content.slug);
-        // fileReport.rule_id = message.rule
-
-        fileReport.name = message.rule;
-
-        if (message.severity == "warning") {
-          fileReport.severity_level = 1;
-
-        } else if (message.severity == "error") {
-          fileReport.severity_level = 2;
-
-
+      if (file.warnings.length == 0) {
+        var fileReport = {
+          file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+          file_path: relativePath
         }
-
-
-
-        var lines = getOffenseLine(file.source, message.line)
-        fileReport.source = lines
-
-
-
         rule_checks_attributes.push(fileReport);
+        _.union(rule_checks_attributes, fileReport);
 
-      });
-    }
-  });
 
+      } else {
+        file.warnings.forEach(function(message) {
+          // console.log(message);
+          var fileReport = {};
+          if (message.rule == policy_rule.rule.content.slug) {
+
+
+            fileReport.file_path = relativePath
+            fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
+            fileReport.line = message.line;
+            fileReport.column = message.column;
+
+
+            fileReport.message = message.text.split(/[()]+/)[0];
+
+            // console.log(policy_rule.rule.content.slug);
+            fileReport.rule_id = policy_rule.rule.content.id;
+
+            fileReport.name = message.rule;
+
+            if (message.severity == "warning") {
+              fileReport.severity_level = 1;
+
+            } else if (message.severity == "error") {
+              fileReport.severity_level = 2;
+
+            }
+            fileReport.language_id = policy_rule.rule.content.language_id;
+
+
+            var lines = getOffenseLine(file.source, message.line)
+            fileReport.source = lines
+            rule_checks_attributes.push(fileReport);
+          }
+        });
+      }
+    });
+  })
   // console.log(rule_checks_attributes);
   return rule_checks_attributes;
 }
@@ -331,9 +438,9 @@ function parseStyleLintResults(output, body) {
 
 
 function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
-
-  var cmd = "stylelint " + styleLintFiles.join(" ") + " -f json"
-
+  // sortPolicyRules()
+  var cmd = "stylelint --config " + dotOmnilintDirectory + "/tmp/.stylelintrc " + styleLintFiles.join(" ") + " -f json"
+  // console.log(cmd);
   try {
     var styleLintRunner =  execSync(cmd)
     if (styleLintRunner) {
@@ -361,7 +468,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
     if (e.stdout) {
       // console.log("e.stdout");
       // console.log(e.stdout.toString());
-
+      // console.log(e.stdout.toString());
       var output = JSON.parse(e.stdout.toString());
 
       if (desiredFormat == "simple") {
@@ -386,5 +493,7 @@ module.exports = {
   checkIfStyleLintIsInstalled,
   installStyleLint,
   runStyleLint,
-  selectFilesForStyleLint
+  selectFilesForStyleLint,
+  sortstyleLintRules,
+  createStyleLintConfig
 }
