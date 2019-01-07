@@ -527,9 +527,6 @@ function lintingPreCommit(desiredFormat, keep, time) {
                   //   chalk.red("Commit Aborded. Fix your code first.")
                   // );
                 }
-                if (!keep) {
-                  rimraf("./.omnilint/tmp/");
-                }
               })
               .catch(error => {
                 console.log(error);
