@@ -203,15 +203,26 @@ function parseErbLintOutput(output, statusCode) {
 
 function getRelevantSource(file, lineStart) {
   var offenseLines = []
-  var allLines = fs.readFileSync(file).toString().split('\n')
-  for (var i = lineStart-3; i < lineStart+2; i++) {
-    if (i > -1) {
-      if (typeof allLines[i] !== 'undefined') {
-        offenseLines.push({line:i+1, code:allLines[i]})
+  try {
+    var content = fs.readFileSync(file)
+    var allLinesString = content.toString()
+    var allLines = allLinesString.split("\n")
+    for (var i = lineStart - 3; i < lineStart + 2; i++) {
+      if (i > -1) {
+        if (typeof allLines[i] !== 'undefined') {
+          offenseLines.push({
+            line: i + 1,
+            code: allLines[i]
+          })
+        }
       }
     }
+    return offenseLines
+  } catch (e) {
+    console.log('Error reading the relevant source for file: ' + file + ' at line: ' + lineStart)
+    console.log(e)
   }
-  return offenseLines
+  return null
 }
 
 
