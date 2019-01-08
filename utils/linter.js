@@ -507,10 +507,13 @@ function lintingPreCommit(desiredFormat, keep, time) {
           styleLintCompatibleFiles
         )
           .then(report => {
+            var executionEndTime = new Date() - executionStartTime;
+            // console.log("report.report");
+            // console.log(report.report);
+            report.report.lint_execution_time = executionEndTime
             saveReport(report);
             postReport(report, time)
               .then(report => {
-                // var executionEndTime = new Date() - executionStartTime;
                 // console.log("");
                 if (time) {
                   console.log(
