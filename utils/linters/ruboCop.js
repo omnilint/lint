@@ -6,6 +6,7 @@ var CliTable = require("cli-table");
 const chalk = require("chalk");
 const request = require("request");
 const path = require("path");
+var _ = require('lodash');
 
 const fs = require("fs");
 const yaml = require("js-yaml");
@@ -594,51 +595,63 @@ function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
   console.log("");
+  var filePath = ""
+
   body.policy.policy_rules.forEach(function(policy_rule) {
     var fileInfo = []
 
     output.files.forEach(function(file) {
 
+
+
       if (file.offenses.length == 0) {
+        if (filePath !== file.path) {
+
+
         var fileReport = {
           file_name: file.path.substring( file.path.lastIndexOf("/") + 1 ),
           file_path: file.path
 
         }
+
         rule_checks_attributes.push(fileReport);
-      }
-      file.offenses.forEach(function(offense) {
-        var fileReport = {};
-        if (offense.cop_name == policy_rule.rule.content.slug) {
-          fileReport.file_path = file.path;
-          fileReport.file_name = file.path.substring(
-            file.path.lastIndexOf("/") + 1
-          );
-          fileReport.message = offense.message;
-          // console.log(offense);
-
-          fileReport.line = offense.location.line;
-          fileReport.column = offense.location.column;
-          fileReport.line_end = offense.location.last_line;
-          fileReport.column_end = offense.location.last_column;
-          // console.log(policy_rule.rule.content.slug);
-          fileReport.rule_id = policy_rule.rule.content.id;
-
-          fileReport.name = offense.cop_name;
-          if (offense.severity == "warning") {
-            fileReport.severity_level = 1;
-          } else if (offense.severity == "error") {
-            fileReport.severity_level = 2;
-          }
-
-          var lines = getOffenseLine(file.path, offense.location.line)
-          fileReport.source = lines
-
-          fileReport.language_id = policy_rule.rule.content.language_id;
-
-          rule_checks_attributes.push(fileReport);
         }
-      });
+        filePath = file.path
+        _.union(rule_checks_attributes, fileReport);
+      } else {
+        file.offenses.forEach(function(offense) {
+          var fileReport = {};
+          if (offense.cop_name == policy_rule.rule.content.slug) {
+            fileReport.file_path = file.path;
+            fileReport.file_name = file.path.substring(
+              file.path.lastIndexOf("/") + 1
+            );
+            fileReport.message = offense.message;
+            // console.log(offense);
+
+            fileReport.line = offense.location.line;
+            fileReport.column = offense.location.column;
+            fileReport.line_end = offense.location.last_line;
+            fileReport.column_end = offense.location.last_column;
+            // console.log(policy_rule.rule.content.slug);
+            fileReport.rule_id = policy_rule.rule.content.id;
+
+            fileReport.name = offense.cop_name;
+            if (offense.severity == "warning") {
+              fileReport.severity_level = 1;
+            } else if (offense.severity == "error") {
+              fileReport.severity_level = 2;
+            }
+
+            var lines = getOffenseLine(file.path, offense.location.line)
+            fileReport.source = lines
+
+            fileReport.language_id = policy_rule.rule.content.language_id;
+
+            rule_checks_attributes.push(fileReport);
+          }
+        });
+      }
     });
   });
 

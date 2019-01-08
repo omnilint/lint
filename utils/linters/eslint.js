@@ -407,18 +407,21 @@ function createRuleCheckJson(output, body) {
   console.log("");
   // console.log("createRuleCheckJson");
     var dict = [];
-
+  var filePath = ""
   body.policy.policy_rules.forEach(function(policy_rule) {
 
     output.forEach(function(file) {
       var relativePath = file.filePath.replace(process.cwd() + '/', "");
 
       if (file.messages.length == 0) {
-        var fileReport = {
-          file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-          file_path: relativePath
+        if (filePath !== file.path) {
+          var fileReport = {
+            file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+            file_path: relativePath
+          }
+          rule_checks_attributes.push(fileReport);
         }
-        rule_checks_attributes.push(fileReport);
+        filePath = file.path
         _.union(rule_checks_attributes, fileReport);
         // console.log("twice");
         //

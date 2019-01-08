@@ -344,7 +344,7 @@ function getOffenseLine(file, lineStart){
 function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
-
+  var filePath = ""
   console.log("");
 
   body.policy.policy_rules.forEach(function(policy_rule) {
@@ -352,11 +352,14 @@ function createRuleCheckJson(output, body) {
       var relativePath = file.source.replace(process.cwd() + '/', "");
 
       if (file.warnings.length == 0) {
-        var fileReport = {
-          file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-          file_path: relativePath
+        if (filePath !== file.path) {
+          var fileReport = {
+            file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+            file_path: relativePath
+          }
+          rule_checks_attributes.push(fileReport);
         }
-        rule_checks_attributes.push(fileReport);
+        filePath = file.path
         _.union(rule_checks_attributes, fileReport);
 
 
