@@ -1172,6 +1172,7 @@ function lintStaged(
       console.log("");
       console.log(chalk.bold.cyan("Running ERB Lint..."));
       erbReports = runErbLint(erbFiles, body);
+      // console.log(erbReports);
     } else {
       erbReports.error_count = 0;
       erbReports.warning_count = 0;
