@@ -291,7 +291,7 @@ function makeHookExecutable(hooksDirectory, hookName) {
     var res = execSync("chmod +x " + hookPath);
     if (res) {
       // console.log("Hook saved successfully to: " + chalk.green(hookPath));
-      console.log("Hook saved successfully to: " + chalk.green(".git/hooks"+hookName));
+      // console.log("Hook saved successfully to: " + chalk.green(".git/hooks"+hookName));
 
 
     }
@@ -322,7 +322,8 @@ function copyFolderRecursiveSync(source, target) {
   if (!fs.existsSync(targetFolder)) {
     fs.mkdirSync(targetFolder);
   }
-  console.log("Saving your hooks to " + targetFolder);
+  var copyFileSpinner = ora()
+  copyFileSpinner.info("Saving your hooks to " + targetFolder);
   //copy
   if (fs.lstatSync(source).isDirectory()) {
     files = fs.readdirSync(source);
