@@ -125,21 +125,21 @@ function askToInstallRubocop() {
 
 function installRubocop() {
   try {
-    console.log("=== Instaling Rubocop ===");
+    console.log("==== Instaling Rubocop ===");
     var install_cmd = execSync("gem install rubocop", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("=== Catch ===");
+    // console.log("==== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("=== Catch stdout ===");
+      // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("=== Catch after ===");
+    // console.log("==== Catch after ===");
   }
 }
 
@@ -170,7 +170,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
 
 
     try {
-      // console.log("=== Try ===");
+      // console.log("==== Try ===");
       // console.log(cmd);
       var linter_command = execSync(cmd);
       if (linter_command) {
@@ -185,7 +185,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
 
       }
     } catch (err) {
-      // console.log("=== Catch ===");
+      // console.log("==== Catch ===");
       // console.log(err);
       if (err.stdout) {
         var output = JSON.parse(err.stdout);
@@ -200,10 +200,10 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
         // console.log(output);
         // prepareRequestAfterLint(false, body, 1, output);
 
-        // console.log("=== Catch stdout ===");
+        // console.log("==== Catch stdout ===");
         // console.log(err.stdout.toString());
       }
-      // console.log("=== Catch after ===");
+      // console.log("==== Catch after ===");
     }
     // console.log("Linting Done");
   } else {
@@ -230,7 +230,7 @@ function runRubocop(files, autofix) {
         files.join(" ");
     }
     try {
-      // console.log("=== Try ===");
+      // console.log("==== Try ===");
       var linter_command = execSync(cmd);
       if (linter_command) {
         console.log("linter_command.toString() WORKS");
@@ -244,14 +244,14 @@ function runRubocop(files, autofix) {
         return linter_command;
       }
     } catch (err) {
-      // console.log("=== Catch ===");
+      // console.log("==== Catch ===");
       // console.log(err);
       if (err.stdout) {
-        // console.log("=== Catch stdout ===");
+        // console.log("==== Catch stdout ===");
         console.log(err.stdout.toString());
       }
       process.exit(1);
-      // console.log("=== Catch after ===");
+      // console.log("==== Catch after ===");
     }
     // console.log("Linting Done");
   } else {
@@ -312,7 +312,7 @@ function parseRubocopResults(output, body) {
   rubocopReport.fixable_warning_count = totalfixableWarnCount
   rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body);
 
-  console.log(rubocopReport);
+
   return rubocopReport;
 }
 
@@ -595,50 +595,65 @@ function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
   console.log("");
+  var filePath = ""
+
+  // body.policy.policy_rules.forEach(function(policy_rule) {
+    var fileInfo = []
+
+    output.files.forEach(function(file) {
 
 
 
-  var fileInfo = []
-
-  output.files.forEach(function(file) {
-    if (file.offenses.length == 0) {
-      var fileReport = {
-        file_name: file.path.substring( file.path.lastIndexOf("/") + 1 ),
-        file_path: file.path
-      }
-      rule_checks_attributes.push(fileReport);
-
-    } else {
-      file.offenses.forEach(function(offense) {
-        var fileReport = {};
-        fileReport.file_path = file.path;
-        fileReport.file_name = file.path.substring(
-          file.path.lastIndexOf("/") + 1
-        );
-        fileReport.message = offense.message;
+      if (file.offenses.length == 0) {
+        if (filePath !== file.path) {
 
 
-        fileReport.line = offense.location.line;
-        fileReport.column = offense.location.column;
-        fileReport.line_end = offense.location.last_line;
-        fileReport.column_end = offense.location.last_column;
-        // console.log(policy_rule.rule.content.slug);
-        // fileReport.rule_id = policy_rule.rule.content.id;
+        var fileReport = {
+          file_name: file.path.substring( file.path.lastIndexOf("/") + 1 ),
+          file_path: file.path
 
-        fileReport.name = offense.cop_name;
-        if (offense.severity == "warning") {
-          fileReport.severity_level = 1;
-        } else if (offense.severity == "error") {
-          fileReport.severity_level = 2;
         }
 
-        var lines = getOffenseLine(file.path, offense.location.line)
-        fileReport.source = lines
         rule_checks_attributes.push(fileReport);
-      });
-    }
-  });
+        }
+        filePath = file.path
+        // _.union(rule_checks_attributes, fileReport);
+      } else {
+        file.offenses.forEach(function(offense) {
+          var fileReport = {};
+          // if (offense.cop_name == policy_rule.rule.content.slug) {
+            fileReport.file_path = file.path;
+            fileReport.file_name = file.path.substring(
+              file.path.lastIndexOf("/") + 1
+            );
+            fileReport.message = offense.message;
+            // console.log(offense);
 
+            fileReport.line = offense.location.line;
+            fileReport.column = offense.location.column;
+            fileReport.line_end = offense.location.last_line;
+            fileReport.column_end = offense.location.last_column;
+            // console.log(policy_rule.rule.content.slug);
+            // fileReport.rule_id = policy_rule.rule.content.id;
+
+            fileReport.name = offense.cop_name;
+            if (offense.severity == "warning") {
+              fileReport.severity_level = 1;
+            } else if (offense.severity == "error") {
+              fileReport.severity_level = 2;
+            }
+
+            var lines = getOffenseLine(file.path, offense.location.line)
+            fileReport.source = lines
+
+            // fileReport.language_id = policy_rule.rule.content.language_id;
+
+            rule_checks_attributes.push(fileReport);
+          }
+        });
+      }
+    });
+  // });
 
   return rule_checks_attributes;
 }

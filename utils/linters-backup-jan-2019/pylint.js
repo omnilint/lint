@@ -51,7 +51,7 @@ function checkIfPylintIsInstalled() {
 
 function installPip(){
   try {
-    console.log("=== Instaling Pip ===");
+    console.log("==== Instaling Pip ===");
     execSync("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     var install_cmd = execSync("python get-pip.py", { stdio: [0, 1, 2] });
     if (install_cmd) {
@@ -60,14 +60,14 @@ function installPip(){
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("=== Catch ===");
+    // console.log("==== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("=== Catch stdout ===");
+      // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("=== Catch after ===");
+    // console.log("==== Catch after ===");
   }
 
 }
@@ -75,7 +75,7 @@ function installPip(){
 
 function installPytlint(){
   try {
-    console.log("=== Instaling Pytlint ===");
+    console.log("==== Instaling Pytlint ===");
     var install_cmd = execSync("pip install pylint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
@@ -83,22 +83,20 @@ function installPytlint(){
       // process.exit(0);
     }
   } catch (err) {
-    console.log("=== Catch ===");
+    console.log("==== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("=== Catch stdout ===");
+      // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("=== Catch after ===");
+    // console.log("==== Catch after ===");
   }
 
 }
 
 
 function checkForPyLintRequirement(){
-  const spinner = ora();
-
   var pythonInstalled = checkIfPythonIsInstalled()
   var pipInstalled = checkIfPipIsInstalled()
   var pylintInstalled = checkIfPylintIsInstalled()
@@ -110,28 +108,17 @@ function checkForPyLintRequirement(){
 
   if (!pipInstalled) {
     console.log("Pip is not installed. Installing...")
-    try {
-      installPip()
-      spinner.succeed("Pip is now installed.");
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install Pip. Please install it using " + chalk.cyan("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py") + ".")
-    }
+    installPip()
+    console.log("Pip is now installed.")
   }
-
   if (!pylintInstalled) {
     console.log("Pylint is not installed. Installing...");
-    try {
-      installPytlint()
-      spinner.succeed("Pylint is now installed.");
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install Pylint. Please install it using " + chalk.cyan("pip install pylint") + ".")
-    }
+    installPytlint()
 
+    console.log("Pylint is now installed.")
 
   } else {
-    spinner.succeed("Pylint is installed.")
+    console.log("Pylint is installed.")
   }
 
 }
@@ -265,31 +252,49 @@ function createRuleCheckJson(output, body) {
         rule_checks_attributes.push(fileReport);
       } else {
         output[file].forEach(function(offense){
+          // console.log(offense);
+          // if (policy_rule.rule.linter.command == "pylint") {
+            // console.log("Pylint")
+            // console.log("offense");
 
-          var fileReport = {};
+            // if (offense.symbol == policy_rule.rule.content.slug) {
+              // console.log(chalk.green(offense.symbol + " == " + policy_rule.rule.content.slug));
 
-          fileReport.file_path = relativePath
-          fileReport.file_name = relativePath.substring(
-            relativePath.lastIndexOf("/") + 1
-          );
+              // console.log("Offense");
 
-          fileReport.line = offense.line;
-          fileReport.column = offense.column;
-          fileReport.long_message = offense.message
-          fileReport.message = offense.message.split("\n")[0];
-          // fileReport.rule_id = policy_rule.rule.content.id;
+                // console.log(offense.symbol);
+                // console.log(policy_rule.rule.content.slug);
 
-          // console.log(policy_rule.rule.content.slug);
+              // console.log("offense");
+              // console.log(offense);
+              var fileReport = {};
 
-          fileReport.name = offense.symbol;
-          // fileReport.language_id = policy_rule.rule.content.language_id;
-          fileReport.severity_level = 1;
-          var lines = getOffenseLine(relativePath, offense.line)
-          fileReport.source = lines
-          // console.log(lines);
-          // console.log(fileReport);
-          rule_checks_attributes.push(fileReport);
+              fileReport.file_path = relativePath
+              fileReport.file_name = relativePath.substring(
+                relativePath.lastIndexOf("/") + 1
+              );
 
+              fileReport.line = offense.line;
+              fileReport.column = offense.column;
+              fileReport.long_message = offense.message
+              fileReport.message = offense.message.split("\n")[0];
+              // fileReport.rule_id = policy_rule.rule.content.id;
+
+              // console.log(policy_rule.rule.content.slug);
+
+              fileReport.name = offense.symbol;
+              // fileReport.language_id = policy_rule.rule.content.language_id;
+              fileReport.severity_level = 1;
+              var lines = getOffenseLine(relativePath, offense.line)
+              fileReport.source = lines
+              // console.log(lines);
+              // console.log(fileReport);
+              rule_checks_attributes.push(fileReport);
+            // }
+            // else{
+            //   console.log(chalk.red(offense.symbol + " != " + policy_rule.rule.content.slug));
+            // }
+          // }
         })
       }
 
@@ -353,7 +358,7 @@ function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFor
 
 
   try {
-    // console.log("=== Try ===");
+    // console.log("==== Try ===");
     var linter_command = execSync(cmd);
     if (linter_command) {
 
@@ -387,7 +392,7 @@ function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFor
     }
     // prepareRequestAfterLint(passed, body)
     // process.exit(1);
-    // // console.log("=== Catch after ===");
+    // // console.log("==== Catch after ===");
   }
 }
 
