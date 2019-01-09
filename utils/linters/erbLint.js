@@ -7,7 +7,8 @@ const chalk = require("chalk");
 const {
   getEnclosingGitRepository,
   isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  getDotOmnilintDirectory,
+  getRelevantSource
 } = require("../filesHandler");
 const ora = require("ora");
 
@@ -188,35 +189,6 @@ function parseErbLintOutput(output, statusCode) {
   // console.log(offenses)
 
   return offenses;
-}
-
-function getRelevantSource(file, lineStart) {
-  var offenseLines = [];
-  try {
-    var content = fs.readFileSync(file);
-    var allLinesString = content.toString();
-    var allLines = allLinesString.split("\n");
-    for (var i = lineStart - 3; i < lineStart + 2; i++) {
-      if (i > -1) {
-        if (typeof allLines[i] !== "undefined") {
-          offenseLines.push({
-            line: i + 1,
-            code: allLines[i]
-          });
-        }
-      }
-    }
-    return offenseLines;
-  } catch (e) {
-    console.log(
-      "Error reading the relevant source for file: " +
-        file +
-        " at line: " +
-        lineStart
-    );
-    console.log(e);
-  }
-  return null;
 }
 
 function parseErbLintResults(offenses, body) {

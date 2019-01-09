@@ -69,9 +69,7 @@ const {
   runPylintOntStagedFiles
 } = require("./linters/pylint");
 
-const {
-  runBrakeman
-} = require("./linters/brakeman");
+const { runBrakeman } = require("./linters/brakeman");
 
 const {
   getUsernameFromLocalDevice,
@@ -194,7 +192,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
     var prettierFiles = selectFilesForPrettier(stagedFilePaths);
     var pythonFiles = selectFilesForPylint(stagedFilePaths);
     var erbFiles = selectFilesForErbLint(stagedFilePaths);
-    var styleLintCompatibleFiles = selectFilesForStyleLint(stagedFilePaths)
+    var styleLintCompatibleFiles = selectFilesForStyleLint(stagedFilePaths);
     // console.log(styleLintCompatibleFiles);
     // connected to the internet
     createCommitAttempt(repositoryUUID)
@@ -274,9 +272,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
               policy_rule.rule.linter.command == "stylelint" &&
               styleLintCompatibleFiles.length > 0
             ) {
-
-              styleLintRules = sortstyleLintRules(policy_rule, styleLintRules)
-
+              styleLintRules = sortstyleLintRules(policy_rule, styleLintRules);
             }
 
             if (
@@ -514,7 +510,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
             var executionEndTime = new Date() - executionStartTime;
             // console.log("report.report");
             // console.log(report.report);
-            report.report.lint_execution_time = executionEndTime
+            report.report.lint_execution_time = executionEndTime;
             saveReport(report);
             postReport(report, time)
               .then(report => {
@@ -977,21 +973,30 @@ function lintStaged(
       }
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
     }
-    var brakemanFiles = rubyFiles.concat(erbFiles)
+    var brakemanFiles = rubyFiles.concat(erbFiles);
     if (brakemanFiles.length > 0) {
-
       console.log("");
       console.log(chalk.bold.cyan("Running Brakeman..."));
 
-      var brakemanReport = runBrakeman(brakemanFiles)
-      console.log(brakemanReport);
-
+      var brakemanReport = runBrakeman(brakemanFiles);
+      // console.log(brakemanReport);
+    } else {
+      brakemanReport.error_count = 0;
+      brakemanReport.warning_count = 0;
+      brakemanReport.fixable_error_count = 0;
+      brakemanReport.fixable_warning_count = 0;
+      brakemanReport.rule_checks_attributes = [];
     }
 
     if (styleLintCompatibleFiles.length > 0) {
-        console.log("");
-        console.log(chalk.bold.cyan("Running Stylelint..."));
-        styleFilesReport = runStyleLint(styleLintCompatibleFiles, autofix, body, desiredFormat)
+      console.log("");
+      console.log(chalk.bold.cyan("Running Stylelint..."));
+      styleFilesReport = runStyleLint(
+        styleLintCompatibleFiles,
+        autofix,
+        body,
+        desiredFormat
+      );
     } else {
       styleFilesReport.error_count = 0;
       styleFilesReport.warning_count = 0;
@@ -1210,12 +1215,15 @@ function lintStaged(
       rubyReports.error_count +
       styleFilesReport.error_count +
       pythonReports.error_count +
+      brakemanReport.error_count +
       erbReports.error_count;
+
     report.warning_count =
       javascriptReports.warning_count +
       rubyReports.warning_count +
       styleFilesReport.warning_count +
       pythonReports.warning_count +
+      brakemanReport.warning_count +
       erbReports.warning_count;
     report.fixable_error_count =
       javascriptReports.fixable_error_count +
@@ -1232,26 +1240,22 @@ function lintStaged(
 
     var ruleChecks = {};
 
+    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes
+      .concat(rubyReports.rule_checks_attributes)
+      .concat(pythonReports.rule_checks_attributes)
+      .concat(erbReports.rule_checks_attributes)
+      .concat(styleFilesReport.rule_checks_attributes)
+      .concat(brakemanReport.rule_checks_attributes);
 
-    ruleChecks.rule_checks_attributes =
-      javascriptReports.rule_checks_attributes
-        .concat(rubyReports.rule_checks_attributes)
-        .concat(pythonReports.rule_checks_attributes)
-        .concat(erbReports.rule_checks_attributes)
-        .concat(styleFilesReport.rule_checks_attributes)
-        .concat(brakemanReport.rule_checks_attributes)
+    // console.log('@@@ ruleChecks @@@')
+    // console.log(ruleChecks)
 
-    console.log('@@@ ruleChecks @@@')
-    console.log(ruleChecks)
-
-    var inspectedFiles =
-      jsFiles
-        .concat(rubyFiles)
-        .concat(erbFiles)
-        .concat(pythonFiles)
-        .concat(erbFiles)
-        .concat(styleLintCompatibleFiles)
-
+    var inspectedFiles = jsFiles
+      .concat(rubyFiles)
+      .concat(erbFiles)
+      .concat(pythonFiles)
+      .concat(erbFiles)
+      .concat(styleLintCompatibleFiles);
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles);
 
@@ -1261,6 +1265,7 @@ function lintStaged(
       javascript_files: jsFiles,
       ruby_files: rubyFiles,
       erb_files: rubyFiles,
+      brakeman: brakemanFiles,
       formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
       not_inspected_files: notInspectedFiles

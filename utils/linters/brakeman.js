@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const fs = require("fs");
 const yaml = require("js-yaml");
 var _ = require("lodash");
+const { getRelevantSource } = require("../filesHandler");
 
 function checkIfRubyIsInstalled() {
   try {
@@ -122,6 +123,11 @@ function formatBrakemanResult(rawBrakemanResult) {
     // fileReport.user_input = offense.user_input
     // fileReport.confidence = offense.confidence
     // fileReport.confidence_level = offense.confidence ?
+
+    var lines = getRelevantSource(offense.file, offense.line);
+
+    fileReport.source = lines;
+
     formattedBrakemanResult.rule_checks_attributes.push(fileReport);
   });
 

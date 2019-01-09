@@ -133,12 +133,42 @@ function copyRecursiveSync(source, target) {
   }
 }
 
-
 function parseOmnilintFile() {
   if (isOmnilintFilePresent()) {
-    const repo = yaml.safeLoad(fs.readFileSync(dotOmnilintDirectory + "/config"));
+    const repo = yaml.safeLoad(
+      fs.readFileSync(dotOmnilintDirectory + "/config")
+    );
     return repo;
   }
+}
+
+function getRelevantSource(file, lineStart) {
+  var offenseLines = [];
+  try {
+    var content = fs.readFileSync(file);
+    var allLinesString = content.toString();
+    var allLines = allLinesString.split("\n");
+    for (var i = lineStart - 3; i < lineStart + 2; i++) {
+      if (i > -1) {
+        if (typeof allLines[i] !== "undefined") {
+          offenseLines.push({
+            line: i + 1,
+            code: allLines[i]
+          });
+        }
+      }
+    }
+    return offenseLines;
+  } catch (e) {
+    console.log(
+      "Error reading the relevant source for file: " +
+        file +
+        " at line: " +
+        lineStart
+    );
+    console.log(e);
+  }
+  return null;
 }
 
 module.exports = {
@@ -150,5 +180,6 @@ module.exports = {
   copyFileSync,
   copyFolderRecursiveSync,
   copyRecursiveSync,
-  parseOmnilintFile
+  parseOmnilintFile,
+  getRelevantSource
 };
