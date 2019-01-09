@@ -1,5 +1,6 @@
 const fs = require("fs");
 var path = require("path");
+const ora = require("ora");
 const chalk = require("chalk");
 const { prompt } = require("inquirer");
 const { exec, execSync, spawn } = require("child_process");
@@ -46,47 +47,77 @@ function install() {
   const moment = momentjs();
   const enclosingGitRepository = getEnclosingGitRepository();
 
-
-  if(checkIfEslintIsInstalled()) {
-    console.log("Eslint is installed.")
-  } else {
-    console.log("ESLint is not installed. Installing...")
-    installEslint();
-    console.log("ESLint is now installed.")
-  }
+  const spinner = ora("");
 
 
   if(checkIfPrettierIsInstalled()) {
-    console.log("Prettier is installed.")
+    spinner.succeed("Prettier is installed.")
+
   } else {
     console.log("Prettier is not installed. Installing...")
-    installPrettier();
-    console.log("Prettier is now installed.")
+    try {
+      installPrettier();
+      spinner.succeed("Prettier is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install Prettier. Please install it using " + chalk.cyan("npm i -g prettier") + ".");
+    }
+  }
+
+
+  if(checkIfEslintIsInstalled()) {
+    spinner.succeed("Eslint is installed.")
+  } else {
+    console.log("ESLint is not installed. Installing...")
+
+    try {
+      installEslint();
+      spinner.succeed("ESLint is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install EsLint. Please install it using " + chalk.cyan("npm i -g eslint") + ".");
+    }
+  }
+
+
+  if(checkIfStyleLintIsInstalled()) {
+    spinner.succeed("StyleLint is installed.")
+  } else {
+    console.log("StyleLint is not installed. Installing...")
+    try {
+      installStyleLint();
+      spinner.succeed("StyleLint is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install StyleLint. Please install it using " + chalk.cyan("npm i -g stylelint") + ".");
+    }
   }
 
   if(checkIfRubocopIsInstalled()) {
-    console.log("Rubocop is installed.")
+    spinner.succeed("Rubocop is installed.")
   } else {
     console.log("Rubocop is not installed. Installing...")
-    installRubocop();
-    console.log("Rubocop is now installed.")
+    try {
+      installRubocop();
+      spinner.succeed("Rubocop is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install Rubocop. Please install it using " + chalk.cyan("gem install rubocop") + ".");
+    }
   }
 
 
   if(checkIfErbLintIsInstalled()) {
-    console.log("ERBLint is installed.")
+    spinner.succeed("ERBLint is installed.")
   } else {
     console.log("ERBLint is not installed. Installing...")
-    installErbLint();
-    console.log("ERBLint is now installed.")
-  }
-
-  if(checkIfStyleLintIsInstalled()) {
-    console.log("StyleLint is installed.")
-  } else {
-    console.log("StyleLint is not installed. Installing...")
-    installStyleLint();
-    console.log("StyleLint is now installed.")
+    try {
+      installErbLint();
+      spinner.succeed("ERBLint is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install ERBLint. Please install it using " + chalk.cyan("gem install erblint") + ".");
+    }
   }
 
   checkForPyLintRequirement()
@@ -134,6 +165,8 @@ function install() {
   const hooksCreated = createHooks();
   if (!hooksCreated) {
     process.exit(0);
+  } else {
+    spinner.succeed("Hooks installed.")
   }
 
   if (!isOmnilintFilePresent()) {

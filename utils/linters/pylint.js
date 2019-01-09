@@ -51,7 +51,7 @@ function checkIfPylintIsInstalled() {
 
 function installPip(){
   try {
-    console.log("==== Instaling Pip ===");
+    console.log("==== Instaling Pip ====");
     execSync("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     var install_cmd = execSync("python get-pip.py", { stdio: [0, 1, 2] });
     if (install_cmd) {
@@ -75,7 +75,7 @@ function installPip(){
 
 function installPytlint(){
   try {
-    console.log("==== Instaling Pytlint ===");
+    console.log("==== Instaling Pytlint ====");
     var install_cmd = execSync("pip install pylint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
@@ -97,6 +97,8 @@ function installPytlint(){
 
 
 function checkForPyLintRequirement(){
+  const spinner = ora();
+
   var pythonInstalled = checkIfPythonIsInstalled()
   var pipInstalled = checkIfPipIsInstalled()
   var pylintInstalled = checkIfPylintIsInstalled()
@@ -108,17 +110,28 @@ function checkForPyLintRequirement(){
 
   if (!pipInstalled) {
     console.log("Pip is not installed. Installing...")
-    installPip()
-    console.log("Pip is now installed.")
+    try {
+      installPip()
+      spinner.succeed("Pip is now installed.");
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install Pip. Please install it using " + chalk.cyan("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py") + ".")
+    }
   }
+
   if (!pylintInstalled) {
     console.log("Pylint is not installed. Installing...");
-    installPytlint()
+    try {
+      installPytlint()
+      spinner.succeed("Pylint is now installed.");
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install Pylint. Please install it using " + chalk.cyan("pip install pylint") + ".")
+    }
 
-    console.log("Pylint is now installed.")
 
   } else {
-    console.log("Pylint is installed.")
+    spinner.succeed("Pylint is installed.")
   }
 
 }
