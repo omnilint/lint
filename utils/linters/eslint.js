@@ -41,7 +41,7 @@ function checkIfEslintIsInstalled() {
 
 function runEslint(files, autofix, body, desiredFormat) {
   // var cmd = "which eslint";
-  // console.log("==== Lint called ===");
+  // console.log("=== Lint called ===");
   if (autofix) {
     var cmd =
       "eslint --config " +
@@ -57,7 +57,7 @@ function runEslint(files, autofix, body, desiredFormat) {
       files.join(" ");
   }
   try {
-    // console.log("==== Try ===");
+    // console.log("=== Try ===");
     var linter_command = execSync(cmd);
     if (linter_command) {
       // // console.log("linter_command.toString() WORKS");
@@ -80,12 +80,12 @@ function runEslint(files, autofix, body, desiredFormat) {
       // prepareRequestAfterLint(true, body, 0, output);
     }
   } catch (err) {
-    // // console.log("==== Catch ===");
+    // // console.log("=== Catch ===");
     // // console.log(err);
     //
 
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       // console.log(err.stdout.toString());
       var output = JSON.parse(err.stdout);
       // parseOutPoutForRuleCheckAsTable(output)
@@ -547,21 +547,21 @@ function prepareRequestAfterLint(passed, body, exitCode, output) {
 
 function installEslint() {
   try {
-    console.log("==== Instaling ESLint ===");
+    console.log("=== Instaling ESLint ===");
     var install_cmd = execSync("npm install -g eslint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("==== Catch ===");
+    // console.log("=== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("==== Catch after ===");
+    // console.log("=== Catch after ===");
   }
 }
 

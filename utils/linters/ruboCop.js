@@ -125,21 +125,21 @@ function askToInstallRubocop() {
 
 function installRubocop() {
   try {
-    console.log("==== Instaling Rubocop ===");
+    console.log("=== Instaling Rubocop ===");
     var install_cmd = execSync("gem install rubocop", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("==== Catch ===");
+    // console.log("=== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("==== Catch after ===");
+    // console.log("=== Catch after ===");
   }
 }
 
@@ -170,7 +170,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
 
 
     try {
-      // console.log("==== Try ===");
+      // console.log("=== Try ===");
       // console.log(cmd);
       var linter_command = execSync(cmd);
       if (linter_command) {
@@ -185,7 +185,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
 
       }
     } catch (err) {
-      // console.log("==== Catch ===");
+      // console.log("=== Catch ===");
       // console.log(err);
       if (err.stdout) {
         var output = JSON.parse(err.stdout);
@@ -200,10 +200,10 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
         // console.log(output);
         // prepareRequestAfterLint(false, body, 1, output);
 
-        // console.log("==== Catch stdout ===");
+        // console.log("=== Catch stdout ===");
         // console.log(err.stdout.toString());
       }
-      // console.log("==== Catch after ===");
+      // console.log("=== Catch after ===");
     }
     // console.log("Linting Done");
   } else {
@@ -230,7 +230,7 @@ function runRubocop(files, autofix) {
         files.join(" ");
     }
     try {
-      // console.log("==== Try ===");
+      // console.log("=== Try ===");
       var linter_command = execSync(cmd);
       if (linter_command) {
         console.log("linter_command.toString() WORKS");
@@ -244,14 +244,14 @@ function runRubocop(files, autofix) {
         return linter_command;
       }
     } catch (err) {
-      // console.log("==== Catch ===");
+      // console.log("=== Catch ===");
       // console.log(err);
       if (err.stdout) {
-        // console.log("==== Catch stdout ===");
+        // console.log("=== Catch stdout ===");
         console.log(err.stdout.toString());
       }
       process.exit(1);
-      // console.log("==== Catch after ===");
+      // console.log("=== Catch after ===");
     }
     // console.log("Linting Done");
   } else {

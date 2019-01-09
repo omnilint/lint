@@ -32,21 +32,21 @@ function checkIfStyleLintIsInstalled() {
 
 function installStyleLint() {
   try {
-    console.log("==== Instaling StyleLint ===");
+    console.log("=== Instaling StyleLint ===");
     var install_cmd = execSync("npm install -g stylelint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("==== Catch ===");
+    // console.log("=== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("==== Catch after ===");
+    // console.log("=== Catch after ===");
   }
 }
 

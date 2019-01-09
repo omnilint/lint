@@ -25,6 +25,10 @@ const {
   installPrettier
 } = require('./linters/prettier');
 
+const {
+  checkIfBrakemanIsInstalled,
+  installBrakeman
+} = require('./linters/brakeman');
 
 const {
   checkIfStyleLintIsInstalled,
@@ -121,6 +125,23 @@ function install() {
   }
 
   checkForPyLintRequirement()
+
+
+  if(checkIfBrakemanIsInstalled()) {
+    spinner.succeed("Brakeman is installed.")
+  } else {
+    console.log("Brakeman is not installed. Installing...")
+    try {
+      installBrakeman();
+      spinner.succeed("Brakeman is now installed.")
+    } catch (e) {
+      console.log(e);
+      spinner.fail("Could not install Brakeman. Please install it using " + chalk.cyan("gem install brakeman") + ".");
+    }
+  }
+
+
+
 
   if (
     !enclosingGitRepository ||

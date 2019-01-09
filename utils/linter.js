@@ -1333,7 +1333,7 @@ function postReport(report, time) {
 
 // function lint(files, autofix, body) {
 //   // var cmd = "which eslint";
-//   // // console.log("==== Lint called ===");
+//   // // console.log("=== Lint called ===");
 //   if (autofix) {
 //     var cmd = "eslint --color --fix --format json " + files.join(" ");
 //     // console.log("Prepare to fix");
@@ -1341,7 +1341,7 @@ function postReport(report, time) {
 //     var cmd = "eslint --color --format json " + files.join(" ");
 //   }
 //   try {
-//     // // console.log("==== Try ===");
+//     // // console.log("=== Try ===");
 //     var linter_command = execSync(cmd);
 //     if (linter_command) {
 //       // // console.log("linter_command.toString() WORKS");
@@ -1355,11 +1355,11 @@ function postReport(report, time) {
 //       prepareRequestAfterLint(true, body, 0, output);
 //     }
 //   } catch (err) {
-//     // // console.log("==== Catch ===");
+//     // // console.log("=== Catch ===");
 //     // // console.log(err);
 //
 //     if (err.stdout) {
-//       console.log("==== Catch stdout ===");
+//       console.log("=== Catch stdout ===");
 //       // console.log(err.stdout.toString());
 //       var output = JSON.parse(err.stdout);
 //       parseOutPoutForRuleCheck(output);
@@ -1369,7 +1369,7 @@ function postReport(report, time) {
 //     }
 //     // prepareRequestAfterLint(passed, body)
 //     //  process.exit(1);
-//     // // console.log("==== Catch after ===");
+//     // // console.log("=== Catch after ===");
 //   }
 //   // // console.log("Linting Done");
 // }

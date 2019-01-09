@@ -51,7 +51,7 @@ function checkIfPylintIsInstalled() {
 
 function installPip(){
   try {
-    console.log("==== Instaling Pip ====");
+    console.log("=== Instaling Pip ===");
     execSync("curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py")
     var install_cmd = execSync("python get-pip.py", { stdio: [0, 1, 2] });
     if (install_cmd) {
@@ -60,14 +60,14 @@ function installPip(){
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("==== Catch ===");
+    // console.log("=== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("==== Catch after ===");
+    // console.log("=== Catch after ===");
   }
 
 }
@@ -75,7 +75,7 @@ function installPip(){
 
 function installPytlint(){
   try {
-    console.log("==== Instaling Pytlint ====");
+    console.log("=== Instaling Pytlint ===");
     var install_cmd = execSync("pip install pylint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
@@ -83,14 +83,14 @@ function installPytlint(){
       // process.exit(0);
     }
   } catch (err) {
-    console.log("==== Catch ===");
+    console.log("=== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("==== Catch stdout ===");
+      // console.log("=== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("==== Catch after ===");
+    // console.log("=== Catch after ===");
   }
 
 }
@@ -371,7 +371,7 @@ function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFor
 
 
   try {
-    // console.log("==== Try ===");
+    // console.log("=== Try ===");
     var linter_command = execSync(cmd);
     if (linter_command) {
 
@@ -405,7 +405,7 @@ function runPylintOntStagedFiles(pythonFiles, autofix, commitAttempt, desiredFor
     }
     // prepareRequestAfterLint(passed, body)
     // process.exit(1);
-    // // console.log("==== Catch after ===");
+    // // console.log("=== Catch after ===");
   }
 }
 
