@@ -1150,7 +1150,7 @@ function lintStaged(
     }
 
     if (rubyFiles.length > 0) {
-      // console.log("");
+      console.log("");
       // console.log(
       //   "************************************************************************"
       // );
