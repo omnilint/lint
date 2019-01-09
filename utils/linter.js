@@ -70,6 +70,10 @@ const {
 } = require("./linters/pylint");
 
 const {
+  runBrakeman
+} = require("./linters/brakeman");
+
+const {
   getUsernameFromLocalDevice,
   getTokenFromLocalDevice
 } = require("./user");
@@ -972,6 +976,14 @@ function lintStaged(
         var prettierHasSucceed = false;
       }
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
+    }
+    var brakemanFiles = rubyFiles.concat(erbFiles)
+    if (brakemanFiles.length > 0) {
+
+      console.log("");
+      console.log(chalk.bold.cyan("Running Brakeman..."));
+
+      runBrakeman(brakemanFiles)
     }
 
     if (styleLintCompatibleFiles.length > 0) {

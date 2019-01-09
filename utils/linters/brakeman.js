@@ -51,7 +51,37 @@ function installBrakeman() {
   }
 }
 
+function runBrakeman(files) {
+  var cmd = "brakeman --only-files " + files.join(",") + " -f json"
+  try {
+    // console.log(cmd);
+    var brakemanResult = execSync(cmd, { stdio: [0] })
+    if (brakemanResult) {
+      // console.log(brakemanResult);
+      console.log("SUCCESS");
+
+      var output = brakemanResult.stdout.toString()
+      console.log(output);
+    }
+  } catch (e) {
+    if (e.status === 4) {
+      console.log("");
+      console.log("Not inside a Rails application.");
+      console.log("");
+    } else {
+      // if (e.stderr) {
+        // console.log(e.stderr.toString());
+      // }
+      var output = e.stdout.toString()
+      console.log(output);
+    }
+
+  }
+
+}
+
 module.exports = {
   checkIfBrakemanIsInstalled,
-  installBrakeman
+  installBrakeman,
+  runBrakeman
 }
