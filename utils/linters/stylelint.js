@@ -2,7 +2,7 @@ const fs = require("fs");
 const { exec, execSync, spawn } = require("child_process");
 const ora = require("ora");
 const chalk = require("chalk");
-var _ = require('lodash');
+var _ = require("lodash");
 
 const {
   getEnclosingGitRepository,
@@ -12,11 +12,9 @@ const {
 
 const dotOmnilintDirectory = getDotOmnilintDirectory();
 
-
-
 function checkIfStyleLintIsInstalled() {
   try {
-    var res = execSync("which stylelint")
+    var res = execSync("which stylelint");
     if (res) {
       // console.log(res.toString())
       return true;
@@ -29,11 +27,12 @@ function checkIfStyleLintIsInstalled() {
   return false;
 }
 
-
 function installStyleLint() {
   try {
     console.log("==== Instaling StyleLint ===");
-    var install_cmd = execSync("npm install -g stylelint", { stdio: [0, 1, 2] });
+    var install_cmd = execSync("npm install -g stylelint", {
+      stdio: [0, 1, 2]
+    });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
@@ -50,30 +49,27 @@ function installStyleLint() {
   }
 }
 
-
 function sortstyleLintRules(policy_rule, styleLintRules) {
-  var name = policy_rule.rule.content.slug
+  var name = policy_rule.rule.content.slug;
   var styleLintSelectedOptions = {};
-  var styleLintRules = styleLintRules
+  var styleLintRules = styleLintRules;
   var options = [];
 
   if (
     policy_rule.rule.linter &&
     policy_rule.rule.linter.command == "stylelint"
   ) {
-
     if (policy_rule.status == "warn") {
-      styleLintSelectedOptions["severity"] = "warning"
+      styleLintSelectedOptions["severity"] = "warning";
     } else if (policy_rule.status == "error") {
-      styleLintSelectedOptions["severity"] = "error"
+      styleLintSelectedOptions["severity"] = "error";
     }
 
     if (policy_rule.options.length == 0) {
-
       if (policy_rule.status == "warn") {
-        styleLintRules[name] = [true, {severity: "warning"}]
+        styleLintRules[name] = [true, { severity: "warning" }];
       } else if (policy_rule.status == "error") {
-        styleLintRules[name] = [true, {severity: "error"}]
+        styleLintRules[name] = [true, { severity: "error" }];
       }
     } else {
       policy_rule.options.forEach(function(option) {
@@ -126,10 +122,7 @@ function sortstyleLintRules(policy_rule, styleLintRules) {
 
           // Check if options are selected
           if (Object.keys(styleLintSelectedOptions).length > 0) {
-            styleLintRules[name] = [
-              true,
-              styleLintSelectedOptions
-            ];
+            styleLintRules[name] = [true, styleLintSelectedOptions];
           }
         } else {
           styleLintRules[name] = policy_rule.status;
@@ -140,15 +133,12 @@ function sortstyleLintRules(policy_rule, styleLintRules) {
     }
   }
   // console.log(styleLintRules);
-  return styleLintRules
+  return styleLintRules;
 }
 
-
 function createStyleLintConfig(rules) {
-  rules = { rules:
-    rules
-  };
-  var json = JSON.stringify(rules)
+  rules = { rules: rules };
+  var json = JSON.stringify(rules);
 
   if (!fs.existsSync(dotOmnilintDirectory)) {
     fs.mkdirSync(dotOmnilintDirectory);
@@ -160,11 +150,9 @@ function createStyleLintConfig(rules) {
   // console.log("ESLint configuration file successfully updated.");
 }
 
-
 function getExtension(file) {
   return file.split(".").pop();
 }
-
 
 function selectFilesForStyleLint(stagedFilePaths) {
   var selectedFiles = [];
@@ -190,7 +178,7 @@ function sortErrorsToDisplay(file) {
   if (file.warnings.length > 10) {
     file.warnings.forEach(function(message) {
       // console.log(message);
-      if (message.severity == 'warning') {
+      if (message.severity == "warning") {
         warningMessages.push(message);
         // console.log(message);
       } else {
@@ -241,14 +229,14 @@ function parseOutPoutForRuleCheckAsText(output) {
     console.log("");
 
     // console.log(file);
-    var relativePath = file.source.replace(process.cwd() + '/', "");
+    var relativePath = file.source.replace(process.cwd() + "/", "");
     // console.log(relativePath);
-
 
     console.log("- " + chalk.green(relativePath));
 
-    console.log("--------------------------------------------------------------------------------------");
-
+    console.log(
+      "--------------------------------------------------------------------------------------"
+    );
 
     if (file.warnings.length == 0) {
       spinner.succeed();
@@ -258,25 +246,24 @@ function parseOutPoutForRuleCheckAsText(output) {
     file.warnings.sort((a, b) =>
       b.severity < a.severity ? 1 : a.severity < b.severity ? -1 : 0
     );
-    var totalError = 0
-    var totalWarn = 0
+    var totalError = 0;
+    var totalWarn = 0;
     file.warnings.forEach(function(message) {
-      if (message.severity == 'warning') {
-        totalWarn++
-      } else if (message.severity == 'error') {
-        totalError++
+      if (message.severity == "warning") {
+        totalWarn++;
+      } else if (message.severity == "error") {
+        totalError++;
       }
-
-    })
+    });
     var errorsToDisplay = sortErrorsToDisplay(file);
     errorsToDisplay.forEach(function(message) {
       // console.log(message);
 
       var ruleName = message.rule;
       var severity;
-      if (message.severity == 'warning') {
+      if (message.severity == "warning") {
         severity = chalk.yellow("Warning");
-      } else if (message.severity == 'error') {
+      } else if (message.severity == "error") {
         severity = chalk.red("Error");
       }
       var codeCoordinate = message.line + ":" + message.column;
@@ -290,8 +277,7 @@ function parseOutPoutForRuleCheckAsText(output) {
           " " +
           chalk.grey(message.text.split(/[()]+/)[0])
       );
-
-    })
+    });
 
     if (file.warnings.length > 10) {
       console.log(
@@ -319,24 +305,24 @@ function parseOutPoutForRuleCheckAsText(output) {
       messageToPrint += ", " + chalk.green(totalWarn) + " warning.";
     }
 
-
     console.log(messageToPrint);
-
-  })
-
+  });
 }
 
-function getOffenseLine(file, lineStart){
-  var offenseLines = []
-  var allLines = fs.readFileSync(file).toString().split('\n')
-  for (var i = lineStart-3; i < lineStart+2; i++) {
+function getOffenseLine(file, lineStart) {
+  var offenseLines = [];
+  var allLines = fs
+    .readFileSync(file)
+    .toString()
+    .split("\n");
+  for (var i = lineStart - 3; i < lineStart + 2; i++) {
     if (i > -1) {
-      if (typeof allLines[i] !== 'undefined') {
-        offenseLines.push({line:i+1, code:allLines[i]})
+      if (typeof allLines[i] !== "undefined") {
+        offenseLines.push({ line: i + 1, code: allLines[i] });
       }
     }
   }
-  return offenseLines
+  return offenseLines;
 }
 
 function createRuleCheckJson(output, body) {
@@ -345,51 +331,43 @@ function createRuleCheckJson(output, body) {
   console.log("");
 
   output.forEach(function(file) {
-    var relativePath = file.source.replace(process.cwd() + '/', "");
+    var relativePath = file.source.replace(process.cwd() + "/", "");
 
     if (file.warnings.length == 0) {
       var fileReport = {
-        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-        file_path: relativePath
-      }
+        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1),
+        file_path: relativePath,
+        linter: "Stylelint"
+      };
       rule_checks_attributes.push(fileReport);
-
     } else {
       file.warnings.forEach(function(message) {
         // console.log(message);
         var fileReport = {};
 
-
-
-        fileReport.file_path = relativePath
-        fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
+        fileReport.file_path = relativePath;
+        fileReport.file_name = relativePath.substring(
+          relativePath.lastIndexOf("/") + 1
+        );
         fileReport.line = message.line;
         fileReport.column = message.column;
         fileReport.rule_id = null;
-
-
 
         fileReport.message = message.text.split(/[()]+/)[0];
 
         // console.log(policy_rule.rule.content.slug);
 
-
         fileReport.name = message.rule;
 
         if (message.severity == "warning") {
           fileReport.severity_level = 1;
-
         } else if (message.severity == "error") {
           fileReport.severity_level = 2;
-
         }
 
-
-
-        var lines = getOffenseLine(file.source, message.line)
-        fileReport.source = lines
+        var lines = getOffenseLine(file.source, message.line);
+        fileReport.source = lines;
         rule_checks_attributes.push(fileReport);
-
       });
     }
   });
@@ -398,51 +376,50 @@ function createRuleCheckJson(output, body) {
   return rule_checks_attributes;
 }
 
-
 function parseStyleLintResults(output, body) {
   var stylintReport = {};
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
   var totalfixableWarnCount = 0;
-  var fileInfo = []
+  var fileInfo = [];
 
   output.forEach(function(file) {
     file.warnings.forEach(function(message) {
-      if (message.severity == 'warning') {
-      totalWarn++
-      } else if (message.severity == 'error') {
-      totalError++
+      if (message.severity == "warning") {
+        totalWarn++;
+      } else if (message.severity == "error") {
+        totalError++;
       }
-    })
-  })
+    });
+  });
 
-
-  stylintReport.name = body.content.message
-  stylintReport.commit_attempt_id = body.content.id
-  stylintReport.repository_id = body.content.repository_id
-  stylintReport.user_id = body.content.user_id
-  stylintReport.policy_id = body.policy.content.id
-  stylintReport.error_count = totalError
-  stylintReport.warning_count = totalWarn
+  stylintReport.name = body.content.message;
+  stylintReport.commit_attempt_id = body.content.id;
+  stylintReport.repository_id = body.content.repository_id;
+  stylintReport.user_id = body.content.user_id;
+  stylintReport.policy_id = body.policy.content.id;
+  stylintReport.error_count = totalError;
+  stylintReport.warning_count = totalWarn;
   stylintReport.rule_checks_attributes = createRuleCheckJson(output, body);
 
   // console.log(eslintReport);
   return stylintReport;
 }
 
-
-
-function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
+function runStyleLint(styleLintFiles, autofix, body, desiredFormat) {
   // sortPolicyRules()
-  var cmd = "stylelint --config " + dotOmnilintDirectory + "/tmp/.stylelintrc " + styleLintFiles.join(" ") + " -f json"
+  var cmd =
+    "stylelint --config " +
+    dotOmnilintDirectory +
+    "/tmp/.stylelintrc " +
+    styleLintFiles.join(" ") +
+    " -f json";
   // console.log(cmd);
   try {
-    var styleLintRunner =  execSync(cmd)
+    var styleLintRunner = execSync(cmd);
     if (styleLintRunner) {
       console.log("styleLintRunner Success");
-
-
 
       var output = JSON.parse(styleLintRunner.toString());
 
@@ -475,15 +452,9 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat){
       // console.log("Error");
       // console.log(parseEslintResults(output, body));
       return parseStyleLintResults(output, body);
-
-
     }
   }
-
 }
-
-
-
 
 module.exports = {
   checkIfStyleLintIsInstalled,
@@ -492,4 +463,4 @@ module.exports = {
   selectFilesForStyleLint,
   sortstyleLintRules,
   createStyleLintConfig
-}
+};

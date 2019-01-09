@@ -6,7 +6,7 @@ var CliTable = require("cli-table");
 const chalk = require("chalk");
 const request = require("request");
 const path = require("path");
-var _ = require('lodash');
+var _ = require("lodash");
 
 const fs = require("fs");
 const yaml = require("js-yaml");
@@ -168,7 +168,6 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
         files.join(" ");
     }
 
-
     try {
       // console.log("=== Try ===");
       // console.log(cmd);
@@ -182,7 +181,6 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
         }
 
         return parseRubocopResults(output, body);
-
       }
     } catch (err) {
       // console.log("=== Catch ===");
@@ -260,20 +258,22 @@ function runRubocop(files, autofix) {
   }
 }
 
-function getOffenseLine(file, lineStart){
-  var offenseLines = []
-  var allLines = fs.readFileSync(file).toString().split('\n')
-  for (var i = lineStart-3; i < lineStart+2; i++) {
+function getOffenseLine(file, lineStart) {
+  var offenseLines = [];
+  var allLines = fs
+    .readFileSync(file)
+    .toString()
+    .split("\n");
+  for (var i = lineStart - 3; i < lineStart + 2; i++) {
     if (i > -1) {
-      if (typeof allLines[i] !== 'undefined') {
-        offenseLines.push({line:i+1, code:allLines[i]})
+      if (typeof allLines[i] !== "undefined") {
+        offenseLines.push({ line: i + 1, code: allLines[i] });
       }
     }
   }
 
-  return offenseLines
+  return offenseLines;
 }
-
 
 function parseRubocopResults(output, body) {
   var rubocopReport = {};
@@ -297,21 +297,18 @@ function parseRubocopResults(output, body) {
         }
       }
     });
-
   });
 
-
-  rubocopReport.name = body.content.message
-  rubocopReport.commit_attempt_id = body.content.id
-  rubocopReport.repository_id = body.content.repository_id
-  rubocopReport.user_id = body.content.user_id
-  rubocopReport.policy_id = body.policy.content.id
-  rubocopReport.error_count = totalError
-  rubocopReport.warning_count = totalWarn
-  rubocopReport.fixable_error_count = totalfixableErrorCount
-  rubocopReport.fixable_warning_count = totalfixableWarnCount
+  rubocopReport.name = body.content.message;
+  rubocopReport.commit_attempt_id = body.content.id;
+  rubocopReport.repository_id = body.content.repository_id;
+  rubocopReport.user_id = body.content.user_id;
+  rubocopReport.policy_id = body.policy.content.id;
+  rubocopReport.error_count = totalError;
+  rubocopReport.warning_count = totalWarn;
+  rubocopReport.fixable_error_count = totalfixableErrorCount;
+  rubocopReport.fixable_warning_count = totalfixableWarnCount;
   rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body);
-
 
   return rubocopReport;
 }
@@ -375,7 +372,9 @@ function parseOutPoutForRuleCheckAsText(output) {
     console.log("");
     console.log("- " + chalk.green(file.path));
     // console.log(file.path);
-    console.log("--------------------------------------------------------------------------------------");
+    console.log(
+      "--------------------------------------------------------------------------------------"
+    );
     // console.log(file.offenses);
     // console.log(file.offenses.length);
     // console.log(file.offenses.count);
@@ -445,7 +444,6 @@ function parseOutPoutForRuleCheckAsText(output) {
     } else {
       messageToPrint += ", " + chalk.green(warningCount) + " warning.";
     }
-
 
     // console.log(messageToPrint);
 
@@ -596,18 +594,16 @@ function createRuleCheckJson(output, body) {
   var file_rule_checks = [];
   console.log("");
 
-
-
-  var fileInfo = []
+  var fileInfo = [];
 
   output.files.forEach(function(file) {
     if (file.offenses.length == 0) {
       var fileReport = {
-        file_name: file.path.substring( file.path.lastIndexOf("/") + 1 ),
-        file_path: file.path
-      }
+        file_name: file.path.substring(file.path.lastIndexOf("/") + 1),
+        file_path: file.path,
+        linter: "Rubocop"
+      };
       rule_checks_attributes.push(fileReport);
-
     } else {
       file.offenses.forEach(function(offense) {
         var fileReport = {};
@@ -617,13 +613,12 @@ function createRuleCheckJson(output, body) {
         );
         fileReport.message = offense.message;
 
-
         fileReport.line = offense.location.line;
         fileReport.column = offense.location.column;
         fileReport.line_end = offense.location.last_line;
         fileReport.column_end = offense.location.last_column;
         // console.log(policy_rule.rule.content.slug);
-        fileReport.rule_id = null
+        fileReport.rule_id = null;
 
         fileReport.name = offense.cop_name;
         if (offense.severity == "warning") {
@@ -632,13 +627,12 @@ function createRuleCheckJson(output, body) {
           fileReport.severity_level = 2;
         }
 
-        var lines = getOffenseLine(file.path, offense.location.line)
-        fileReport.source = lines
+        var lines = getOffenseLine(file.path, offense.location.line);
+        fileReport.source = lines;
         rule_checks_attributes.push(fileReport);
       });
     }
   });
-
 
   return rule_checks_attributes;
 }

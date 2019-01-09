@@ -6,7 +6,7 @@ const request = require("request");
 const { exec, execSync, spawn } = require("child_process");
 var CliTable = require("cli-table");
 const ora = require("ora");
-var _ = require('lodash');
+var _ = require("lodash");
 
 const {
   getUsernameFromLocalDevice,
@@ -26,7 +26,7 @@ const DEV_API_BASE_URL = "http://localhost:3000";
 
 function checkIfEslintIsInstalled() {
   try {
-    var res = execSync("which eslint")
+    var res = execSync("which eslint");
     if (res) {
       // console.log(res.toString())
       return true;
@@ -97,7 +97,6 @@ function runEslint(files, autofix, body, desiredFormat) {
       }
 
       return parseEslintResults(output, body);
-
     }
   }
 }
@@ -217,8 +216,7 @@ function parseOutPoutForRuleCheckAsText(output) {
     // console.log("- " + chalk.green(file.filePath.substring(
     //   file.filePath.lastIndexOf("/") + 1
     // )))
-    var relativePath = file.filePath.replace(process.cwd() + '/', "");
-
+    var relativePath = file.filePath.replace(process.cwd() + "/", "");
 
     // console.log(file.filePath.indexOf(directory));
 
@@ -226,7 +224,9 @@ function parseOutPoutForRuleCheckAsText(output) {
 
     console.log("- " + chalk.green(relativePath));
 
-    console.log("--------------------------------------------------------------------------------------");
+    console.log(
+      "--------------------------------------------------------------------------------------"
+    );
     // console.log(file);
     if (file.messages.length == 0) {
       spinner.succeed();
@@ -409,17 +409,18 @@ function createRuleCheckJson(output, body) {
   var dict = [];
 
   output.forEach(function(file) {
-    var relativePath = file.filePath.replace(process.cwd() + '/', "");
+    var relativePath = file.filePath.replace(process.cwd() + "/", "");
     if (file.messages.length == 0) {
       var fileReport = {
-        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-        file_path: relativePath
-      }
+        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1),
+        file_path: relativePath,
+        linter: "Eslint"
+      };
       rule_checks_attributes.push(fileReport);
     } else {
       file.messages.forEach(function(message) {
         var fileReport = {};
-        fileReport.file_path = relativePath
+        fileReport.file_path = relativePath;
         fileReport.file_name = file.filePath.substring(
           file.filePath.lastIndexOf("/") + 1
         );
@@ -433,9 +434,7 @@ function createRuleCheckJson(output, body) {
 
         fileReport.rule_id = null;
 
-
         // console.log(policy_rule.rule.content.slug);
-
 
         fileReport.name = message.ruleId;
 
@@ -443,32 +442,32 @@ function createRuleCheckJson(output, body) {
         // console.log(fileReport);
         // console.log("");
 
-
-        var lines = getOffenseLine(file.filePath, message.line)
-        fileReport.source = lines
+        var lines = getOffenseLine(file.filePath, message.line);
+        fileReport.source = lines;
         // console.log(fileReport);
-          // console.log(line);
+        // console.log(line);
         rule_checks_attributes.push(fileReport);
-
       });
     }
   });
   return rule_checks_attributes;
 }
 
-function getOffenseLine(file, lineStart){
-  var offenseLines = []
-  var allLines = fs.readFileSync(file).toString().split('\n')
-  for (var i = lineStart-3; i < lineStart+2; i++) {
+function getOffenseLine(file, lineStart) {
+  var offenseLines = [];
+  var allLines = fs
+    .readFileSync(file)
+    .toString()
+    .split("\n");
+  for (var i = lineStart - 3; i < lineStart + 2; i++) {
     if (i > -1) {
-      if (typeof allLines[i] !== 'undefined') {
-        offenseLines.push({line:i+1, code:allLines[i]})
+      if (typeof allLines[i] !== "undefined") {
+        offenseLines.push({ line: i + 1, code: allLines[i] });
       }
     }
   }
-  return offenseLines
+  return offenseLines;
 }
-
 
 function createPolicyCheckJson(passed, output, body) {
   var totalError = 0;
@@ -558,29 +557,24 @@ function parseEslintResults(output, body) {
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
   var totalfixableWarnCount = 0;
-  var fileInfo = []
+  var fileInfo = [];
 
   output.forEach(function(file) {
-
-
     totalError += file.errorCount;
     totalWarn += file.warningCount;
     totalfixableErrorCount += file.fixableErrorCount;
     totalfixableWarnCount += file.fixableWarningCount;
-  })
+  });
 
-
-  eslintReport.name = body.content.message
-  eslintReport.commit_attempt_id = body.content.id
-  eslintReport.repository_id = body.content.repository_id
-  eslintReport.user_id = body.content.user_id
-  eslintReport.policy_id = body.policy.content.id
-  eslintReport.error_count = totalError
-  eslintReport.warning_count = totalWarn
-  eslintReport.fixable_error_count = totalfixableErrorCount
-  eslintReport.fixable_warning_count = totalfixableWarnCount
-
-
+  eslintReport.name = body.content.message;
+  eslintReport.commit_attempt_id = body.content.id;
+  eslintReport.repository_id = body.content.repository_id;
+  eslintReport.user_id = body.content.user_id;
+  eslintReport.policy_id = body.policy.content.id;
+  eslintReport.error_count = totalError;
+  eslintReport.warning_count = totalWarn;
+  eslintReport.fixable_error_count = totalfixableErrorCount;
+  eslintReport.fixable_warning_count = totalfixableWarnCount;
 
   eslintReport.rule_checks_attributes = createRuleCheckJson(output, body);
 
