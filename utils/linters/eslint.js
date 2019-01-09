@@ -406,66 +406,50 @@ function createRuleCheckJson(output, body) {
   // console.log(output);
   console.log("");
   // console.log("createRuleCheckJson");
-    var dict = [];
-  var filePath = ""
-  body.policy.policy_rules.forEach(function(policy_rule) {
+  var dict = [];
 
-    output.forEach(function(file) {
-      var relativePath = file.filePath.replace(process.cwd() + '/', "");
-
-      if (file.messages.length == 0) {
-        if (filePath !== file.path) {
-          var fileReport = {
-            file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-            file_path: relativePath
-          }
-          rule_checks_attributes.push(fileReport);
-        }
-        filePath = file.path
-        _.union(rule_checks_attributes, fileReport);
-        // console.log("twice");
-        //
-        // if (_.findWhere(rule_checks_attributes, fileReport) == null) {
-        //   console.log("Once");
-        // }
-      } else {
-        file.messages.forEach(function(message) {
-          var fileReport = {};
-          if (message.ruleId == policy_rule.rule.content.slug) {
-            // fileReport.file_path = file.filePath;
-            fileReport.file_path = relativePath
-            fileReport.file_name = file.filePath.substring(
-              file.filePath.lastIndexOf("/") + 1
-            );
-
-            fileReport.line = message.line;
-            fileReport.column = message.column;
-            fileReport.line_end = message.endLine;
-            fileReport.column_end = message.endColumn;
-
-            fileReport.message = message.message;
-
-            // console.log(policy_rule.rule.content.slug);
-            fileReport.rule_id = policy_rule.rule.content.id;
-
-            fileReport.name = message.ruleId;
-
-            fileReport.severity_level = message.severity;
-            // console.log(fileReport);
-            // console.log("");
-            fileReport.language_id = policy_rule.rule.content.language_id;
-
-            var lines = getOffenseLine(file.filePath, message.line)
-            fileReport.source = lines
-            // console.log(fileReport);
-              // console.log(line);
-            rule_checks_attributes.push(fileReport);
-          }
-        });
+  output.forEach(function(file) {
+    var relativePath = file.filePath.replace(process.cwd() + '/', "");
+    if (file.messages.length == 0) {
+      var fileReport = {
+        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+        file_path: relativePath
       }
-    });
-  });
+      rule_checks_attributes.push(fileReport);
+    } else {
+      file.messages.forEach(function(message) {
+        var fileReport = {};
+        fileReport.file_path = relativePath
+        fileReport.file_name = file.filePath.substring(
+          file.filePath.lastIndexOf("/") + 1
+        );
 
+        fileReport.line = message.line;
+        fileReport.column = message.column;
+        fileReport.line_end = message.endLine;
+        fileReport.column_end = message.endColumn;
+
+        fileReport.message = message.message;
+
+        // console.log(policy_rule.rule.content.slug);
+
+
+        fileReport.name = message.ruleId;
+
+        fileReport.severity_level = message.severity;
+        // console.log(fileReport);
+        // console.log("");
+
+
+        var lines = getOffenseLine(file.filePath, message.line)
+        fileReport.source = lines
+        // console.log(fileReport);
+          // console.log(line);
+        rule_checks_attributes.push(fileReport);
+
+      });
+    }
+  });
   return rule_checks_attributes;
 }
 
@@ -480,7 +464,7 @@ function getOffenseLine(file, lineStart){
     }
   }
   return offenseLines
-  }
+}
 
 
 function createPolicyCheckJson(passed, output, body) {

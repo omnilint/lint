@@ -166,7 +166,6 @@ function getExtension(file) {
 }
 
 
-
 function selectFilesForStyleLint(stagedFilePaths) {
   var selectedFiles = [];
   stagedFilePaths.forEach(function(file) {
@@ -177,7 +176,6 @@ function selectFilesForStyleLint(stagedFilePaths) {
       getExtension(file).toLowerCase() === "sss" ||
       getExtension(file).toLowerCase() === "css" ||
       getExtension(file).toLowerCase() === "html"
-
     ) {
       selectedFiles.push(file);
     }
@@ -339,7 +337,7 @@ function getOffenseLine(file, lineStart){
     }
   }
   return offenseLines
-  }
+}
 
 function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
