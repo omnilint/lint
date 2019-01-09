@@ -2,8 +2,7 @@ const { execSync } = require("child_process");
 const chalk = require("chalk");
 const fs = require("fs");
 const yaml = require("js-yaml");
-var _ = require('lodash');
-
+var _ = require("lodash");
 
 function checkIfRubyIsInstalled() {
   try {
@@ -18,7 +17,6 @@ function checkIfRubyIsInstalled() {
   return false;
 }
 
-
 function checkIfBrakemanIsInstalled() {
   try {
     var res = execSync("which brakeman");
@@ -31,11 +29,10 @@ function checkIfBrakemanIsInstalled() {
   return false;
 }
 
-
 function installBrakeman() {
   try {
     console.log("=== Instaling Brakeman ===");
-    var install_cmd = execSync("gem install Brakeman", { stdio: [0, 1, 2] });
+    var install_cmd = execSync("gem install brakeman", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
@@ -68,40 +65,35 @@ function displayOffenseAsText(offense) {
     // errorCount++;
   }
 
-
   console.log(
-    offense.line +
-      " " +
-      ruleSeverity +
-      " " +
-      ruleName +
-      " " +
-      linterMessage
+    offense.line + " " + ruleSeverity + " " + ruleName + " " + linterMessage
   );
 }
-
 
 function displayOffensesAsText(formattedBrakemanResult) {
   // console.log('formattedBrakemanResult');
   // console.log(formattedBrakemanResult);
-  var groupedBrakemanResult =  _.mapValues(_.groupBy(formattedBrakemanResult.rule_checks_attributes, "file_path"));
-  var filePaths = Object.keys(groupedBrakemanResult)
+  var groupedBrakemanResult = _.mapValues(
+    _.groupBy(formattedBrakemanResult.rule_checks_attributes, "file_path")
+  );
+  var filePaths = Object.keys(groupedBrakemanResult);
   filePaths.forEach(function(file) {
     var warningCount = 0;
     var errorCount = 0;
     console.log("");
     console.log("- " + chalk.green(file));
-    console.log("--------------------------------------------------------------------------------------");
+    console.log(
+      "--------------------------------------------------------------------------------------"
+    );
     if (groupedBrakemanResult[file]) {
       groupedBrakemanResult[file].forEach(function(offense) {
         // console.log('offense');
         // console.log(offense);
-        displayOffenseAsText(offense)
-      })
+        displayOffenseAsText(offense);
+      });
     }
-  })
+  });
 }
-
 
 function formatBrakemanResult(rawBrakemanResult) {
   // console.log(rawBrakemanResult.scan_info);
@@ -113,7 +105,6 @@ function formatBrakemanResult(rawBrakemanResult) {
     rule_checks_attributes: []
   };
 
-
   rawBrakemanResult.warnings.forEach(function(offense) {
     var fileReport = {};
     fileReport.file_path = offense.file;
@@ -122,31 +113,30 @@ function formatBrakemanResult(rawBrakemanResult) {
     );
     fileReport.message = offense.message;
     fileReport.line = offense.line;
-    fileReport.name = offense.warning_type
-    fileReport.severity_level = 1
-    fileReport.rule_id = null
+    fileReport.name = offense.warning_type;
+    fileReport.severity_level = 1;
+    fileReport.rule_id = null;
 
     // fileReport.location = offense.location
     // fileReport.user_input = offense.user_input
     // fileReport.confidence = offense.confidence
     // fileReport.confidence_level = offense.confidence ?
     formattedBrakemanResult.rule_checks_attributes.push(fileReport);
-  })
+  });
 
-  return formattedBrakemanResult
-
+  return formattedBrakemanResult;
 }
 
 function runBrakeman(files) {
-  var cmd = "brakeman -f json --only-files " + files.join(",")
+  var cmd = "brakeman -f json --only-files " + files.join(",");
   var output;
   try {
     // console.log(cmd);
-    var brakemanResult = execSync(cmd, { stdio: [0] })
+    var brakemanResult = execSync(cmd, { stdio: [0] });
     if (brakemanResult) {
       // console.log(brakemanResult);
       console.log("SUCCESS");
-      output = brakemanResult.stdout.toString()
+      output = brakemanResult.stdout.toString();
       console.log(output);
     }
   } catch (e) {
@@ -155,21 +145,19 @@ function runBrakeman(files) {
       console.log("Not inside a Rails application.");
       console.log("");
     } else {
-      output = JSON.parse(e.stdout.toString())
+      output = JSON.parse(e.stdout.toString());
       // console.log(output);
     }
   }
-  var formattedBrakemanResult = formatBrakemanResult(output)
+  var formattedBrakemanResult = formatBrakemanResult(output);
 
-  displayOffensesAsText(formattedBrakemanResult)
+  displayOffensesAsText(formattedBrakemanResult);
 
-
-  return formattedBrakemanResult
-
+  return formattedBrakemanResult;
 }
 
 module.exports = {
   checkIfBrakemanIsInstalled,
   installBrakeman,
   runBrakeman
-}
+};
