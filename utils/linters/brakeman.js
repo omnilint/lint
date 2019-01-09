@@ -112,6 +112,7 @@ function formatBrakemanResult(rawBrakemanResult) {
       offense.file.lastIndexOf("/") + 1
     );
     fileReport.message = offense.message;
+    // fileReport.linter = "brakeman";
     fileReport.line = offense.line;
     fileReport.name = offense.warning_type;
     fileReport.severity_level = 1;
@@ -135,9 +136,9 @@ function runBrakeman(files) {
     var brakemanResult = execSync(cmd, { stdio: [0] });
     if (brakemanResult) {
       // console.log(brakemanResult);
-      console.log("SUCCESS");
+      // console.log("SUCCESS");
       output = brakemanResult.stdout.toString();
-      console.log(output);
+      // console.log(output);
     }
   } catch (e) {
     if (e.status === 4) {
