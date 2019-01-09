@@ -101,7 +101,7 @@ function initializeAndCreateRepository(username, token) {
         confirmWriteOmnilintFile(defaultRepositoryName, body, username, token);
       } else if (body.length == 0) {
         // console.log("Repository not found on Omnilint.");fail
-        reportSpinner.succeed("Repository initialized.");
+        reportSpinner.stop();
         confirmRepoName(defaultRepositoryName);
       } else {
         console.log(

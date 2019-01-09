@@ -344,7 +344,9 @@ function copyFolderRecursiveSync(source, target) {
     fs.mkdirSync(targetFolder);
   }
   var copyFileSpinner = ora()
-  copyFileSpinner.info("Saving your hooks to " + targetFolder);
+  // copyFileSpinner.info("Saving your hooks to " + targetFolder);
+  copyFileSpinner.succeed("Hooks backed up.");
+
   //copy
   if (fs.lstatSync(source).isDirectory()) {
     files = fs.readdirSync(source);
