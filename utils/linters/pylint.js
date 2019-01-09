@@ -277,7 +277,7 @@ function createRuleCheckJson(output, body) {
           fileReport.column = offense.column;
           fileReport.long_message = offense.message
           fileReport.message = offense.message.split("\n")[0];
-          // fileReport.rule_id = policy_rule.rule.content.id;
+          fileReport.rule_id = null;
 
           // console.log(policy_rule.rule.content.slug);
 

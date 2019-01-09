@@ -32,21 +32,21 @@ function checkIfStyleLintIsInstalled() {
 
 function installStyleLint() {
   try {
-    console.log("=== Instaling StyleLint ===");
+    console.log("==== Instaling StyleLint ===");
     var install_cmd = execSync("npm install -g stylelint", { stdio: [0, 1, 2] });
     if (install_cmd) {
       console.log(install_cmd.toString());
       // process.exit(0);
     }
   } catch (err) {
-    // console.log("=== Catch ===");
+    // console.log("==== Catch ===");
     console.log(err);
     if (err.stdout) {
-      // console.log("=== Catch stdout ===");
+      // console.log("==== Catch stdout ===");
       console.log(err.stdout.toString());
     }
     // process.exit(1);
-    // console.log("=== Catch after ===");
+    // console.log("==== Catch after ===");
   }
 }
 
@@ -342,63 +342,58 @@ function getOffenseLine(file, lineStart){
 function createRuleCheckJson(output, body) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
-  var filePath = ""
   console.log("");
 
-  body.policy.policy_rules.forEach(function(policy_rule) {
-    output.forEach(function(file) {
-      var relativePath = file.source.replace(process.cwd() + '/', "");
+  output.forEach(function(file) {
+    var relativePath = file.source.replace(process.cwd() + '/', "");
 
-      if (file.warnings.length == 0) {
-        if (filePath !== file.path) {
-          var fileReport = {
-            file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
-            file_path: relativePath
-          }
-          rule_checks_attributes.push(fileReport);
-        }
-        filePath = file.path
-        _.union(rule_checks_attributes, fileReport);
-
-
-      } else {
-        file.warnings.forEach(function(message) {
-          // console.log(message);
-          var fileReport = {};
-          if (message.rule == policy_rule.rule.content.slug) {
-
-
-            fileReport.file_path = relativePath
-            fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
-            fileReport.line = message.line;
-            fileReport.column = message.column;
-
-
-            fileReport.message = message.text.split(/[()]+/)[0];
-
-            // console.log(policy_rule.rule.content.slug);
-            fileReport.rule_id = policy_rule.rule.content.id;
-
-            fileReport.name = message.rule;
-
-            if (message.severity == "warning") {
-              fileReport.severity_level = 1;
-
-            } else if (message.severity == "error") {
-              fileReport.severity_level = 2;
-
-            }
-            fileReport.language_id = policy_rule.rule.content.language_id;
-
-
-            var lines = getOffenseLine(file.source, message.line)
-            fileReport.source = lines
-            rule_checks_attributes.push(fileReport);
-          }
-        });
+    if (file.warnings.length == 0) {
+      var fileReport = {
+        file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1 ),
+        file_path: relativePath
       }
-    });
-  })
+      rule_checks_attributes.push(fileReport);
+
+    } else {
+      file.warnings.forEach(function(message) {
+        // console.log(message);
+        var fileReport = {};
+
+
+
+        fileReport.file_path = relativePath
+        fileReport.file_name = relativePath.substring(relativePath.lastIndexOf("/") + 1 )
+        fileReport.line = message.line;
+        fileReport.column = message.column;
+        fileReport.rule_id = null;
+
+
+
+        fileReport.message = message.text.split(/[()]+/)[0];
+
+        // console.log(policy_rule.rule.content.slug);
+
+
+        fileReport.name = message.rule;
+
+        if (message.severity == "warning") {
+          fileReport.severity_level = 1;
+
+        } else if (message.severity == "error") {
+          fileReport.severity_level = 2;
+
+        }
+
+
+
+        var lines = getOffenseLine(file.source, message.line)
+        fileReport.source = lines
+        rule_checks_attributes.push(fileReport);
+
+      });
+    }
+  });
+
   // console.log(rule_checks_attributes);
   return rule_checks_attributes;
 }

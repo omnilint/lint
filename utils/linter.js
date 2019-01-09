@@ -1174,7 +1174,7 @@ function lintStaged(
       // console.log(rubyFiles);
       rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat);
       // runRubocop(rubyFiles, autofix);
-      console.log(rubyReports);
+      // console.log(rubyReports);
       // console.log(rubyReports);
       // console.log("Linting Done");
     } else {
@@ -1233,19 +1233,24 @@ function lintStaged(
     var ruleChecks = {};
 
 
-    ruleChecks.rule_checks_attributes = javascriptReports.rule_checks_attributes.concat(
-      rubyReports.rule_checks_attributes
+    ruleChecks.rule_checks_attributes =
+      javascriptReports.rule_checks_attributes
+        .concat(rubyReports.rule_checks_attributes)
         .concat(pythonReports.rule_checks_attributes)
         .concat(erbReports.rule_checks_attributes)
         .concat(styleFilesReport.rule_checks_attributes)
+        .concat(brakemanReport.rule_checks_attributes)
 
-    );
+    console.log('@@@ ruleChecks @@@')
+    console.log(ruleChecks)
 
-    var inspectedFiles = jsFiles
-      .concat(rubyFiles)
-      .concat(pythonFiles)
-      .concat(erbFiles)
-      .concat(styleLintCompatibleFiles)
+    var inspectedFiles =
+      jsFiles
+        .concat(rubyFiles)
+        .concat(erbFiles)
+        .concat(pythonFiles)
+        .concat(erbFiles)
+        .concat(styleLintCompatibleFiles)
 
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles);
@@ -1255,6 +1260,7 @@ function lintStaged(
       staged_files: stagedFilePaths,
       javascript_files: jsFiles,
       ruby_files: rubyFiles,
+      erb_files: rubyFiles,
       formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
       not_inspected_files: notInspectedFiles

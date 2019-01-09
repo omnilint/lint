@@ -80,20 +80,22 @@ function displayOffenseAsText(offense) {
   );
 }
 
+
 function displayOffensesAsText(formattedBrakemanResult) {
-
-  var groupedBrakemanResult =  _.mapValues(_.groupBy(formattedBrakemanResult, "file_path"));
-  var parseableOutput = Object.keys(groupedBrakemanResult)
-
-
-  parseableOutput.forEach(function(file) {
+  // console.log('formattedBrakemanResult');
+  // console.log(formattedBrakemanResult);
+  var groupedBrakemanResult =  _.mapValues(_.groupBy(formattedBrakemanResult.rule_checks_attributes, "file_path"));
+  var filePaths = Object.keys(groupedBrakemanResult)
+  filePaths.forEach(function(file) {
     var warningCount = 0;
     var errorCount = 0;
     console.log("");
     console.log("- " + chalk.green(file));
     console.log("--------------------------------------------------------------------------------------");
     if (groupedBrakemanResult[file]) {
-      groupedBrakemanResult[file].forEach(function(offense){
+      groupedBrakemanResult[file].forEach(function(offense) {
+        // console.log('offense');
+        // console.log(offense);
         displayOffenseAsText(offense)
       })
     }
@@ -105,12 +107,15 @@ function formatBrakemanResult(rawBrakemanResult) {
   // console.log(rawBrakemanResult.scan_info);
   // console.log();
   // console.log(rawBrakemanResult.warnings);
-  var formattedBrakemanResult = [];
+  var formattedBrakemanResult = {
+    error_count: rawBrakemanResult.errors.length,
+    warning_count: rawBrakemanResult.warnings.length,
+    rule_checks_attributes: []
+  };
+
 
   rawBrakemanResult.warnings.forEach(function(offense) {
-
     var fileReport = {};
-
     fileReport.file_path = offense.file;
     fileReport.file_name = offense.file.substring(
       offense.file.lastIndexOf("/") + 1
@@ -119,14 +124,13 @@ function formatBrakemanResult(rawBrakemanResult) {
     fileReport.line = offense.line;
     fileReport.name = offense.warning_type
     fileReport.severity_level = 1
+    fileReport.rule_id = null
 
     // fileReport.location = offense.location
     // fileReport.user_input = offense.user_input
     // fileReport.confidence = offense.confidence
     // fileReport.confidence_level = offense.confidence ?
-
-    formattedBrakemanResult.push(fileReport);
-
+    formattedBrakemanResult.rule_checks_attributes.push(fileReport);
   })
 
   return formattedBrakemanResult

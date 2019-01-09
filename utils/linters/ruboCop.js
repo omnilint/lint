@@ -312,7 +312,7 @@ function parseRubocopResults(output, body) {
   rubocopReport.fixable_warning_count = totalfixableWarnCount
   rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body);
 
-  console.log(rubocopReport);
+
   return rubocopReport;
 }
 
@@ -623,7 +623,7 @@ function createRuleCheckJson(output, body) {
         fileReport.line_end = offense.location.last_line;
         fileReport.column_end = offense.location.last_column;
         // console.log(policy_rule.rule.content.slug);
-        // fileReport.rule_id = policy_rule.rule.content.id;
+        fileReport.rule_id = null
 
         fileReport.name = offense.cop_name;
         if (offense.severity == "warning") {

@@ -180,6 +180,7 @@ function parseErbLintOutput(output, statusCode) {
       file_path: filePath,
       file_name: filePath.substring(filePath.lastIndexOf("/") + 1),
       name: slug,
+      rule_id: null,
       message: message,
       line: line,
       severity_level: 1,

@@ -431,6 +431,9 @@ function createRuleCheckJson(output, body) {
 
         fileReport.message = message.message;
 
+        fileReport.rule_id = null;
+
+
         // console.log(policy_rule.rule.content.slug);
 
 
