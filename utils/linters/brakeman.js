@@ -159,6 +159,9 @@ function runBrakeman(files) {
 
   displayOffensesAsText(formattedBrakemanResult)
 
+
+  return formattedBrakemanResult
+
 }
 
 module.exports = {

@@ -983,7 +983,9 @@ function lintStaged(
       console.log("");
       console.log(chalk.bold.cyan("Running Brakeman..."));
 
-      runBrakeman(brakemanFiles)
+      var brakemanReport = runBrakeman(brakemanFiles)
+      console.log(brakemanReport);
+
     }
 
     if (styleLintCompatibleFiles.length > 0) {
@@ -1172,7 +1174,7 @@ function lintStaged(
       // console.log(rubyFiles);
       rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat);
       // runRubocop(rubyFiles, autofix);
-
+      console.log(rubyReports);
       // console.log(rubyReports);
       // console.log("Linting Done");
     } else {
