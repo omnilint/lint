@@ -141,10 +141,13 @@ function formatBrakemanResult(rawBrakemanResult) {
     });
   }
 
-
+  console.log('rawBrakemanResult.errors');
+  console.log(rawBrakemanResult.errors);
   if (rawBrakemanResult.errors.length > 0) {
     rawBrakemanResult.errors.forEach(function(offense) {
 
+      console.log('offense');
+      console.log(offense);
       var fileReport = {};
       fileReport.file_path = offense.file;
       fileReport.file_name = offense.file.substring(
