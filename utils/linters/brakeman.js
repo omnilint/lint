@@ -104,62 +104,71 @@ function formatBrakemanResult(rawBrakemanResult) {
   // console.log(rawBrakemanResult.scan_info);
   // console.log();
   // console.log(rawBrakemanResult.warnings);
+  // console.log(rawBrakemanResult);
+  // console.log(rawBrakemanResult);
+
 
   var formattedBrakemanResult = {
     error_count: rawBrakemanResult.errors.length || 0,
     warning_count: rawBrakemanResult.warnings.length || 0,
     rule_checks_attributes: []
   };
+  if (rawBrakemanResult.warnings.length > 0) {
+    rawBrakemanResult.warnings.forEach(function(offense) {
+      var fileReport = {};
+      fileReport.file_path = offense.file;
+      fileReport.file_name = offense.file.substring(
+        offense.file.lastIndexOf("/") + 1
+      );
+      fileReport.message = offense.message;
+      fileReport.linter = "brakeman";
+      fileReport.line = offense.line;
+      fileReport.name = offense.warning_type;
+      fileReport.severity_level = 1;
+      fileReport.rule_id = null;
 
-  rawBrakemanResult.warnings.forEach(function(offense) {
-    var fileReport = {};
-    fileReport.file_path = offense.file;
-    fileReport.file_name = offense.file.substring(
-      offense.file.lastIndexOf("/") + 1
-    );
-    fileReport.message = offense.message;
-    fileReport.linter = "brakeman";
-    fileReport.line = offense.line;
-    fileReport.name = offense.warning_type;
-    fileReport.severity_level = 1;
-    fileReport.rule_id = null;
+      // fileReport.location = offense.location
+      // fileReport.user_input = offense.user_input
+      // fileReport.confidence = offense.confidence
+      // fileReport.confidence_level = offense.confidence ?
 
-    // fileReport.location = offense.location
-    // fileReport.user_input = offense.user_input
-    // fileReport.confidence = offense.confidence
-    // fileReport.confidence_level = offense.confidence ?
+      var lines = getRelevantSource(offense.file, offense.line);
 
-    var lines = getRelevantSource(offense.file, offense.line);
+      fileReport.source = lines;
 
-    fileReport.source = lines;
+      formattedBrakemanResult.rule_checks_attributes.push(fileReport);
+    });
+  }
 
-    formattedBrakemanResult.rule_checks_attributes.push(fileReport);
-  });
-  rawBrakemanResult.errors.forEach(function(offense) {
-    var fileReport = {};
-    fileReport.file_path = offense.file;
-    fileReport.file_name = offense.file.substring(
-      offense.file.lastIndexOf("/") + 1
-    );
-    fileReport.message = offense.message;
-    fileReport.linter = "brakeman";
-    fileReport.line = offense.line;
-    fileReport.name = offense.warning_type;
-    fileReport.severity_level = 2;
-    fileReport.rule_id = null;
 
-    // fileReport.location = offense.location
-    // fileReport.user_input = offense.user_input
-    // fileReport.confidence = offense.confidence
-    // fileReport.confidence_level = offense.confidence ?
+  if (rawBrakemanResult.errors.length > 0) {
+    rawBrakemanResult.errors.forEach(function(offense) {
 
-    var lines = getRelevantSource(offense.file, offense.line);
+      var fileReport = {};
+      fileReport.file_path = offense.file;
+      fileReport.file_name = offense.file.substring(
+        offense.file.lastIndexOf("/") + 1
+      );
+      fileReport.message = offense.message;
+      fileReport.linter = "brakeman";
+      fileReport.line = offense.line;
+      fileReport.name = offense.warning_type;
+      fileReport.severity_level = 2;
+      fileReport.rule_id = null;
 
-    fileReport.source = lines;
+      // fileReport.location = offense.location
+      // fileReport.user_input = offense.user_input
+      // fileReport.confidence = offense.confidence
+      // fileReport.confidence_level = offense.confidence ?
 
-    formattedBrakemanResult.rule_checks_attributes.push(fileReport);
-  });
+      var lines = getRelevantSource(offense.file, offense.line);
 
+      fileReport.source = lines;
+
+      formattedBrakemanResult.rule_checks_attributes.push(fileReport);
+    });
+
+  }
   return formattedBrakemanResult;
 }
 
@@ -174,7 +183,7 @@ function runBrakeman(files) {
       // console.log(brakemanResult.toString());
       output = JSON.parse(brakemanResult.toString());
       // console.log(output);
-      var formattedBrakemanResult = formatBrakemanResult(output);
+      // var formattedBrakemanResult = formatBrakemanResult(output);
 
       // console.log("formattedBrakemanResult");
       // console.log(formattedBrakemanResult);
@@ -182,7 +191,7 @@ function runBrakeman(files) {
         console.log("");
         ora("No offense").succeed()
       }
-      displayOffensesAsText(formattedBrakemanResult);
+      // displayOffensesAsText(formattedBrakemanResult);
 
       // return formattedBrakemanResult;
 
@@ -193,6 +202,7 @@ function runBrakeman(files) {
       console.log("");
       console.log("Not inside a Rails application.");
       console.log("");
+      return
     } else {
       if (e.stdout) {
         // console.log(e.stdout);
