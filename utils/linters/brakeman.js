@@ -157,11 +157,29 @@ function formatBrakemanResult(rawBrakemanResult) {
       var name = offense.location.replace(filePath, 'file');
       var relativePath = filePath.replace(process.cwd() + "/", "");
 
-      console.log("$$$ filePath:", filePath);
-      console.log("$$$ relativePath:", relativePath);
-      console.log("$$$ line:", line);
-      console.log("$$$ message:", message);
-      console.log("$$$ name:", name);
+      // console.log("$$$ filePath:", filePath);
+      // console.log("$$$ relativePath:", relativePath);
+      // console.log("$$$ line:", line);
+      // console.log("$$$ message:", message);
+      // console.log("$$$ name:", name);
+
+      var fileReport = {};
+      fileReport.file_path = relativePath;
+      fileReport.file_name = relativePath.substring(
+        relativePath.lastIndexOf("/") + 1
+      );
+      fileReport.message = message;
+      fileReport.line = line;
+      fileReport.name = name;
+      fileReport.severity_level = 2;
+      fileReport.rule_id = null;
+      formattedBrakemanResult.error_count += 1
+
+      var lines = getRelevantSource(filePath, line);
+
+      fileReport.source = lines;
+
+      formattedBrakemanResult.rule_checks_attributes.push(fileReport);
 
       if (offense.file) {
         var fileReport = {};
