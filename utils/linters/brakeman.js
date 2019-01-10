@@ -109,7 +109,7 @@ function formatBrakemanResult(rawBrakemanResult) {
 
 
   var formattedBrakemanResult = {
-    error_count: rawBrakemanResult.errors.length || 0,
+    error_count: 0,
     warning_count: rawBrakemanResult.warnings.length || 0,
     linter: "brakeman",
     rule_checks_attributes: []
@@ -162,7 +162,7 @@ function formatBrakemanResult(rawBrakemanResult) {
         fileReport.name = offense.warning_type;
         fileReport.severity_level = 2;
         fileReport.rule_id = null;
-
+        formattedBrakemanResult.error_count += 1
         // fileReport.location = offense.location
         // fileReport.user_input = offense.user_input
         // fileReport.confidence = offense.confidence
@@ -195,10 +195,7 @@ function runBrakeman(files) {
 
       // console.log("formattedBrakemanResult");
       // console.log(formattedBrakemanResult);
-      if (formattedBrakemanResult.rule_checks_attributes.length == 0) {
-        console.log("");
-        ora("No offense").succeed()
-      }
+
       // displayOffensesAsText(formattedBrakemanResult);
 
       // return formattedBrakemanResult;
@@ -220,7 +217,11 @@ function runBrakeman(files) {
     }
   }
   var formattedBrakemanResult = formatBrakemanResult(output);
-
+  
+  if (formattedBrakemanResult.rule_checks_attributes.length == 0) {
+    console.log("");
+    ora("No offense").succeed()
+  }
   displayOffensesAsText(formattedBrakemanResult);
 
   return formattedBrakemanResult;
