@@ -893,6 +893,7 @@ function lintStaged(
     var rubyReports = {};
     var pythonReports = {};
     var styleFilesReport = {};
+    var brakemanReport = {};
     var erbReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
@@ -978,7 +979,7 @@ function lintStaged(
       console.log("");
       console.log(chalk.bold.cyan("Running Brakeman..."));
 
-      var brakemanReport = runBrakeman(brakemanFiles);
+      brakemanReport = runBrakeman(brakemanFiles);
       // console.log(brakemanReport);
     } else {
       brakemanReport.error_count = 0;
