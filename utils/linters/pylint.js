@@ -274,7 +274,7 @@ function createRuleCheckJson(output, body) {
       var fileReport = {
         file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1),
         file_path: relativePath,
-        linter: "Pylint"
+        linter: "pylint"
       };
       rule_checks_attributes.push(fileReport);
     } else {
@@ -290,6 +290,8 @@ function createRuleCheckJson(output, body) {
         fileReport.column = offense.column;
         fileReport.long_message = offense.message;
         fileReport.message = offense.message.split("\n")[0];
+        fileReport.linter = "pylint"
+
         fileReport.rule_id = null;
 
         // console.log(policy_rule.rule.content.slug);

@@ -337,7 +337,7 @@ function createRuleCheckJson(output, body) {
       var fileReport = {
         file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1),
         file_path: relativePath,
-        linter: "Stylelint"
+        linter: "stylelint"
       };
       rule_checks_attributes.push(fileReport);
     } else {
@@ -354,6 +354,8 @@ function createRuleCheckJson(output, body) {
         fileReport.rule_id = null;
 
         fileReport.message = message.text.split(/[()]+/)[0];
+        
+        fileReport.linter = "stylelint"
 
         // console.log(policy_rule.rule.content.slug);
 

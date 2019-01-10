@@ -601,7 +601,7 @@ function createRuleCheckJson(output, body) {
       var fileReport = {
         file_name: file.path.substring(file.path.lastIndexOf("/") + 1),
         file_path: file.path,
-        linter: "Rubocop"
+        linter: "rubocop"
       };
       rule_checks_attributes.push(fileReport);
     } else {
@@ -619,6 +619,8 @@ function createRuleCheckJson(output, body) {
         fileReport.column_end = offense.location.last_column;
         // console.log(policy_rule.rule.content.slug);
         fileReport.rule_id = null;
+        fileReport.linter = "rubocop"
+
 
         fileReport.name = offense.cop_name;
         if (offense.severity == "warning") {

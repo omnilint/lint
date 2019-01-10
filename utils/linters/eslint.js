@@ -414,7 +414,7 @@ function createRuleCheckJson(output, body) {
       var fileReport = {
         file_name: relativePath.substring(relativePath.lastIndexOf("/") + 1),
         file_path: relativePath,
-        linter: "Eslint"
+        linter: "eslint"
       };
       rule_checks_attributes.push(fileReport);
     } else {
@@ -431,6 +431,8 @@ function createRuleCheckJson(output, body) {
         fileReport.column_end = message.endColumn;
 
         fileReport.message = message.message;
+        fileReport.linter = "eslint";
+
 
         fileReport.rule_id = null;
 

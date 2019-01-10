@@ -113,7 +113,7 @@ function formatBrakemanResult(rawBrakemanResult) {
       offense.file.lastIndexOf("/") + 1
     );
     fileReport.message = offense.message;
-    // fileReport.linter = "brakeman";
+    fileReport.linter = "brakeman";
     fileReport.line = offense.line;
     fileReport.name = offense.warning_type;
     fileReport.severity_level = 1;
