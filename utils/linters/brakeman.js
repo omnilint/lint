@@ -148,27 +148,32 @@ function formatBrakemanResult(rawBrakemanResult) {
 
       console.log('offense');
       console.log(offense);
-      var fileReport = {};
-      fileReport.file_path = offense.file;
-      fileReport.file_name = offense.file.substring(
-        offense.file.lastIndexOf("/") + 1
-      );
-      fileReport.message = offense.message;
-      fileReport.line = offense.line;
-      fileReport.name = offense.warning_type;
-      fileReport.severity_level = 2;
-      fileReport.rule_id = null;
 
-      // fileReport.location = offense.location
-      // fileReport.user_input = offense.user_input
-      // fileReport.confidence = offense.confidence
-      // fileReport.confidence_level = offense.confidence ?
 
-      var lines = getRelevantSource(offense.file, offense.line);
 
-      fileReport.source = lines;
+      if (offense.file) {
+        var fileReport = {};
+        fileReport.file_path = offense.file;
+        fileReport.file_name = offense.file.substring(
+          offense.file.lastIndexOf("/") + 1
+        );
+        fileReport.message = offense.message;
+        fileReport.line = offense.line;
+        fileReport.name = offense.warning_type;
+        fileReport.severity_level = 2;
+        fileReport.rule_id = null;
 
-      formattedBrakemanResult.rule_checks_attributes.push(fileReport);
+        // fileReport.location = offense.location
+        // fileReport.user_input = offense.user_input
+        // fileReport.confidence = offense.confidence
+        // fileReport.confidence_level = offense.confidence ?
+
+        var lines = getRelevantSource(offense.file, offense.line);
+
+        fileReport.source = lines;
+
+        formattedBrakemanResult.rule_checks_attributes.push(fileReport);
+      }
     });
 
   }
