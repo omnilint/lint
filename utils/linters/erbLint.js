@@ -135,7 +135,6 @@ function parseErbLintOutput(output, statusCode) {
   var tmpOffenses = [];
 
   var offenses = [];
-
   if (statusCode === 0) {
     // console.log(tmpOffenses);
     // console.log("No offenses");
@@ -158,13 +157,17 @@ function parseErbLintOutput(output, statusCode) {
       filePath = filePath.substr(1);
     }
     var message = tmpOffense[0].split(":")[1];
+
     if (message) {
       var slug = tmpOffense[0].split(":")[0];
-      message = message.substr(1);
+      message = slug + " " + message.substr(1);
     } else {
       var slug = "undefined";
       message = tmpOffense[0].split(":")[0];
     }
+
+    message = message.charAt(0).toUpperCase() + message.slice(1);
+
     var line = parseInt(tmpOffense[1].split(":")[2]);
     var source = getRelevantSource(filePath, line);
 
@@ -176,6 +179,7 @@ function parseErbLintOutput(output, statusCode) {
       message: message,
       line: line,
       severity_level: 1,
+      linter: "erblint",
       source: source
     };
     // console.log('offense')
@@ -257,19 +261,19 @@ function parseOutPoutForRuleCheckAsText(offenses) {
         }
         var codeCoordinate = error.line;
         var shortMessage = error.message;
-        if (ruleName) {
+        // if (ruleName) {
+        //   console.log(
+        //     chalk.grey(codeCoordinate) +
+        //       " " +
+        //       ruleName +
+        //       " " +
+        //       chalk.grey(shortMessage)
+        //   );
+        // } else {
           console.log(
-            chalk.grey(codeCoordinate) +
-              " " +
-              ruleName +
-              " " +
-              chalk.grey(shortMessage)
+            chalk.grey("Line " + codeCoordinate) + " " + shortMessage
           );
-        } else {
-          console.log(
-            chalk.grey(codeCoordinate) + " " + chalk.grey(shortMessage)
-          );
-        }
+        // }
       });
     }
   });
