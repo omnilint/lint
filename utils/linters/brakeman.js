@@ -146,10 +146,22 @@ function formatBrakemanResult(rawBrakemanResult) {
   if (rawBrakemanResult.errors.length > 0) {
     rawBrakemanResult.errors.forEach(function(offense) {
 
-      // console.log('offense');
-      // console.log(offense);
 
+      var tmp_1 = offense.error.split(" :: ")
+      var tmp_2 = tmp_1[0]
+      var tmp_3 = tmp_2.split(":")
+      var filePath = tmp_3[0]
+      var line = tmp_3[1]
 
+      var message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
+      var name = offense.location.replace(filePath, 'file');
+      var relativePath = filePath.replace(process.cwd() + "/", "");
+
+      console.log("$$$ filePath:", filePath);
+      console.log("$$$ relativePath:", relativePath);
+      console.log("$$$ line:", line);
+      console.log("$$$ message:", message);
+      console.log("$$$ name:", name);
 
       if (offense.file) {
         var fileReport = {};
@@ -217,7 +229,7 @@ function runBrakeman(files) {
     }
   }
   var formattedBrakemanResult = formatBrakemanResult(output);
-  
+
   if (formattedBrakemanResult.rule_checks_attributes.length == 0) {
     console.log("");
     ora("No offense").succeed()
