@@ -87,10 +87,10 @@ function displayOffensesAsText(formattedBrakemanResult) {
     console.log(
       "--------------------------------------------------------------------------------------"
     );
-    console.log("No Offenses");
+    // console.log("No Offenses");
 
     if (groupedBrakemanResult[file]) {
-      console.log("Offenses");
+      // console.log("Offenses");
       groupedBrakemanResult[file].forEach(function(offense) {
         // console.log('offense');
         // console.log(offense);
@@ -122,6 +122,30 @@ function formatBrakemanResult(rawBrakemanResult) {
     fileReport.line = offense.line;
     fileReport.name = offense.warning_type;
     fileReport.severity_level = 1;
+    fileReport.rule_id = null;
+
+    // fileReport.location = offense.location
+    // fileReport.user_input = offense.user_input
+    // fileReport.confidence = offense.confidence
+    // fileReport.confidence_level = offense.confidence ?
+
+    var lines = getRelevantSource(offense.file, offense.line);
+
+    fileReport.source = lines;
+
+    formattedBrakemanResult.rule_checks_attributes.push(fileReport);
+  });
+  rawBrakemanResult.errors.forEach(function(offense) {
+    var fileReport = {};
+    fileReport.file_path = offense.file;
+    fileReport.file_name = offense.file.substring(
+      offense.file.lastIndexOf("/") + 1
+    );
+    fileReport.message = offense.message;
+    fileReport.linter = "brakeman";
+    fileReport.line = offense.line;
+    fileReport.name = offense.warning_type;
+    fileReport.severity_level = 2;
     fileReport.rule_id = null;
 
     // fileReport.location = offense.location
@@ -171,7 +195,7 @@ function runBrakeman(files) {
       console.log("");
     } else {
       if (e.stdout) {
-        console.log(e.stdout);
+        // console.log(e.stdout);
         output = JSON.parse(e.stdout.toString());
       }
       // console.log(output);
