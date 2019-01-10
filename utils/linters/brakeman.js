@@ -146,14 +146,19 @@ function formatBrakemanResult(rawBrakemanResult) {
   if (rawBrakemanResult.errors.length > 0) {
     rawBrakemanResult.errors.forEach(function(offense) {
 
-
+      console.log(offense);
       var tmp_1 = offense.error.split(" :: ")
       var tmp_2 = tmp_1[0]
       var tmp_3 = tmp_2.split(":")
       var filePath = tmp_3[0]
       var line = parseInt(tmp_3[1])
 
-      var message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
+      if (tmp_1[1]) {
+        var message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
+      } else {
+        var message = ""
+      }
+
       var name = offense.location.replace(filePath, 'file.');
       var relativePath = filePath.replace(process.cwd() + "/", "");
 
