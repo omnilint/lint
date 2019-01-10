@@ -348,16 +348,18 @@ function copyFolderRecursiveSync(source, target) {
   copyFileSpinner.succeed("Hooks backed up.");
 
   //copy
-  if (fs.lstatSync(source).isDirectory()) {
-    files = fs.readdirSync(source);
-    files.forEach(function(file) {
-      var curSource = path.join(source, file);
-      if (fs.lstatSync(curSource).isDirectory()) {
-        copyFolderRecursiveSync(curSource, targetFolder);
-      } else {
-        copyFileSync(curSource, targetFolder);
-      }
-    });
+  if (fs.existsSync(source)) {
+    if (fs.lstatSync(source).isDirectory()) {
+      files = fs.readdirSync(source);
+      files.forEach(function(file) {
+        var curSource = path.join(source, file);
+        if (fs.lstatSync(curSource).isDirectory()) {
+          copyFolderRecursiveSync(curSource, targetFolder);
+        } else {
+          copyFileSync(curSource, targetFolder);
+        }
+      });
+    }
   }
 }
 
