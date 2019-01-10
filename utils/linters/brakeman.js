@@ -4,6 +4,7 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 var _ = require("lodash");
 const { getRelevantSource } = require("../filesHandler");
+const ora = require("ora");
 
 function checkIfRubyIsInstalled() {
   try {
@@ -67,7 +68,7 @@ function displayOffenseAsText(offense) {
   }
 
   console.log(
-    offense.line + " " + ruleSeverity + " " + ruleName + " " + linterMessage
+    chalk.grey("Line " + offense.line) + " " + ruleSeverity + " " + ruleName + " " + linterMessage
   );
 }
 
@@ -86,7 +87,10 @@ function displayOffensesAsText(formattedBrakemanResult) {
     console.log(
       "--------------------------------------------------------------------------------------"
     );
+    console.log("No Offenses");
+
     if (groupedBrakemanResult[file]) {
+      console.log("Offenses");
       groupedBrakemanResult[file].forEach(function(offense) {
         // console.log('offense');
         // console.log(offense);
@@ -100,9 +104,10 @@ function formatBrakemanResult(rawBrakemanResult) {
   // console.log(rawBrakemanResult.scan_info);
   // console.log();
   // console.log(rawBrakemanResult.warnings);
+
   var formattedBrakemanResult = {
-    error_count: rawBrakemanResult.errors.length,
-    warning_count: rawBrakemanResult.warnings.length,
+    error_count: rawBrakemanResult.errors.length || 0,
+    warning_count: rawBrakemanResult.warnings.length || 0,
     rule_checks_attributes: []
   };
 
@@ -142,8 +147,21 @@ function runBrakeman(files) {
     var brakemanResult = execSync(cmd, { stdio: [0] });
     if (brakemanResult) {
       // console.log(brakemanResult);
-      // console.log("SUCCESS");
-      output = brakemanResult.stdout.toString();
+      // console.log(brakemanResult.toString());
+      output = JSON.parse(brakemanResult.toString());
+      // console.log(output);
+      var formattedBrakemanResult = formatBrakemanResult(output);
+
+      // console.log("formattedBrakemanResult");
+      // console.log(formattedBrakemanResult);
+      if (formattedBrakemanResult.rule_checks_attributes.length == 0) {
+        console.log("");
+        ora("No offense").succeed()
+      }
+      displayOffensesAsText(formattedBrakemanResult);
+
+      // return formattedBrakemanResult;
+
       // console.log(output);
     }
   } catch (e) {
@@ -152,7 +170,10 @@ function runBrakeman(files) {
       console.log("Not inside a Rails application.");
       console.log("");
     } else {
-      output = JSON.parse(e.stdout.toString());
+      if (e.stdout) {
+        console.log(e.stdout);
+        output = JSON.parse(e.stdout.toString());
+      }
       // console.log(output);
     }
   }
