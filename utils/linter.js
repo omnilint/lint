@@ -1254,10 +1254,10 @@ function lintStaged(
       .concat(rubyFiles)
       .concat(erbFiles)
       .concat(pythonFiles)
-      .concat(erbFiles)
       .concat(styleLintCompatibleFiles);
 
     var notInspectedFiles = arr_diff(stagedFilePaths, inspectedFiles);
+    // console.log(notInspectedFiles);
 
     report.report = {
       rule_checks_attributes: ruleChecks.rule_checks_attributes,
