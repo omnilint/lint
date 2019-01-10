@@ -66,13 +66,13 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.4.4", "-v, --version");
+program.version("v0.5.0", "-v, --version");
 
 program
   .command("version")
   .description("Print Omnilint version.")
   .action(() => {
-    console.log("v0.4.4");
+    console.log("v0.5.0");
     process.exit(0);
   });
 
@@ -117,7 +117,6 @@ program
     const token = getTokenFromLocalDevice();
     if (username && token) {
       console.log("Already logged in as " + chalk.green(username) + ".");
-
     } else {
       prompt([
         {
@@ -147,7 +146,6 @@ program
     const token = getTokenFromLocalDevice();
     if (!username && !token) {
       console.log("Not logged in.");
-
     } else {
       prompt([
         {
@@ -523,7 +521,6 @@ program
         process.exit(1);
       });
   });
-
 
 program.parse(process.argv);
 
