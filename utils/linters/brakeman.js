@@ -68,7 +68,7 @@ function displayOffenseAsText(offense) {
   }
 
   console.log(
-    chalk.grey("Line " + offense.line) + " " + ruleSeverity + " " + ruleName + " " + linterMessage
+    chalk.grey("Line " + offense.line) + " " + ruleSeverity + " " + ruleName + " " + chalk.grey(linterMessage)
   );
 }
 
@@ -151,10 +151,10 @@ function formatBrakemanResult(rawBrakemanResult) {
       var tmp_2 = tmp_1[0]
       var tmp_3 = tmp_2.split(":")
       var filePath = tmp_3[0]
-      var line = tmp_3[1]
+      var line = parseInt(tmp_3[1])
 
       var message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
-      var name = offense.location.replace(filePath, 'file');
+      var name = offense.location.replace(filePath, 'file.');
       var relativePath = filePath.replace(process.cwd() + "/", "");
 
       // console.log("$$$ filePath:", filePath);
