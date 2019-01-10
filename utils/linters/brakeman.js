@@ -111,7 +111,9 @@ function formatBrakemanResult(rawBrakemanResult) {
   var formattedBrakemanResult = {
     error_count: rawBrakemanResult.errors.length || 0,
     warning_count: rawBrakemanResult.warnings.length || 0,
+    linter: "brakeman",
     rule_checks_attributes: []
+
   };
   if (rawBrakemanResult.warnings.length > 0) {
     rawBrakemanResult.warnings.forEach(function(offense) {
@@ -121,7 +123,6 @@ function formatBrakemanResult(rawBrakemanResult) {
         offense.file.lastIndexOf("/") + 1
       );
       fileReport.message = offense.message;
-      fileReport.linter = "brakeman";
       fileReport.line = offense.line;
       fileReport.name = offense.warning_type;
       fileReport.severity_level = 1;
@@ -150,7 +151,6 @@ function formatBrakemanResult(rawBrakemanResult) {
         offense.file.lastIndexOf("/") + 1
       );
       fileReport.message = offense.message;
-      fileReport.linter = "brakeman";
       fileReport.line = offense.line;
       fileReport.name = offense.warning_type;
       fileReport.severity_level = 2;
@@ -183,7 +183,7 @@ function runBrakeman(files) {
       // console.log(brakemanResult.toString());
       output = JSON.parse(brakemanResult.toString());
       // console.log(output);
-      // var formattedBrakemanResult = formatBrakemanResult(output);
+      var formattedBrakemanResult = formatBrakemanResult(output);
 
       // console.log("formattedBrakemanResult");
       // console.log(formattedBrakemanResult);
