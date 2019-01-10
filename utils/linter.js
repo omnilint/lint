@@ -1590,11 +1590,16 @@ function postCommit() {
 
     editCommitAttempt(repositoryUUID, sha)
       .then(body => {
+        // console.log("editCommitAttempt Success");
         // console.log(body);
         rimraf("./.omnilint/tmp/");
       })
       .catch(error => {
+        // console.log("editCommitAttempt Error");
+
         console.log(error);
+        rimraf("./.omnilint/tmp/");
+
         process.exit(1);
       });
   });
@@ -1658,9 +1663,9 @@ function editCommitAttempt(repositoryUUID, sha) {
             // var stringify = JSON.stringify(body);
             resolve(body);
           } else {
-            console.log(error);
-            console.log(body);
-            console.log(response.statusCode);
+            // console.log(error);
+            // console.log(body);
+            // console.log(response.statusCode);
             reject(new Error("Unable to post to server."));
           }
         } else {
