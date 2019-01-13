@@ -6,6 +6,10 @@ var _ = require("lodash");
 const { getRelevantSource } = require("../filesHandler");
 const ora = require("ora");
 
+
+
+
+
 function checkIfRubyIsInstalled() {
   try {
     var res = execSync("ruby -v");
@@ -147,26 +151,42 @@ function formatBrakemanResult(rawBrakemanResult) {
     rawBrakemanResult.errors.forEach(function(offense) {
 
       console.log(offense);
-      var tmp_1 = offense.error.split(" :: ")
-      var tmp_2 = tmp_1[0]
-      var tmp_3 = tmp_2.split(":")
-      var filePath = tmp_3[0]
-      var line = parseInt(tmp_3[1])
 
-      if (tmp_1[1]) {
-        var message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
+
+      // Resultat Brakeman
+      // { error:
+      //    'invalid byte sequence in US-ASCII While processing /Users/jimmy/Dev/gatrix/app/views/commit_attempts/show.html.erb',
+      //   location:
+      //    '/Users/jimmy/.rvm/gems/ruby-2.5.3/gems/brakeman-4.3.1/lib/brakeman/parsers/rails3_erubis.rb:78:in 'gsub\'' }
+
+
+      var tmp_1 = offense.error
+      var line;
+      var name;
+      var message;
+      var absoluteFilePath;
+      if (tmp_1.split(" :: ").length > 1) {
+        var tmp_2 = tmp_1[0]
+        var tmp_3 = tmp_2.split(":")
+        absoluteFilePath = tmp_3[0]
+        line = parseInt(tmp_3[1])
+        if (tmp_1[1]) {
+          message = tmp_1[1].replace(/^\w/, c => c.toUpperCase());
+        }
+        name = offense.location.replace(absoluteFilePath, 'file.');
       } else {
-        var message = ""
+        absoluteFilePath = tmp_1.substring(tmp_1.lastIndexOf(" "));
+        message = tmp_1;
+        name = tmp_1.replace(absoluteFilePath, 'file.');
       }
 
-      var name = offense.location.replace(filePath, 'file.');
-      var relativePath = filePath.replace(process.cwd() + "/", "");
+      var relativePath = absoluteFilePath.replace(process.cwd() + "/", "");
 
-      // console.log("$$$ filePath:", filePath);
-      // console.log("$$$ relativePath:", relativePath);
-      // console.log("$$$ line:", line);
-      // console.log("$$$ message:", message);
-      // console.log("$$$ name:", name);
+      console.log("$$$ absoluteFilePath:", absoluteFilePath);
+      console.log("$$$ relativePath:", relativePath);
+      console.log("$$$ line:", line);
+      console.log("$$$ message:", message);
+      console.log("$$$ name:", name);
 
       var fileReport = {};
       fileReport.file_path = relativePath;
