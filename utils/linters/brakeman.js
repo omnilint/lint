@@ -177,7 +177,7 @@ function formatBrakemanResult(rawBrakemanResult) {
       } else {
         absoluteFilePath = tmp_1.substring(tmp_1.lastIndexOf(" "));
         message = tmp_1;
-        name = tmp_1.replace(absoluteFilePath, 'file.');
+        name = tmp_1.replace(absoluteFilePath, ' file.');
       }
 
       var relativePath = absoluteFilePath.replace(process.cwd() + "/", "");
@@ -200,9 +200,11 @@ function formatBrakemanResult(rawBrakemanResult) {
       fileReport.rule_id = null;
       formattedBrakemanResult.error_count += 1
 
-      var lines = getRelevantSource(filePath, line);
+      if (line) {
+        var lines = getRelevantSource(absoluteFilePath, line);
+        fileReport.source = lines;
+      }
 
-      fileReport.source = lines;
 
       formattedBrakemanResult.rule_checks_attributes.push(fileReport);
 
@@ -236,7 +238,13 @@ function formatBrakemanResult(rawBrakemanResult) {
 }
 
 function runBrakeman(files) {
-  var cmd = "brakeman -f json --only-files " + files.join(",");
+  var sanitizedFiles = [];
+  files.forEach(function(file) {
+    if (file.lastIndexOf(" ") == -1) {
+      sanitizedFiles.push(file)
+    }
+  })
+  var cmd = "brakeman -f json --only-files " + sanitizedFiles.join(",");
   var output;
   try {
     // console.log(cmd);
@@ -261,7 +269,7 @@ function runBrakeman(files) {
     if (e.status === 4) {
       console.log("");
       console.log("Not inside a Rails application.");
-      console.log("");
+      console.log(e);
       return
     } else {
       if (e.stdout) {

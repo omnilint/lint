@@ -893,7 +893,11 @@ function lintStaged(
     var rubyReports = {};
     var pythonReports = {};
     var styleFilesReport = {};
-    var brakemanReport = {};
+    var brakemanReport = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: [],
+    };
     var erbReports = {};
     var filesMadePrettier = [];
     var prettierHasSucceed = true;
