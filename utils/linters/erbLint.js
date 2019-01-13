@@ -283,11 +283,7 @@ function parseOutPoutForRuleCheckAsText(offenses) {
 function runErbLint(files, body) {
   console.log("");
 
-  var cmd =
-    "erblint --config " +
-    dotOmnilintDirectory +
-    "/tmp/.erb-lint.yml " +
-    files.join(" ");
+  var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join(" ") + '"';
   var statusCode = 0;
   try {
     // console.log("merde1");

@@ -150,7 +150,7 @@ function formatBrakemanResult(rawBrakemanResult) {
   if (rawBrakemanResult.errors.length > 0) {
     rawBrakemanResult.errors.forEach(function(offense) {
 
-      console.log(offense);
+      // console.log(offense);
 
 
       // Resultat Brakeman
@@ -182,11 +182,11 @@ function formatBrakemanResult(rawBrakemanResult) {
 
       var relativePath = absoluteFilePath.replace(process.cwd() + "/", "");
 
-      console.log("$$$ absoluteFilePath:", absoluteFilePath);
-      console.log("$$$ relativePath:", relativePath);
-      console.log("$$$ line:", line);
-      console.log("$$$ message:", message);
-      console.log("$$$ name:", name);
+      // console.log("$$$ absoluteFilePath:", absoluteFilePath);
+      // console.log("$$$ relativePath:", relativePath);
+      // console.log("$$$ line:", line);
+      // console.log("$$$ message:", message);
+      // console.log("$$$ name:", name);
 
       var fileReport = {};
       fileReport.file_path = relativePath;
@@ -196,9 +196,9 @@ function formatBrakemanResult(rawBrakemanResult) {
       fileReport.message = message;
       fileReport.line = line;
       fileReport.name = name;
-      fileReport.severity_level = 2;
+      fileReport.severity_level = 1;
       fileReport.rule_id = null;
-      formattedBrakemanResult.error_count += 1
+      formattedBrakemanResult.warning_count += 1
 
       if (line) {
         var lines = getRelevantSource(absoluteFilePath, line);
@@ -238,16 +238,14 @@ function formatBrakemanResult(rawBrakemanResult) {
 }
 
 function runBrakeman(files) {
-  var sanitizedFiles = [];
-  files.forEach(function(file) {
-    if (file.lastIndexOf(" ") == -1) {
-      sanitizedFiles.push(file)
-    }
-  })
-  var cmd = "brakeman -f json --only-files " + sanitizedFiles.join(",");
+  // var sanitizedFiles = [];
+  // files.forEach(function(file) {
+  //   file.replace(/"/g, "\'")
+  // })
+  var cmd = 'brakeman -f json --only-files "' + files.join(",") + '"';
   var output;
   try {
-    // console.log(cmd);
+    console.log(cmd);
     var brakemanResult = execSync(cmd, { stdio: [0] });
     if (brakemanResult) {
       // console.log(brakemanResult);

@@ -889,18 +889,38 @@ function lintStaged(
       var autofixEnabled = ora("Autofix enabled.").succeed();
     }
 
-    var javascriptReports = {};
-    var rubyReports = {};
-    var pythonReports = {};
-    var styleFilesReport = {};
+    var javascriptReports = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: []
+    };
+    var rubyReports = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: []
+    };
+    var pythonReports = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: []
+    };
+    var styleFilesReport = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: []
+    };
     var brakemanReport = {
       error_count: 0,
       warning_count: 0,
-      rule_checks_attributes: [],
+      rule_checks_attributes: []
     };
-    var erbReports = {};
+    var erbReports = {
+      error_count: 0,
+      warning_count: 0,
+      rule_checks_attributes: []
+    };
     var filesMadePrettier = [];
-    var prettierHasSucceed = true;
+    var prettierHasSucceed;
 
     if (prettierFiles.length > 0) {
       // console.log("Before prettierFiles");
@@ -974,7 +994,7 @@ function lintStaged(
           console.log(e);
         }
 
-        var prettierHasSucceed = false;
+        prettierHasSucceed = false;
       }
       // var prettierHasSucceed = runPrettierOnStagedFiles(prettierFiles, body);
     }
