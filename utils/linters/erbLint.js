@@ -231,6 +231,25 @@ function parseErbLintResults(offenses, body) {
   return erbLintReport;
 }
 
+function sortErrorsToDisplay(fileReport) {
+  var errorMessages = [];
+  var warningMessages = [];
+  var errorsToDisplay;
+
+    // var errorsToDisplay = file.offenses.sort((a, b) =>
+    //   b.severity < a.severity ? 1 : a.severity < b.severity ? -1 : 0
+    // );
+  errorsToDisplay = fileReport.sort(function(a, b) {
+    if (a.line === b.line) {
+      // Column is only important when lines are the same
+      return a.message > b.message ? 1 : -1;
+    }
+    return a.line > b.line ? 1 : -1;
+  });
+
+  return errorsToDisplay;
+}
+
 function parseOutPoutForRuleCheckAsText(offenses) {
   var output = _.mapValues(_.groupBy(offenses, "file_path"));
   var parseableOutput = Object.keys(output);
@@ -251,7 +270,9 @@ function parseOutPoutForRuleCheckAsText(offenses) {
     // console.log(output);
 
     if (output[file]) {
-      output[file].forEach(function(error) {
+      var errorsToDisplay = sortErrorsToDisplay(output[file]);
+
+      errorsToDisplay.forEach(function(error) {
         if (!error.message) {
           spinner.succeed();
           return;
