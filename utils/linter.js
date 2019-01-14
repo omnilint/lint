@@ -993,7 +993,7 @@ function lintStaged(
           var error_at_line = e.loc.start + "";
           console.log(error_at_line);
         } else {
-          console.log(e);
+          console.log(e.toString());
         }
 
         prettierHasSucceed = false;
