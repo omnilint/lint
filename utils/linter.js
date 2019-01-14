@@ -983,6 +983,8 @@ function lintStaged(
         // console.log("");
         if (prettier_fails > 0) {
           prettierHasSucceed = false;
+        } else {
+          prettierHasSucceed = true
         }
       } catch (e) {
         console.log("Prettier failure:");
@@ -1304,7 +1306,7 @@ function lintStaged(
     ) {
       report.passed = false;
     } else if (
-      !prettierHasSucceed &&
+      prettierHasSucceed == false &&
       body.policy.content.prevent_commits_on_errors
     ) {
       report.passed = false;
