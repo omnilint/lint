@@ -44,17 +44,15 @@ function runEslint(files, autofix, body, desiredFormat) {
   // console.log("=== Lint called ===");
   if (autofix) {
     var cmd =
-      "eslint --config " +
+      'eslint --config ' +
       dotOmnilintDirectory +
-      "/tmp/eslintrc --fix --format json " +
-      files.join(" ");
+      '/tmp/eslintrc --fix --format json "' + files.join('" "') + '"'
     // console.log("Prepare to fix");
   } else {
     var cmd =
-      "eslint --config " +
+      'eslint --config ' +
       dotOmnilintDirectory +
-      "/tmp/eslintrc --format json " +
-      files.join(" ");
+      '/tmp/eslintrc --format json "' + files.join('" "') + '"'
   }
   try {
     // console.log("=== Try ===");
