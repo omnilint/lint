@@ -304,10 +304,11 @@ function parseOutPoutForRuleCheckAsText(offenses) {
 function runErbLint(files, body) {
   // console.log("");
 
-  var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join(" ") + '"';
+  var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
   var statusCode = 0;
   try {
     // console.log("merde1");
+    // console.log(cmd);
 
     var erbLintRunner = execSync(cmd, { stdio: [0] });
 
@@ -349,8 +350,8 @@ function runErbLint(files, body) {
 
     if (e.stdout && statusCode === 1) {
       var output = e.stdout.toString();
-      // console.log(output);
       // console.log('-------------------');
+      // console.log(output);
       var offenses = parseErbLintOutput(output, statusCode);
       var output = _.mapValues(_.groupBy(offenses, "file_path"));
       var parseableOutput = Object.keys(output);
