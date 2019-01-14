@@ -205,7 +205,54 @@ function createPylintConfig(pylintRules) {
   fs.writeFileSync(dotOmnilintDirectory + "/tmp/.pylintrc", pylintRulesConfig);
 }
 
-function parseOutPoutForRuleCheckAsText(output) {
+function sortErrorsToDisplay(file, truncate) {
+  var errorMessages = [];
+  var warningMessages = [];
+  var errorsToDisplay;
+
+
+
+  if (truncate, file.length > 10) {
+    offenses.forEach(function(offense) {
+      // console.log(message);
+      if (offense.severity_level == 1) {
+        warningMessages.push(offense);
+        // console.log(message);
+      } else {
+        errorMessages.push(offense);
+        // console.log(message);
+      }
+    });
+    errorsToDisplay = warningMessages.concat(errorMessages);
+    errorsToDisplay = errorsToDisplay.slice(0,10).sort(function(a, b) {
+      if (a.severity_level === b.severity_level) {
+        // Line is only important when severities are the same
+        if (a.line === b.line) {
+          // Column is only important when lines are the same
+          return a.column > b.column ? 1 : -1;
+        }
+        return a.line > b.line ? 1 : -1;
+      }
+      return b.severity_level > a.severity_level ? 1 : -1;
+    });
+  } else {
+    errorsToDisplay = offenses.sort(function(a, b) {
+      if (a.severity_level === b.severity_level) {
+        // Line is only important when severities are the same
+        if (a.line === b.line) {
+          // Column is only important when lines are the same
+          return a.column > b.column ? 1 : -1;
+        }
+        return a.line > b.line ? 1 : -1;
+      }
+      return b.severity_level > a.severity_level ? 1 : -1;
+    });
+  }
+  return errorsToDisplay;
+}
+
+
+function parseOutPoutForRuleCheckAsText(output, truncate) {
   var parseableOutput = Object.keys(output);
 
   const spinner = ora("No offense, bravo!");
@@ -224,7 +271,8 @@ function parseOutPoutForRuleCheckAsText(output) {
       spinner.succeed();
       return;
     }
-    output[file].forEach(function(error) {
+    var errorsToDisplay =  sortErrorsToDisplay(output[file], truncate)
+    errorsToDisplay.forEach(function(error) {
       // console.log(error);
       var ruleName = error.symbol;
       var codeCoordinate = error.line + ":" + error.column;
@@ -237,6 +285,15 @@ function parseOutPoutForRuleCheckAsText(output) {
           chalk.grey(shortMessage)
       );
     });
+    if (truncate && output[file].length > 10) {
+      console.log(
+        chalk.grey(
+          " + " +
+            (output[file].length - errorsToDisplay.length) +
+            " other offenses."
+        )
+      );
+    }
   });
 }
 
@@ -365,7 +422,7 @@ function runPylintOntStagedFiles(
       var output = _.mapValues(_.groupBy(pylintOutPut, "path"));
 
       if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(output);
+        parseOutPoutForRuleCheckAsText(output, truncate);
       } else {
         parseOutPoutForRuleCheckAsTable(output);
       }
@@ -378,7 +435,7 @@ function runPylintOntStagedFiles(
       var output = _.mapValues(_.groupBy(pylintOutPut, "path"));
 
       if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(output);
+        parseOutPoutForRuleCheckAsText(output, truncate);
       } else {
         parseOutPoutForRuleCheckAsTable(output);
       }

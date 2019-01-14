@@ -123,7 +123,7 @@ function saveReport(report) {
 }
 
 // Use of eslint with lint-staged//
-function lintingPreCommit(desiredFormat, keep, time) {
+function lintingPreCommit(desiredFormat, keep, time, truncate) {
   // console.log(desiredFormat);
   // console.log('startESLintPreCommit');
   var eslintRules = {};
@@ -504,7 +504,8 @@ function lintingPreCommit(desiredFormat, keep, time) {
           stagedFilePaths,
           pythonFiles,
           erbFiles,
-          styleLintCompatibleFiles
+          styleLintCompatibleFiles,
+          truncate
         )
           .then(report => {
             var executionEndTime = new Date() - executionStartTime;
@@ -864,7 +865,8 @@ function lintStaged(
   stagedFilePaths,
   pythonFiles,
   erbFiles,
-  styleLintCompatibleFiles
+  styleLintCompatibleFiles,
+  truncate
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
@@ -1005,7 +1007,7 @@ function lintStaged(
       console.log("");
       console.log(chalk.bold.cyan("Running Brakeman..."));
 
-      brakemanReport = runBrakeman(brakemanFiles);
+      brakemanReport = runBrakeman(brakemanFiles, truncate);
       // console.log(brakemanReport);
     } else {
       brakemanReport.error_count = 0;
@@ -1022,7 +1024,8 @@ function lintStaged(
         styleLintCompatibleFiles,
         autofix,
         body,
-        desiredFormat
+        desiredFormat,
+        truncate
       );
     } else {
       styleFilesReport.error_count = 0;
@@ -1040,7 +1043,8 @@ function lintStaged(
         pythonFiles,
         autofix,
         body,
-        desiredFormat
+        desiredFormat,
+        truncate
       );
     } else {
       pythonReports.error_count = 0;
@@ -1069,7 +1073,7 @@ function lintStaged(
       //   "Linter is coming for " + jsFiles.length + " Javascript file(s):"
       // );
       // console.log(jsFiles);
-      javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat);
+      javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat, truncate);
       // var linting = eslintCli.executeOnFiles(jsFiles);
       //
       // const dotOmnilintDirectory = getDotOmnilintDirectory();
@@ -1204,7 +1208,7 @@ function lintStaged(
       // console.log("About to lint " + rubyFiles.length + " Ruby file(s):");
 
       // console.log(rubyFiles);
-      rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat);
+      rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat, truncate);
       // runRubocop(rubyFiles, autofix);
       // console.log(rubyReports);
       // console.log(rubyReports);
@@ -1220,8 +1224,7 @@ function lintStaged(
     if (erbFiles.length > 0) {
       console.log("");
       console.log(chalk.bold.cyan("Running ERB Lint..."));
-      erbReports = runErbLint(erbFiles, body);
-      // console.log(erbReports);
+      erbReports = runErbLint(erbFiles, body, truncate); // console.log(erbReports);
     } else {
       erbReports.error_count = 0;
       erbReports.warning_count = 0;
@@ -1516,7 +1519,7 @@ function printLinters(linters) {
   }
 }
 
-function preCommit(keep, time) {
+function preCommit(keep, time, truncate) {
   if (checkIfEslintIsInstalled()) {
     // console.log("Eslint is installed.");
   } else {
@@ -1541,7 +1544,7 @@ function preCommit(keep, time) {
     console.log("Rubocop is now installed.");
   }
 
-  lintingPreCommit("simple", keep, time);
+  lintingPreCommit("simple", keep, time, truncate);
 }
 
 function readPaths() {

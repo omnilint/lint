@@ -143,7 +143,7 @@ function installRubocop() {
   }
 }
 
-function runRubocopJson(files, autofix, body, desiredFormat) {
+function runRubocopJson(files, autofix, body, desiredFormat, truncate) {
   // console.log("Launching Rubocop");
 
   if (checkIfRubocopIsInstalled()) {
@@ -173,7 +173,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
       if (linter_command) {
         var output = JSON.parse(linter_command);
         if (desiredFormat == "simple") {
-          parseOutPoutForRuleCheckAsText(output);
+          parseOutPoutForRuleCheckAsText(output, truncate);
         } else {
           parseOutPoutForRuleCheckAsTable(output);
         }
@@ -187,7 +187,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
         var output = JSON.parse(err.stdout);
         // console.log(output);
         if (desiredFormat == "simple") {
-          parseOutPoutForRuleCheckAsText(output);
+          parseOutPoutForRuleCheckAsText(output, truncate);
         } else {
           parseOutPoutForRuleCheckAsTable(output);
         }
@@ -311,11 +311,13 @@ function parseRubocopResults(output, body) {
   return rubocopReport;
 }
 
-function sortErrorsToDisplay(file) {
+function sortErrorsToDisplay(file, truncate) {
   var errorMessages = [];
   var warningMessages = [];
   var errorsToDisplay;
-  if (file.offenses.length > 10) {
+
+
+  if (truncate && file.offenses.length > 10) {
     file.offenses.forEach(function(offense) {
       // console.log(offense);
 
@@ -362,7 +364,7 @@ function sortErrorsToDisplay(file) {
   return errorsToDisplay;
 }
 
-function parseOutPoutForRuleCheckAsText(output) {
+function parseOutPoutForRuleCheckAsText(output, truncate) {
   const spinner = ora("No offense, bravo!");
   output.files.forEach(function(file) {
     var warningCount = 0;
@@ -388,7 +390,7 @@ function parseOutPoutForRuleCheckAsText(output) {
     // } else {
     //   var errorMessages = file.offenses;
     // }
-    var errorsToDisplay = sortErrorsToDisplay(file);
+    var errorsToDisplay = sortErrorsToDisplay(file, truncate);
 
     errorsToDisplay.forEach(function(offense) {
       var ruleName = offense.cop_name;
@@ -417,7 +419,7 @@ function parseOutPoutForRuleCheckAsText(output) {
       );
     });
 
-    if (file.offenses.length > 10) {
+    if (truncate && file.offenses.length > 10) {
       console.log(
         chalk.grey(
           " + " +

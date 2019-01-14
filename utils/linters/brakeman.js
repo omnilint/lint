@@ -75,8 +75,49 @@ function displayOffenseAsText(offense) {
     chalk.grey("Line " + offense.line) + " " + ruleSeverity + " " + ruleName + " " + chalk.grey(linterMessage)
   );
 }
+function sortErrorsToDisplay(offenses, truncate) {
+  var errorMessages = [];
+  var warningMessages = [];
+  var errorsToDisplay;
 
-function displayOffensesAsText(formattedBrakemanResult) {
+
+
+  if (truncate && offenses.length > 10) {
+    offenses.forEach(function(offense) {
+      // console.log(message);
+      if (offense.severity_level == 1) {
+        warningMessages.push(offense);
+        // console.log(message);
+      } else {
+        errorMessages.push(offense);
+        // console.log(message);
+      }
+    });
+    errorsToDisplay = warningMessages.concat(errorMessages);
+    errorsToDisplay = errorsToDisplay.slice(0,10).sort(function(a, b) {
+      if (a.line === b.line) {
+        // Column is only important when lines are the same
+        return a.message > b.message ? 1 : -1;
+      }
+      return a.line > b.line ? 1 : -1;
+    });
+  } else {
+    errorsToDisplay = offenses.sort(function(a, b) {
+      if (a.severity_level === b.severity_level) {
+        // Line is only important when severities are the same
+        if (a.line === b.line) {
+          // Column is only important when lines are the same
+          return a.message > b.message ? 1 : -1;
+        }
+        return a.line > b.line ? 1 : -1;
+      }
+      return b.severity_level > a.severity_level ? 1 : -1;
+    });
+  }
+  return errorsToDisplay;
+}
+
+function displayOffensesAsText(formattedBrakemanResult, truncate) {
   // console.log('formattedBrakemanResult');
   // console.log(formattedBrakemanResult);
   var groupedBrakemanResult = _.mapValues(
@@ -92,10 +133,11 @@ function displayOffensesAsText(formattedBrakemanResult) {
       "--------------------------------------------------------------------------------------"
     );
     // console.log("No Offenses");
-
     if (groupedBrakemanResult[file]) {
       // console.log("Offenses");
-      groupedBrakemanResult[file].forEach(function(offense) {
+      var errorsToDisplay = sortErrorsToDisplay(groupedBrakemanResult[file], truncate)
+
+      errorsToDisplay.forEach(function(offense) {
         // console.log('offense');
         // console.log(offense);
         displayOffenseAsText(offense);
@@ -237,7 +279,7 @@ function formatBrakemanResult(rawBrakemanResult) {
   return formattedBrakemanResult;
 }
 
-function runBrakeman(files) {
+function runBrakeman(files, truncate) {
   // var sanitizedFiles = [];
   // files.forEach(function(file) {
   //   file.replace(/"/g, "\'")
@@ -287,7 +329,7 @@ function runBrakeman(files) {
     console.log("");
     ora("No offense").succeed()
   }
-  displayOffensesAsText(formattedBrakemanResult);
+  displayOffensesAsText(formattedBrakemanResult, truncate);
 
   return formattedBrakemanResult;
 }

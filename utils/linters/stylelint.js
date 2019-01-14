@@ -171,11 +171,11 @@ function selectFilesForStyleLint(stagedFilePaths) {
   return selectedFiles;
 }
 
-function sortErrorsToDisplay(file) {
+function sortErrorsToDisplay(file, truncate) {
   var errorMessages = [];
   var warningMessages = [];
 
-  if (file.warnings.length > 10) {
+  if (truncate && file.warnings.length > 10) {
     file.warnings.forEach(function(message) {
       // console.log(message);
       if (message.severity == "warning") {
@@ -222,7 +222,7 @@ function sortErrorsToDisplay(file) {
   return errorsToDisplay;
 }
 
-function parseOutPoutForRuleCheckAsText(output) {
+function parseOutPoutForRuleCheckAsText(output, truncate) {
   const spinner = ora("No offense, bravo!");
 
   output.forEach(function(file) {
@@ -255,7 +255,7 @@ function parseOutPoutForRuleCheckAsText(output) {
         totalError++;
       }
     });
-    var errorsToDisplay = sortErrorsToDisplay(file);
+    var errorsToDisplay = sortErrorsToDisplay(file, truncate);
     errorsToDisplay.forEach(function(message) {
       // console.log(message);
 
@@ -279,7 +279,7 @@ function parseOutPoutForRuleCheckAsText(output) {
       );
     });
 
-    if (file.warnings.length > 10) {
+    if (truncate && file.warnings.length > 10) {
       console.log(
         chalk.grey(
           " + " +
@@ -354,7 +354,7 @@ function createRuleCheckJson(output, body) {
         fileReport.rule_id = null;
 
         fileReport.message = message.text.split(/[()]+/)[0];
-        
+
         fileReport.linter = "stylelint"
 
         // console.log(policy_rule.rule.content.slug);
@@ -409,7 +409,7 @@ function parseStyleLintResults(output, body) {
   return stylintReport;
 }
 
-function runStyleLint(styleLintFiles, autofix, body, desiredFormat) {
+function runStyleLint(styleLintFiles, autofix, body, desiredFormat, truncate) {
   // sortPolicyRules()
   var cmd =
     "stylelint --config " +
@@ -426,7 +426,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat) {
       var output = JSON.parse(styleLintRunner.toString());
 
       if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(output);
+        parseOutPoutForRuleCheckAsText(output, truncate);
       } else {
         parseOutPoutForRuleCheckAsTable(output);
       }
@@ -447,7 +447,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat) {
       var output = JSON.parse(e.stdout.toString());
 
       if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(output);
+        parseOutPoutForRuleCheckAsText(output, truncate);
       } else {
         parseOutPoutForRuleCheckAsTable(output);
       }

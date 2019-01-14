@@ -39,7 +39,7 @@ function checkIfEslintIsInstalled() {
   return false;
 }
 
-function runEslint(files, autofix, body, desiredFormat) {
+function runEslint(files, autofix, body, desiredFormat, truncate) {
   // var cmd = "which eslint";
   // console.log("=== Lint called ===");
   if (autofix) {
@@ -66,7 +66,7 @@ function runEslint(files, autofix, body, desiredFormat) {
       var output = JSON.parse(linter_command);
 
       if (desiredFormat == "simple") {
-        parseOutPoutForRuleCheckAsText(output);
+        parseOutPoutForRuleCheckAsText(output, truncate);
       } else {
         parseOutPoutForRuleCheckAsTable(output);
       }
@@ -153,11 +153,11 @@ function parseOutPoutForRuleCheckAsTable(output) {
   });
 }
 
-function sortErrorsToDisplay(file) {
+function sortErrorsToDisplay(file, truncate) {
   var errorMessages = [];
   var warningMessages = [];
 
-  if (file.messages.length > 10) {
+  if (truncate && file.messages.length > 10) {
     file.messages.forEach(function(message) {
       // console.log(message);
       if (message.severity == 1) {
@@ -204,7 +204,7 @@ function sortErrorsToDisplay(file) {
   return errorsToDisplay;
 }
 
-function parseOutPoutForRuleCheckAsText(output) {
+function parseOutPoutForRuleCheckAsText(output, truncate) {
   // console.log("Parse");
   // console.log(output);
   const spinner = ora("No offense, bravo!");
@@ -237,7 +237,7 @@ function parseOutPoutForRuleCheckAsText(output) {
       b.severity > a.severity ? 1 : a.severity > b.severity ? -1 : 0
     );
 
-    var errorsToDisplay = sortErrorsToDisplay(file);
+    var errorsToDisplay = sortErrorsToDisplay(file, truncate);
     // console.log(errorsToDisplay);
     // console.log(errorMessages.length);
     // file.messages.sort( function( a.severity, b.severity ) { return a.severity - b.severity });
@@ -265,7 +265,7 @@ function parseOutPoutForRuleCheckAsText(output) {
           chalk.grey(message.message)
       );
     });
-    if (file.messages.length > 10) {
+    if (truncate && file.messages.length > 10) {
       console.log(
         chalk.grey(
           " + " +

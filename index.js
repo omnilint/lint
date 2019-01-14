@@ -295,9 +295,11 @@ program
   .description("Run before commit")
   .option("-k, --keep", "Skip temporary files deletion.")
   .option("-t, --time", "Show execution time.")
+  .option("-T, --truncate", "Shorten the output to display only the first 10 offenses.")
+
   .action(cmd => {
     // lintingPreCommit(desiredFormat.format);
-    preCommit(cmd.keep, cmd.time);
+    preCommit(cmd.keep, cmd.time, cmd.truncate);
   });
 
 program
