@@ -245,7 +245,7 @@ function runBrakeman(files) {
   var cmd = 'brakeman -f json --only-files "' + files.join(",") + '"';
   var output;
   try {
-    console.log(cmd);
+    // console.log(cmd);
     var brakemanResult = execSync(cmd, { stdio: [0] });
     if (brakemanResult) {
       // console.log(brakemanResult);
@@ -264,6 +264,10 @@ function runBrakeman(files) {
       // console.log(output);
     }
   } catch (e) {
+    if (e) {
+      // console.log(e);
+
+    }
     if (e.status === 4) {
       console.log("");
       console.log("Not inside a Rails application.");
