@@ -352,14 +352,14 @@ function runPylintOntStagedFiles(
 ) {
   // var cmd = "pylint --output-format json " + pythonFiles.join(" ");
   var cmd =
-    "pylint --rcfile " +
+    'pylint --rcfile ' +
     dotOmnilintDirectory +
-    "/tmp/.pylintrc --output-format json " +
-    pythonFiles.join(" ");
+    '/tmp/.pylintrc --output-format json "'
+     + pythonFiles.join('" "') + '"';
 
   try {
     // console.log("=== Try ===");
-    var linter_command = execSync(cmd);
+    var linter_command = execSync(cmd, { stdio: [0] });
     if (linter_command) {
       var pylintOutPut = JSON.parse(linter_command.stdout);
       var output = _.mapValues(_.groupBy(pylintOutPut, "path"));
