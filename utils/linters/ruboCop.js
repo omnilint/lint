@@ -151,21 +151,19 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
     // console.log("Rubocop is installed.");
     if (autofix) {
       var cmd =
-        "rubocop --config " +
+        'rubocop --config ' +
         dotOmnilintDirectory +
         // TODO: Fix autofix
         // "/tmp/rubocop.yml --color --fix --format json " +
-        "/tmp/rubocop.yml --color --format json " +
-        files.join(" ");
+        '/tmp/rubocop.yml --color --format json "' + files.join('" "') + '"';
       // console.log("Running autofix");
     } else {
       // console.log("Prepare to lint");
 
       var cmd =
-        "rubocop --config " +
+        'rubocop --config ' +
         dotOmnilintDirectory +
-        "/tmp/rubocop.yml --color --format json " +
-        files.join(" ");
+        '/tmp/rubocop.yml --color --format json "' + files.join('" "') + '"';
     }
 
     try {
