@@ -1306,7 +1306,7 @@ function lintStaged(
     ) {
       report.passed = false;
     } else if (
-      prettierHasSucceed == false &&
+      prettierHasSucceed === false &&
       body.policy.content.prevent_commits_on_errors
     ) {
       report.passed = false;
