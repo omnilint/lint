@@ -302,14 +302,14 @@ function parseOutPoutForRuleCheckAsText(offenses) {
 }
 
 function runErbLint(files, body) {
-  console.log("");
+  // console.log("");
 
   var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join(" ") + '"';
   var statusCode = 0;
   try {
     // console.log("merde1");
 
-    var erbLintRunner = execSync(cmd);
+    var erbLintRunner = execSync(cmd, { stdio: [0] });
 
     if (erbLintRunner) {
       // console.log("no offenses");
