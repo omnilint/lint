@@ -460,7 +460,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
         if (pythonFiles.length > 0) {
           var testPython = sortPylintConfig(pythonRules);
           createPylintConfig(testPython);
-          console.log("Config created");
+          // console.log("Config created");
         }
 
         if (jsFiles.length > 0) {
@@ -511,7 +511,9 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
             var executionEndTime = new Date() - executionStartTime;
             // console.log("report.report");
             // console.log(report.report);
-            report.report.lint_execution_time = executionEndTime;
+            if (report.report) {
+              report.report.lint_execution_time = executionEndTime;
+            }
             saveReport(report);
             postReport(report, time)
               .then(report => {
@@ -1046,6 +1048,7 @@ function lintStaged(
         desiredFormat,
         truncate
       );
+      
     } else {
       pythonReports.error_count = 0;
       pythonReports.warning_count = 0;

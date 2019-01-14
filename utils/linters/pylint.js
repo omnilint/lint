@@ -212,8 +212,8 @@ function sortErrorsToDisplay(file, truncate) {
 
 
 
-  if (truncate, file.length > 10) {
-    offenses.forEach(function(offense) {
+  if (truncate && file.length > 10) {
+    file.forEach(function(offense) {
       // console.log(message);
       if (offense.severity_level == 1) {
         warningMessages.push(offense);
@@ -236,7 +236,7 @@ function sortErrorsToDisplay(file, truncate) {
       return b.severity_level > a.severity_level ? 1 : -1;
     });
   } else {
-    errorsToDisplay = offenses.sort(function(a, b) {
+    errorsToDisplay = file.sort(function(a, b) {
       if (a.severity_level === b.severity_level) {
         // Line is only important when severities are the same
         if (a.line === b.line) {
@@ -380,9 +380,7 @@ function parsePylinResults(output, body) {
   var parseableOutput = Object.keys(output);
 
   parseableOutput.forEach(function(file) {
-    if (output[file].length == 0) {
-    }
-    totalWarn == output[file].length;
+    totalWarn += output[file].length;
   });
 
   pylintReport.name = body.content.message;
@@ -405,7 +403,8 @@ function runPylintOntStagedFiles(
   pythonFiles,
   autofix,
   commitAttempt,
-  desiredFormat
+  desiredFormat,
+  truncate
 ) {
   // var cmd = "pylint --output-format json " + pythonFiles.join(" ");
   var cmd =
