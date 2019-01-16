@@ -301,7 +301,7 @@ function parseRubocopResults(output, commitAttempt) {
   rubocopReport.commit_attempt_id = commitAttempt.id;
   rubocopReport.repository_id = commitAttempt.repository_id;
   rubocopReport.user_id = commitAttempt.user_id;
-  rubocopReport.policy_id = body.policy.id;
+  rubocopReport.policy_id = commitAttempt.policy.id;
   rubocopReport.error_count = totalError;
   rubocopReport.warning_count = totalWarn;
   rubocopReport.fixable_error_count = totalfixableErrorCount;
