@@ -185,7 +185,6 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
       setTimeout(() => {
         spinner.color = "yellow";
       }, 2000);
-      savePaths(stagedFilePaths);
     }
     var jsFiles = selectFilesForESLint(stagedFilePaths);
     var rubyFiles = selectFilesForRuboCop(stagedFilePaths);
@@ -198,6 +197,8 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
     spinner.stop()
     createCommitAttempt(repositoryUUID)
       .then(commitAttempt => {
+        // savePaths(stagedFilePaths);
+
         // spinner.succeed("Policy fetched: " + chalk.bold.magenta(body.policy.content.name));
 
         if (commitAttempt.policy && commitAttempt.policy.name) {
