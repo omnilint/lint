@@ -66,13 +66,13 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.5.20", "-v, --version");
+program.version("v0.5.21", "-v, --version");
 
 program
   .command("version")
   .description("Print Omnilint version.")
   .action(() => {
-    console.log("v0.5.20");
+    console.log("v0.5.21");
     process.exit(0);
   });
 
