@@ -195,6 +195,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
     var styleLintCompatibleFiles = selectFilesForStyleLint(stagedFilePaths);
     // console.log(styleLintCompatibleFiles);
     // connected to the internet
+    spinner.stop()
     createCommitAttempt(repositoryUUID)
       .then(commitAttempt => {
         // spinner.succeed("Policy fetched: " + chalk.bold.magenta(body.policy.content.name));
@@ -638,8 +639,8 @@ function createCommitAttempt(repositoryUUID) {
     }
     if (!token) {
       console.log("Please log in first.");
-      reject(new Error("Unable to get token."));
-      process.exit(1);
+      // reject(new Error("Unable to get token."));
+      process.exit(0);
     }
 
     const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
@@ -1580,6 +1581,9 @@ function readReport() {
 
 function checkIfPolicyCheckPassed() {
   var report = readReport();
+  if (!report) {
+    process.exit(0);
+  }
   if (report !== undefined && !report.passed) {
     console.log("");
     const repositoryUUID = parseOmnilintFile();
@@ -1653,8 +1657,8 @@ function editCommitAttempt(repositoryUUID, sha) {
     }
     if (!token) {
       console.log("Please log in first.");
-      reject(new Error("Unable to get token."));
-      process.exit(1);
+      // reject(new Error("Unable to get token."));
+      process.exit(0);
     }
     if (fs.existsSync(".git/COMMIT_EDITMSG")) {
       var commitMessage = fs.readFileSync(".git/COMMIT_EDITMSG", "utf8");
