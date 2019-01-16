@@ -160,16 +160,16 @@ function installPrettier() {
 
 
 function formatPrettierRules(prettier_rules, policy_rule) {
-  var name = policy_rule.rule.content.slug
+  var name = policy_rule.slug
   var prettier_rules = prettier_rules
   if (
-    policy_rule.rule.linter &&
-    policy_rule.rule.linter.command == "prettier"
+    policy_rule.linter &&
+    policy_rule.linter.command == "prettier"
   ) {
     // console.log(policy_rule);
 
     if (policy_rule.options.length == 0) {
-      prettier_rules[name] = parseInt(policy_rule.rule.content.options)
+      prettier_rules[name] = parseInt(policy_rule.options)
     } else {
       policy_rule.options.forEach(function(option) {
         var rule_option = option.rule_option

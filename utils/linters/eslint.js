@@ -39,7 +39,7 @@ function checkIfEslintIsInstalled() {
   return false;
 }
 
-function runEslint(files, autofix, body, desiredFormat, truncate) {
+function runEslint(files, autofix, commitAttempt, desiredFormat, truncate) {
   // var cmd = "which eslint";
   // console.log("=== Lint called ===");
   if (autofix) {
@@ -72,7 +72,7 @@ function runEslint(files, autofix, body, desiredFormat, truncate) {
       }
       // console.log("Error");
       // console.log(parseEslintResults(output, body));
-      return parseEslintResults(output, body);
+      return parseEslintResults(output, commitAttempt);
 
       // console.log(output)
       // prepareRequestAfterLint(true, body, 0, output);
@@ -94,7 +94,7 @@ function runEslint(files, autofix, body, desiredFormat, truncate) {
         parseOutPoutForRuleCheckAsTable(output);
       }
 
-      return parseEslintResults(output, body);
+      return parseEslintResults(output, commitAttempt);
     }
   }
 }
@@ -350,8 +350,8 @@ function createESlintConfig(rules) {
 }
 
 function assignESlintRules(policy_rule) {
-  if (policy_rule.rule.linter.linter.command == "eslint") {
-  } else if (policy_rule.rule.linter.linter.command == "rubocop") {
+  if (policy_rule.linter.linter.command == "eslint") {
+  } else if (policy_rule.linter.linter.command == "rubocop") {
   }
 }
 
@@ -394,7 +394,7 @@ function eslintNoConfig() {
   );
 }
 
-function createRuleCheckJson(output, body) {
+function createRuleCheckJson(output, commitAttempt) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
   // console.log("Output createRuleCheckJson");
@@ -434,7 +434,7 @@ function createRuleCheckJson(output, body) {
 
         fileReport.rule_id = null;
 
-        // console.log(policy_rule.rule.content.slug);
+        // console.log(policy_rule.slug);
 
         fileReport.name = message.ruleId;
 
@@ -469,7 +469,7 @@ function getOffenseLine(file, lineStart) {
   return offenseLines;
 }
 
-function createPolicyCheckJson(passed, output, body) {
+function createPolicyCheckJson(passed, output, commitAttempt) {
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
@@ -483,24 +483,24 @@ function createPolicyCheckJson(passed, output, body) {
   });
 
   var policy_check_attribute = {
-    name: body.content.message,
+    name: content.message,
     passed: passed,
-    commit_attempt_id: body.content.id,
-    policy_id: body.policy.id,
-    repository_id: body.content.repository_id,
-    user_id: body.content.user_id,
-    policy_id: body.policy.content.id,
+    commit_attempt_id: content.id,
+    policy_id: content.id,
+    repository_id: content.repository.id,
+    user_id: commitAttempt.user_id,
+    policy_id: commitAttempt.policy.id,
     error_count: totalError,
     warning_count: totalWarn,
     fixable_error_count: totalfixableErrorCount,
     fixable_warning_count: totalfixableWarnCount,
-    rule_checks_attributes: createRuleCheckJson(output, body)
+    rule_checks_attributes: createRuleCheckJson(output, commitAttempt)
   };
   return policy_check_attribute;
 }
 
 // Create Policy_check with result
-function prepareRequestAfterLint(passed, body, exitCode, output) {
+function prepareRequestAfterLint(passed, commitAttempt, exitCode, output) {
   const token = getTokenFromLocalDevice();
   var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
   return new Promise((resolve, reject) => {
@@ -508,7 +508,7 @@ function prepareRequestAfterLint(passed, body, exitCode, output) {
       postUrl,
       {
         json: {
-          policy_check: createPolicyCheckJson(passed, output, body)
+          policy_check: createPolicyCheckJson(passed, output, commitAttempt)
         }
       },
       function(error, response, obj) {
@@ -551,7 +551,7 @@ function installEslint() {
   }
 }
 
-function parseEslintResults(output, body) {
+function parseEslintResults(output, commitAttempt) {
   var eslintReport = {};
   var totalError = 0;
   var totalWarn = 0;
@@ -566,17 +566,17 @@ function parseEslintResults(output, body) {
     totalfixableWarnCount += file.fixableWarningCount;
   });
 
-  eslintReport.name = body.content.message;
-  eslintReport.commit_attempt_id = body.content.id;
-  eslintReport.repository_id = body.content.repository_id;
-  eslintReport.user_id = body.content.user_id;
-  eslintReport.policy_id = body.policy.content.id;
+  eslintReport.name = commitAttempt.message;
+  eslintReport.commit_attempt_id = commitAttempt.id;
+  eslintReport.repository_id = commitAttempt.repository_id;
+  eslintReport.user_id = commitAttempt.user_id;
+  eslintReport.policy_id = commitAttempt.policy.id;
   eslintReport.error_count = totalError;
   eslintReport.warning_count = totalWarn;
   eslintReport.fixable_error_count = totalfixableErrorCount;
   eslintReport.fixable_warning_count = totalfixableWarnCount;
 
-  eslintReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  eslintReport.rule_checks_attributes = createRuleCheckJson(output, commitAttempt);
 
   // console.log(eslintReport);
   return eslintReport;

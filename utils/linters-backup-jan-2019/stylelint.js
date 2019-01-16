@@ -52,14 +52,14 @@ function installStyleLint() {
 
 
 function sortstyleLintRules(policy_rule, styleLintRules) {
-  var name = policy_rule.rule.content.slug
+  var name = policy_rule.slug
   var styleLintSelectedOptions = {};
   var styleLintRules = styleLintRules
   var options = [];
 
   if (
-    policy_rule.rule.linter &&
-    policy_rule.rule.linter.command == "stylelint"
+    policy_rule.linter &&
+    policy_rule.linter.command == "stylelint"
   ) {
 
     if (policy_rule.status == "warn") {
@@ -367,7 +367,7 @@ function createRuleCheckJson(output, body) {
         file.warnings.forEach(function(message) {
           // console.log(message);
           var fileReport = {};
-          if (message.rule == policy_rule.rule.content.slug) {
+          if (message.rule == policy_rule.slug) {
 
 
             fileReport.file_path = relativePath
@@ -378,8 +378,8 @@ function createRuleCheckJson(output, body) {
 
             fileReport.message = message.text.split(/[()]+/)[0];
 
-            // console.log(policy_rule.rule.content.slug);
-            fileReport.rule_id = policy_rule.rule.content.id;
+            // console.log(policy_rule.slug);
+            fileReport.rule_id = policy_rule.id;
 
             fileReport.name = message.rule;
 
@@ -390,7 +390,7 @@ function createRuleCheckJson(output, body) {
               fileReport.severity_level = 2;
 
             }
-            fileReport.language_id = policy_rule.rule.content.language_id;
+            fileReport.language_id = policy_rule.language_id;
 
 
             var lines = getOffenseLine(file.source, message.line)

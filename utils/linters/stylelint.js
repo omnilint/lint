@@ -50,14 +50,14 @@ function installStyleLint() {
 }
 
 function sortstyleLintRules(policy_rule, styleLintRules) {
-  var name = policy_rule.rule.content.slug;
+  var name = policy_rule.slug;
   var styleLintSelectedOptions = {};
   var styleLintRules = styleLintRules;
   var options = [];
 
   if (
-    policy_rule.rule.linter &&
-    policy_rule.rule.linter.command == "stylelint"
+    policy_rule.linter &&
+    policy_rule.linter.command == "stylelint"
   ) {
     if (policy_rule.status == "warn") {
       styleLintSelectedOptions["severity"] = "warning";
@@ -325,7 +325,7 @@ function getOffenseLine(file, lineStart) {
   return offenseLines;
 }
 
-function createRuleCheckJson(output, body) {
+function createRuleCheckJson(output, commitAttempt) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
   console.log("");
@@ -357,7 +357,7 @@ function createRuleCheckJson(output, body) {
 
         fileReport.linter = "stylelint"
 
-        // console.log(policy_rule.rule.content.slug);
+        // console.log(policy_rule.slug);
 
         fileReport.name = message.rule;
 
@@ -378,7 +378,7 @@ function createRuleCheckJson(output, body) {
   return rule_checks_attributes;
 }
 
-function parseStyleLintResults(output, body) {
+function parseStyleLintResults(output, commitAttempt) {
   var stylintReport = {};
   var totalError = 0;
   var totalWarn = 0;
@@ -396,20 +396,20 @@ function parseStyleLintResults(output, body) {
     });
   });
 
-  stylintReport.name = body.content.message;
-  stylintReport.commit_attempt_id = body.content.id;
-  stylintReport.repository_id = body.content.repository_id;
-  stylintReport.user_id = body.content.user_id;
-  stylintReport.policy_id = body.policy.content.id;
+  stylintReport.name = commitAttempt.message;
+  stylintReport.commit_attempt_id = commitAttempt.id;
+  stylintReport.repository_id = commitAttempt.repository_id;
+  stylintReport.user_id = commitAttempt.user_id;
+  stylintReport.policy_id = commitAttempt.policy.id;
   stylintReport.error_count = totalError;
   stylintReport.warning_count = totalWarn;
-  stylintReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  stylintReport.rule_checks_attributes = createRuleCheckJson(output, commitAttempt);
 
   // console.log(eslintReport);
   return stylintReport;
 }
 
-function runStyleLint(styleLintFiles, autofix, body, desiredFormat, truncate) {
+function runStyleLint(styleLintFiles, autofix, commitAttempt, desiredFormat, truncate) {
   // sortPolicyRules()
   var cmd =
     "stylelint --config " +
@@ -432,7 +432,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat, truncate) {
       }
       // console.log("Error");
       // console.log(parseEslintResults(output, body));
-      return parseStyleLintResults(output, body);
+      return parseStyleLintResults(output, commitAttempt);
     }
   } catch (e) {
     if (e) {
@@ -453,7 +453,7 @@ function runStyleLint(styleLintFiles, autofix, body, desiredFormat, truncate) {
       }
       // console.log("Error");
       // console.log(parseEslintResults(output, body));
-      return parseStyleLintResults(output, body);
+      return parseStyleLintResults(output, commitAttempt);
     }
   }
 }

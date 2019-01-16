@@ -621,7 +621,7 @@ function createRuleCheckJson(output, body) {
       } else {
         file.offenses.forEach(function(offense) {
           var fileReport = {};
-          // if (offense.cop_name == policy_rule.rule.content.slug) {
+          // if (offense.cop_name == policy_rule.slug) {
             fileReport.file_path = file.path;
             fileReport.file_name = file.path.substring(
               file.path.lastIndexOf("/") + 1
@@ -633,8 +633,8 @@ function createRuleCheckJson(output, body) {
             fileReport.column = offense.location.column;
             fileReport.line_end = offense.location.last_line;
             fileReport.column_end = offense.location.last_column;
-            // console.log(policy_rule.rule.content.slug);
-            // fileReport.rule_id = policy_rule.rule.content.id;
+            // console.log(policy_rule.slug);
+            // fileReport.rule_id = policy_rule.id;
 
             fileReport.name = offense.cop_name;
             if (offense.severity == "warning") {
@@ -646,7 +646,7 @@ function createRuleCheckJson(output, body) {
             var lines = getOffenseLine(file.path, offense.location.line)
             fileReport.source = lines
 
-            // fileReport.language_id = policy_rule.rule.content.language_id;
+            // fileReport.language_id = policy_rule.language_id;
 
             rule_checks_attributes.push(fileReport);
           }

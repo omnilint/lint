@@ -196,20 +196,20 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
     // console.log(styleLintCompatibleFiles);
     // connected to the internet
     createCommitAttempt(repositoryUUID)
-      .then(body => {
+      .then(commitAttempt => {
         // spinner.succeed("Policy fetched: " + chalk.bold.magenta(body.policy.content.name));
 
-        if (body.policy && body.policy.content.name) {
+        if (commitAttempt.policy && commitAttempt.policy.name) {
           if (time) {
             spinner.succeed(
               "Policy fetched in " +
                 (new Date() - executionStartTime) +
                 "ms: " +
-                chalk.bold.magenta(body.policy.content.name)
+                chalk.bold.magenta(commitAttempt.policy.name)
             );
           } else {
             spinner.succeed(
-              "Policy fetched: " + chalk.bold.magenta(body.policy.content.name)
+              "Policy fetched: " + chalk.bold.magenta(commitAttempt.policy.name)
             );
           }
         } else {
@@ -236,13 +236,13 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
         var pythonRules = [];
 
         var options = [];
-        saveCommitAttemptId(body.content.id);
+        saveCommitAttemptId(commitAttempt.id);
         if (
-          body.policy &&
-          body.policy.policy_rules &&
-          body.policy.policy_rules.length > 0
+          commitAttempt.policy &&
+          commitAttempt.policy.policy_rules &&
+          commitAttempt.policy.policy_rules.length > 0
         ) {
-          body.policy.policy_rules.forEach(function(policy_rule) {
+          commitAttempt.policy.policy_rules.forEach(function(policy_rule) {
             var obj = {
               Enabled: enableRule(policy_rule)
             };
@@ -254,30 +254,30 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
 
             var es_lint_selected_options = {};
             var rubocopSelectedOptions = {};
-            var name = policy_rule.rule.content.slug;
+            var name = policy_rule.slug;
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "pylint" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "pylint" &&
               pythonFiles.length > 0
             ) {
               pythonRules.push({
-                rule: policy_rule.rule,
+                rule: policy_rule,
                 options: policy_rule.options
               });
             }
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "stylelint" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "stylelint" &&
               styleLintCompatibleFiles.length > 0
             ) {
               styleLintRules = sortstyleLintRules(policy_rule, styleLintRules);
             }
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "eslint" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "eslint" &&
               jsFiles.length > 0
             ) {
               if (policy_rule.options.length === 0) {
@@ -345,16 +345,16 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
                 }
               });
             }
-            // if (policy_rule.rule.linter &&
-            // policy_rule.rule.linter.command) {
-            //   console.log(chalk.green(policy_rule.rule.linter.command));
+            // if (policy_rule.linter &&
+            // policy_rule.linter.command) {
+            //   console.log(chalk.green(policy_rule.linter.command));
             //   console.log(name);
             //
             // }
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "rubocop" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "rubocop" &&
               (rubyFiles.length > 0 || erbFiles.length > 0)
             ) {
               if (policy_rule.options.length == 0) {
@@ -432,8 +432,8 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
             //
           });
           var autofix = false;
-          if (body.repository && body.repository) {
-            var autofix = body.repository.has_autofix;
+          if (commitAttempt.repository && commitAttempt.repository) {
+            var autofix = commitAttempt.repository.has_autofix;
           }
 
           // var eslintCli = new CLIEngine({
@@ -495,7 +495,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
 
         lintStaged(
           autofix,
-          body,
+          commitAttempt,
           desiredFormat,
           prettier_rules,
           jsFiles,
@@ -655,16 +655,16 @@ function createCommitAttempt(repositoryUUID) {
           }
         }
       },
-      function(error, response, body) {
+      function(error, response, commitAttempt) {
         // console.log(url);
         // console.log(response);
         // console.log(body);
         if (response) {
           if (!error && response.statusCode == 201) {
             // console.log('Commit Attempt created.');
-            var stringify = JSON.stringify(body);
+            // var stringify = JSON.stringify(body);
             // console.log(stringify);
-            resolve(body);
+            resolve(commitAttempt);
           } else {
             console.log("No request");
             // console.log(url);
@@ -858,7 +858,7 @@ function arr_diff(a1, a2) {
 
 function lintStaged(
   autofix,
-  body,
+  commitAttempt,
   desiredFormat,
   prettier_rules,
   jsFiles,
@@ -882,7 +882,7 @@ function lintStaged(
     //   return;
     // }
 
-    if (!body.policy) {
+    if (!commitAttempt.policy) {
       report.passed = true;
       resolve(report);
       return;
@@ -1025,7 +1025,7 @@ function lintStaged(
       styleFilesReport = runStyleLint(
         styleLintCompatibleFiles,
         autofix,
-        body,
+        commitAttempt,
         desiredFormat,
         truncate
       );
@@ -1044,11 +1044,11 @@ function lintStaged(
       pythonReports = runPylintOntStagedFiles(
         pythonFiles,
         autofix,
-        body,
+        commitAttempt,
         desiredFormat,
         truncate
       );
-      
+
     } else {
       pythonReports.error_count = 0;
       pythonReports.warning_count = 0;
@@ -1076,7 +1076,7 @@ function lintStaged(
       //   "Linter is coming for " + jsFiles.length + " Javascript file(s):"
       // );
       // console.log(jsFiles);
-      javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat, truncate);
+      javascriptReports = runEslint(jsFiles, autofix, commitAttempt, desiredFormat, truncate);
       // var linting = eslintCli.executeOnFiles(jsFiles);
       //
       // const dotOmnilintDirectory = getDotOmnilintDirectory();
@@ -1211,7 +1211,7 @@ function lintStaged(
       // console.log("About to lint " + rubyFiles.length + " Ruby file(s):");
 
       // console.log(rubyFiles);
-      rubyReports = runRubocopJson(rubyFiles, autofix, body, desiredFormat, truncate);
+      rubyReports = runRubocopJson(rubyFiles, autofix, commitAttempt, desiredFormat, truncate);
       // runRubocop(rubyFiles, autofix);
       // console.log(rubyReports);
       // console.log(rubyReports);
@@ -1227,7 +1227,7 @@ function lintStaged(
     if (erbFiles.length > 0) {
       console.log("");
       console.log(chalk.bold.cyan("Running ERB Lint..."));
-      erbReports = runErbLint(erbFiles, body, truncate); // console.log(erbReports);
+      erbReports = runErbLint(erbFiles, commitAttempt, truncate); // console.log(erbReports);
     } else {
       erbReports.error_count = 0;
       erbReports.warning_count = 0;
@@ -1237,11 +1237,11 @@ function lintStaged(
     }
 
     // console.log(rubyReports);
-    report.name = body.content.message;
-    report.commit_attempt_id = body.content.id;
-    report.policy_id = body.policy.content.id;
-    report.repository_id = body.content.repository_id;
-    report.user_id = body.content.user_id;
+    report.name = commitAttempt.message;
+    report.commit_attempt_id = commitAttempt.id;
+    report.policy_id = commitAttempt.policy.id;
+    report.repository_id = commitAttempt.repository_id;
+    report.user_id = commitAttempt.user_id;
 
     report.error_count =
       javascriptReports.error_count +
@@ -1307,13 +1307,13 @@ function lintStaged(
     // console.log("report.report");
     // console.log(report.report);
     if (
-      body.policy.content.prevent_commits_on_errors &&
+      commitAttempt.policy.prevent_commits_on_errors &&
       report.error_count > 0
     ) {
       report.passed = false;
     } else if (
       prettierHasSucceed === false &&
-      body.policy.content.prevent_commits_on_errors
+      commitAttempt.policy.prevent_commits_on_errors
     ) {
       report.passed = false;
     } else {

@@ -622,8 +622,8 @@ function createRuleCheckJson(output, body) {
         fileReport.column = offense.location.column;
         fileReport.line_end = offense.location.last_line;
         fileReport.column_end = offense.location.last_column;
-        // console.log(policy_rule.rule.content.slug);
-        // fileReport.rule_id = policy_rule.rule.content.id;
+        // console.log(policy_rule.slug);
+        // fileReport.rule_id = policy_rule.id;
 
         fileReport.name = offense.cop_name;
         if (offense.severity == "warning") {

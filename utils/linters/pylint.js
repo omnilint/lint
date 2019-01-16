@@ -146,17 +146,17 @@ function formatPylintConfig(
 ) {
   pythonRules.forEach(rule => {
     // console.log(rule);
-    if (rule.rule.content.type == "Basic") {
+    if (rule.type == "Basic") {
       basicOptions +=
-        "\n" + rule.rule.content.slug + " = " + rule.options[0].selected.value;
+        "\n" + rule.slug + " = " + rule.options[0].selected.value;
     }
-    if (rule.rule.content.type == "Format") {
+    if (rule.type == "Format") {
       formatOptions +=
-        "\n" + rule.rule.content.slug + " = " + rule.options[0].selected.value;
+        "\n" + rule.slug + " = " + rule.options[0].selected.value;
     }
-    if (rule.rule.content.type == "Similaties") {
+    if (rule.type == "Similaties") {
       similaritiesOptions +=
-        "\n" + rule.rule.content.slug + " = " + rule.options[0].selected.value;
+        "\n" + rule.slug + " = " + rule.options[0].selected.value;
     }
   });
   var config = basicOptions + "\n" + formatOptions + "\n" + similaritiesOptions;
@@ -313,7 +313,7 @@ function getOffenseLine(file, lineStart) {
   return offenseLines;
 }
 
-function createRuleCheckJson(output, body) {
+function createRuleCheckJson(output, commitAttempt) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
 
@@ -351,10 +351,10 @@ function createRuleCheckJson(output, body) {
 
         fileReport.rule_id = null;
 
-        // console.log(policy_rule.rule.content.slug);
+        // console.log(policy_rule.slug);
 
         fileReport.name = offense.symbol;
-        // fileReport.language_id = policy_rule.rule.content.language_id;
+        // fileReport.language_id = policy_rule.language_id;
         fileReport.severity_level = 1;
         var lines = getOffenseLine(relativePath, offense.line);
         fileReport.source = lines;
@@ -370,7 +370,7 @@ function createRuleCheckJson(output, body) {
   return rule_checks_attributes;
 }
 
-function parsePylinResults(output, body) {
+function parsePylinResults(output, commitAttempt) {
   var pylintReport = {};
   var totalError = 0;
   var totalWarn = 0;
@@ -383,11 +383,11 @@ function parsePylinResults(output, body) {
     totalWarn += output[file].length;
   });
 
-  pylintReport.name = body.content.message;
-  pylintReport.commit_attempt_id = body.content.id;
-  pylintReport.repository_id = body.content.repository_id;
-  pylintReport.user_id = body.content.user_id;
-  pylintReport.policy_id = body.policy.content.id;
+  pylintReport.name = commitAttempt.message;
+  pylintReport.commit_attempt_id = commitAttempt.id;
+  pylintReport.repository_id = commitAttempt.repository_id;
+  pylintReport.user_id = commitAttempt.user_id;
+  pylintReport.policy_id = commitAttempt.policy.id;
   pylintReport.error_count = totalError;
   pylintReport.warning_count = totalWarn;
   pylintReport.fixable_error_count = totalfixableErrorCount;

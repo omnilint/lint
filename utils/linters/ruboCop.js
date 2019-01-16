@@ -143,7 +143,7 @@ function installRubocop() {
   }
 }
 
-function runRubocopJson(files, autofix, body, desiredFormat, truncate) {
+function runRubocopJson(files, autofix, commitAttempt, desiredFormat, truncate) {
   // console.log("Launching Rubocop");
 
   if (checkIfRubocopIsInstalled()) {
@@ -178,7 +178,7 @@ function runRubocopJson(files, autofix, body, desiredFormat, truncate) {
           parseOutPoutForRuleCheckAsTable(output);
         }
 
-        return parseRubocopResults(output, body);
+        return parseRubocopResults(output, commitAttempt);
       }
     } catch (err) {
       // console.log("=== Catch ===");
@@ -191,7 +191,7 @@ function runRubocopJson(files, autofix, body, desiredFormat, truncate) {
         } else {
           parseOutPoutForRuleCheckAsTable(output);
         }
-        return parseRubocopResults(output, body);
+        return parseRubocopResults(output, commitAttempt);
         // console.log("Output");
         // console.log(output);
         // prepareRequestAfterLint(false, body, 1, output);
@@ -273,7 +273,7 @@ function getOffenseLine(file, lineStart) {
   return offenseLines;
 }
 
-function parseRubocopResults(output, body) {
+function parseRubocopResults(output, commitAttempt) {
   var rubocopReport = {};
   var totalError = 0;
   var totalWarn = 0;
@@ -297,16 +297,16 @@ function parseRubocopResults(output, body) {
     });
   });
 
-  rubocopReport.name = body.content.message;
-  rubocopReport.commit_attempt_id = body.content.id;
-  rubocopReport.repository_id = body.content.repository_id;
-  rubocopReport.user_id = body.content.user_id;
-  rubocopReport.policy_id = body.policy.content.id;
+  rubocopReport.name = commitAttempt.message;
+  rubocopReport.commit_attempt_id = commitAttempt.id;
+  rubocopReport.repository_id = commitAttempt.repository_id;
+  rubocopReport.user_id = commitAttempt.user_id;
+  rubocopReport.policy_id = body.policy.id;
   rubocopReport.error_count = totalError;
   rubocopReport.warning_count = totalWarn;
   rubocopReport.fixable_error_count = totalfixableErrorCount;
   rubocopReport.fixable_warning_count = totalfixableWarnCount;
-  rubocopReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  rubocopReport.rule_checks_attributes = createRuleCheckJson(output, commitAttempt);
 
   return rubocopReport;
 }
@@ -519,7 +519,7 @@ function parseOutPoutForRuleCheckAsTable(output) {
   });
 }
 
-function prepareRequestAfterLint(passed, body, exitCode, output) {
+function prepareRequestAfterLint(passed, commitAttempt, exitCode, output) {
   const token = getTokenFromLocalDevice();
   var postUrl = `${API_BASE_URL}/policy_checks.json?user_token=${token}`;
   return new Promise((resolve, reject) => {
@@ -527,7 +527,7 @@ function prepareRequestAfterLint(passed, body, exitCode, output) {
       postUrl,
       {
         json: {
-          policy_check: createPolicyCheckJson(passed, output, body)
+          policy_check: createPolicyCheckJson(passed, output, commitAttempt)
         }
       },
       function(error, response, obj) {
@@ -550,7 +550,7 @@ function prepareRequestAfterLint(passed, body, exitCode, output) {
   });
 }
 
-function createPolicyCheckJson(passed, output, body) {
+function createPolicyCheckJson(passed, output, commitAttempt) {
   var totalError = 0;
   var totalWarn = 0;
   var totalfixableErrorCount = 0;
@@ -573,23 +573,22 @@ function createPolicyCheckJson(passed, output, body) {
   });
 
   var policy_check_attribute = {
-    name: body.content.message,
+    name: commitAttempt.message,
     passed: passed,
-    commit_attempt_id: body.content.id,
-    policy_id: body.policy.id,
-    repository_id: body.content.repository_id,
-    user_id: body.content.user_id,
-    policy_id: body.policy.content.id,
+    commit_attempt_id: commitAttempt.id,
+    policy_id: commitAttempt.policy.id,
+    repository_id: commitAttempt.repository_id,
+    user_id: commitAttempt.user_id,
     error_count: totalError,
     warning_count: totalWarn,
     fixable_error_count: totalfixableErrorCount,
     fixable_warning_count: totalfixableWarnCount,
-    rule_checks_attributes: createRuleCheckJson(output, body)
+    rule_checks_attributes: createRuleCheckJson(output, commitAttempt)
   };
   return policy_check_attribute;
 }
 
-function createRuleCheckJson(output, body) {
+function createRuleCheckJson(output, commitAttempt) {
   var rule_checks_attributes = [];
   var file_rule_checks = [];
   console.log("");
@@ -617,7 +616,7 @@ function createRuleCheckJson(output, body) {
         fileReport.column = offense.location.column;
         fileReport.line_end = offense.location.last_line;
         fileReport.column_end = offense.location.last_column;
-        // console.log(policy_rule.rule.content.slug);
+        // console.log(policy_rule.slug);
         fileReport.rule_id = null;
         fileReport.linter = "rubocop"
 

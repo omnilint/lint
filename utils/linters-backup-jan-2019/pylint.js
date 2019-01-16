@@ -253,17 +253,17 @@ function createRuleCheckJson(output, body) {
       } else {
         output[file].forEach(function(offense){
           // console.log(offense);
-          // if (policy_rule.rule.linter.command == "pylint") {
+          // if (policy_rule.linter.command == "pylint") {
             // console.log("Pylint")
             // console.log("offense");
 
-            // if (offense.symbol == policy_rule.rule.content.slug) {
-              // console.log(chalk.green(offense.symbol + " == " + policy_rule.rule.content.slug));
+            // if (offense.symbol == policy_rule.slug) {
+              // console.log(chalk.green(offense.symbol + " == " + policy_rule.slug));
 
               // console.log("Offense");
 
                 // console.log(offense.symbol);
-                // console.log(policy_rule.rule.content.slug);
+                // console.log(policy_rule.slug);
 
               // console.log("offense");
               // console.log(offense);
@@ -278,12 +278,12 @@ function createRuleCheckJson(output, body) {
               fileReport.column = offense.column;
               fileReport.long_message = offense.message
               fileReport.message = offense.message.split("\n")[0];
-              // fileReport.rule_id = policy_rule.rule.content.id;
+              // fileReport.rule_id = policy_rule.id;
 
-              // console.log(policy_rule.rule.content.slug);
+              // console.log(policy_rule.slug);
 
               fileReport.name = offense.symbol;
-              // fileReport.language_id = policy_rule.rule.content.language_id;
+              // fileReport.language_id = policy_rule.language_id;
               fileReport.severity_level = 1;
               var lines = getOffenseLine(relativePath, offense.line)
               fileReport.source = lines
@@ -292,7 +292,7 @@ function createRuleCheckJson(output, body) {
               rule_checks_attributes.push(fileReport);
             // }
             // else{
-            //   console.log(chalk.red(offense.symbol + " != " + policy_rule.rule.content.slug));
+            //   console.log(chalk.red(offense.symbol + " != " + policy_rule.slug));
             // }
           // }
         })

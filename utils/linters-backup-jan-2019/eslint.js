@@ -352,8 +352,8 @@ function createESlintConfig(rules) {
 }
 
 function assignESlintRules(policy_rule) {
-  if (policy_rule.rule.linter.linter.command == "eslint") {
-  } else if (policy_rule.rule.linter.linter.command == "rubocop") {
+  if (policy_rule.linter.linter.command == "eslint") {
+  } else if (policy_rule.linter.linter.command == "rubocop") {
   }
 }
 
@@ -431,7 +431,7 @@ function createRuleCheckJson(output, body) {
       } else {
         file.messages.forEach(function(message) {
           var fileReport = {};
-          if (message.ruleId == policy_rule.rule.content.slug) {
+          if (message.ruleId == policy_rule.slug) {
             // fileReport.file_path = file.filePath;
             fileReport.file_path = relativePath
             fileReport.file_name = file.filePath.substring(
@@ -445,15 +445,15 @@ function createRuleCheckJson(output, body) {
 
             fileReport.message = message.message;
 
-            // console.log(policy_rule.rule.content.slug);
-            fileReport.rule_id = policy_rule.rule.content.id;
+            // console.log(policy_rule.slug);
+            fileReport.rule_id = policy_rule.id;
 
             fileReport.name = message.ruleId;
 
             fileReport.severity_level = message.severity;
             // console.log(fileReport);
             // console.log("");
-            fileReport.language_id = policy_rule.rule.content.language_id;
+            fileReport.language_id = policy_rule.language_id;
 
             var lines = getOffenseLine(file.filePath, message.line)
             fileReport.source = lines

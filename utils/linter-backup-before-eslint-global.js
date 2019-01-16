@@ -218,11 +218,11 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
             var es_lint_selected_options = {};
             var rubocopSelectedOptions = {};
-            var name = policy_rule.rule.content.slug;
+            var name = policy_rule.slug;
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "eslint" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "eslint" &&
               jsFiles.length > 0
             ) {
               if (policy_rule.options.length === 0) {
@@ -290,16 +290,16 @@ function lintingPreCommit(desiredFormat, keep, time) {
                 }
               });
             }
-            // if (policy_rule.rule.linter &&
-            // policy_rule.rule.linter.command) {
-            //   console.log(chalk.green(policy_rule.rule.linter.command));
+            // if (policy_rule.linter &&
+            // policy_rule.linter.command) {
+            //   console.log(chalk.green(policy_rule.linter.command));
             //   console.log(name);
             //
             // }
 
             if (
-              policy_rule.rule.linter &&
-              policy_rule.rule.linter.command == "rubocop" &&
+              policy_rule.linter &&
+              policy_rule.linter.command == "rubocop" &&
               rubyFiles.length > 0
             ) {
               if (policy_rule.options.length == 0) {

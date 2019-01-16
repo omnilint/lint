@@ -195,7 +195,7 @@ function parseErbLintOutput(output, statusCode) {
   return offenses;
 }
 
-function parseErbLintResults(offenses, body) {
+function parseErbLintResults(offenses, commitAttempt) {
   var erbLintReport = {};
   var totalError = 0;
   var totalWarn = 0;
@@ -204,11 +204,11 @@ function parseErbLintResults(offenses, body) {
   // console.log("offenses");
 
   // console.log(offenses);
-  erbLintReport.name = body.content.message;
-  erbLintReport.commit_attempt_id = body.content.id;
-  erbLintReport.repository_id = body.content.repository_id;
-  erbLintReport.user_id = body.content.user_id;
-  erbLintReport.policy_id = body.policy.content.id;
+  erbLintReport.name = commitAttempt.message;
+  erbLintReport.commit_attempt_id = commitAttempt.id;
+  erbLintReport.repository_id = commitAttempt.repository_id;
+  erbLintReport.user_id = commitAttempt.user_id;
+  erbLintReport.policy_id = commitAttempt.policy.id;
   erbLintReport.error_count = totalError;
 
   offenses.forEach(function(offense) {
@@ -320,7 +320,7 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
   console.log("");
 }
 
-function runErbLint(files, body, truncate) {
+function runErbLint(files, commitAttempt, truncate) {
   // console.log("");
   var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
   var statusCode = 0;
@@ -359,7 +359,7 @@ function runErbLint(files, body, truncate) {
 
       // console.log("Status Code");
       // console.log(statusCode);
-      return parseErbLintResults(offenses, body);
+      return parseErbLintResults(offenses, commitAttempt);
     }
   } catch (e) {
     // console.log("Error maison");
@@ -396,7 +396,7 @@ function runErbLint(files, body, truncate) {
       // console.log("Status Code");
       // console.log(statusCode);
 
-      return parseErbLintResults(offenses, body);
+      return parseErbLintResults(offenses, commitAttempt);
     } else {
       console.log("Error");
       console.log(e);
