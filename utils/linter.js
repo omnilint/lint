@@ -858,6 +858,86 @@ function arr_diff(a1, a2) {
   return diff;
 }
 
+
+//Get informations for report
+
+function getCliVersion() {
+  try {
+    var result = execSync("which omnilint")
+    if (result) {
+
+      return execSync("npx omnilint -v").toString()
+    }
+  } catch (e) {
+
+  }
+}
+
+
+function getNodeVersion() {
+  try {
+    var result = execSync("which node")
+    if (result) {
+      return   execSync("node -v").toString()
+    }
+  } catch (e) {
+
+  }
+
+}
+
+
+function getNpmVersion() {
+  try {
+    var result = execSync("which npm")
+    if (result) {
+      return   execSync("npm -v").toString()
+    }
+  } catch (e) {
+
+  }
+
+
+}
+
+function getRubyVersion() {
+  try {
+    var result = execSync("which ruby")
+    if (result) {
+      return   execSync("ruby -v").toString()
+    }
+  } catch (e) {
+
+  }
+
+}
+
+function getPythonVersion() {
+  try {
+    var result = execSync("which python")
+    if (result) {
+      var pythonVersion = execSync("python --version")
+      return pythonVersion
+    }
+  } catch (e) {
+
+    console.log('error');
+    console.log(e);
+  }
+}
+
+function fetchShellCommand(){
+  var command = 'node '
+  process.argv.forEach(function (val, index, array) {
+    // console.log(index + ': ' + val);
+    command += val + ' '
+  });
+
+  return command;
+}
+
+//End informations for report
+
 function lintStaged(
   autofix,
   commitAttempt,
@@ -874,6 +954,24 @@ function lintStaged(
 ) {
   return new Promise((resolve, reject) => {
     var report = {};
+
+    var cliVersion = getCliVersion()
+    var nodeVersion = getNodeVersion()
+    var npmVersion = getNpmVersion()
+    var rubyVersion = getRubyVersion()
+    var shellCommand = fetchShellCommand()
+    // var pythonVersion = getPythonVersion()
+
+
+    // console.log("cliVersion", cliVersion);
+    // console.log("nodeVersion", nodeVersion);
+    // console.log("npmVersion", npmVersion);
+    // console.log("rubyVersion", rubyVersion);
+    // console.log("pythonVersion", pythonVersion);
+
+
+
+
     // fs.readFileSync( process.env.GIT_PARAMS );
     // var stagedFilePaths = getStagedFiles();
 
@@ -1303,7 +1401,13 @@ function lintStaged(
       brakeman: brakemanFiles,
       formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
-      not_inspected_files: notInspectedFiles
+      not_inspected_files: notInspectedFiles,
+      omnilint_version: cliVersion,
+      node_version: nodeVersion,
+      npm_version: npmVersion,
+      ruby_version: rubyVersion,
+      // python_version = pythonVersion,
+      source_shell_command: shellCommand
     };
     //
     // console.log("report.report");
