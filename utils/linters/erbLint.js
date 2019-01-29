@@ -322,7 +322,7 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
 
 function runErbLint(files, commitAttempt, truncate) {
   // console.log("");
-  var cmd = 'erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
+  var cmd = 'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
   var statusCode = 0;
   try {
     // console.log("merde1");
