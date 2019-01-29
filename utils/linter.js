@@ -927,7 +927,7 @@ function getPythonVersion() {
 }
 
 function fetchShellCommand(){
-  var command = 'node '
+  var command = ''
   process.argv.forEach(function (val, index, array) {
     // console.log(index + ': ' + val);
     command += val + ' '
