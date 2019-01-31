@@ -393,7 +393,7 @@ function parsePylinResults(output, commitAttempt) {
   pylintReport.fixable_error_count = totalfixableErrorCount;
   pylintReport.fixable_warning_count = totalfixableWarnCount;
 
-  pylintReport.rule_checks_attributes = createRuleCheckJson(output, body);
+  pylintReport.rule_checks_attributes = createRuleCheckJson(output, commitAttempt);
 
   // console.log(pylintReport);
   return pylintReport;
