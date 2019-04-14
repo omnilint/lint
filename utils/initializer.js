@@ -246,8 +246,8 @@ function confirmRepoName(defaultRepositoryName) {
       message: "Pick a code checker policy",
       choices: [
         { name: "No policy", value: null },
-        { name: "Recommended policy", value: "78" },
-        { name: "Strict policy", value: "77" }
+        { name: "Default policy", value: "1" },
+        { name: "Strict policy", value: "4" }
       ],
       initial: 1
     },
