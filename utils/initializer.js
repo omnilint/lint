@@ -131,7 +131,8 @@ function writeOmnilintFile(repositoryName, repositories, username, token) {
         " initialized successfully."
     );
     // console.log(chalk.green(".omnilint/config") + " created");
-    commitAfterInstall();
+    // commitAfterInstall();
+    // askToCommit();
   }
 }
 
