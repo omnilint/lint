@@ -52,93 +52,93 @@ function install() {
   const enclosingGitRepository = getEnclosingGitRepository();
 
   const spinner = ora("");
-
-
-  if(checkIfPrettierIsInstalled()) {
-    spinner.succeed("Prettier is installed.")
-
-  } else {
-    console.log("Prettier is not installed. Installing...")
-    try {
-      installPrettier();
-      spinner.succeed("Prettier is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install Prettier. Please install it using " + chalk.cyan("npm i -g prettier") + ".");
-    }
-  }
-
-
-  if(checkIfEslintIsInstalled()) {
-    spinner.succeed("Eslint is installed.")
-  } else {
-    console.log("ESLint is not installed. Installing...")
-
-    try {
-      installEslint();
-      spinner.succeed("ESLint is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install EsLint. Please install it using " + chalk.cyan("npm i -g eslint") + ".");
-    }
-  }
-
-
-  if(checkIfStyleLintIsInstalled()) {
-    spinner.succeed("StyleLint is installed.")
-  } else {
-    console.log("StyleLint is not installed. Installing...")
-    try {
-      installStyleLint();
-      spinner.succeed("StyleLint is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install StyleLint. Please install it using " + chalk.cyan("npm i -g stylelint") + ".");
-    }
-  }
-
-  if(checkIfRubocopIsInstalled()) {
-    spinner.succeed("Rubocop is installed.")
-  } else {
-    console.log("Rubocop is not installed. Installing...")
-    try {
-      installRubocop();
-      spinner.succeed("Rubocop is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install Rubocop. Please install it using " + chalk.cyan("gem install rubocop") + ".");
-    }
-  }
-
-
-  if(checkIfErbLintIsInstalled()) {
-    spinner.succeed("ERBLint is installed.")
-  } else {
-    console.log("ERBLint is not installed. Installing...")
-    try {
-      installErbLint();
-      spinner.succeed("ERBLint is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install ERBLint. Please install it using " + chalk.cyan("gem install erblint") + ".");
-    }
-  }
-
-  checkForPyLintRequirement()
-
-
-  if(checkIfBrakemanIsInstalled()) {
-    spinner.succeed("Brakeman is installed.")
-  } else {
-    console.log("Brakeman is not installed. Installing...")
-    try {
-      installBrakeman();
-      spinner.succeed("Brakeman is now installed.")
-    } catch (e) {
-      console.log(e);
-      spinner.fail("Could not install Brakeman. Please install it using " + chalk.cyan("gem install brakeman") + ".");
-    }
-  }
+  //
+  //
+  // if(checkIfPrettierIsInstalled()) {
+  //   spinner.succeed("Prettier is installed.")
+  //
+  // } else {
+  //   console.log("Prettier is not installed. Installing...")
+  //   try {
+  //     installPrettier();
+  //     spinner.succeed("Prettier is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install Prettier. Please install it using " + chalk.cyan("npm i -g prettier") + ".");
+  //   }
+  // }
+  //
+  //
+  // if(checkIfEslintIsInstalled()) {
+  //   spinner.succeed("Eslint is installed.")
+  // } else {
+  //   console.log("ESLint is not installed. Installing...")
+  //
+  //   try {
+  //     installEslint();
+  //     spinner.succeed("ESLint is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install EsLint. Please install it using " + chalk.cyan("npm i -g eslint") + ".");
+  //   }
+  // }
+  //
+  //
+  // if(checkIfStyleLintIsInstalled()) {
+  //   spinner.succeed("StyleLint is installed.")
+  // } else {
+  //   console.log("StyleLint is not installed. Installing...")
+  //   try {
+  //     installStyleLint();
+  //     spinner.succeed("StyleLint is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install StyleLint. Please install it using " + chalk.cyan("npm i -g stylelint") + ".");
+  //   }
+  // }
+  //
+  // if(checkIfRubocopIsInstalled()) {
+  //   spinner.succeed("Rubocop is installed.")
+  // } else {
+  //   console.log("Rubocop is not installed. Installing...")
+  //   try {
+  //     installRubocop();
+  //     spinner.succeed("Rubocop is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install Rubocop. Please install it using " + chalk.cyan("gem install rubocop") + ".");
+  //   }
+  // }
+  //
+  //
+  // if(checkIfErbLintIsInstalled()) {
+  //   spinner.succeed("ERBLint is installed.")
+  // } else {
+  //   console.log("ERBLint is not installed. Installing...")
+  //   try {
+  //     installErbLint();
+  //     spinner.succeed("ERBLint is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install ERBLint. Please install it using " + chalk.cyan("gem install erblint") + ".");
+  //   }
+  // }
+  //
+  // checkForPyLintRequirement()
+  //
+  //
+  // if(checkIfBrakemanIsInstalled()) {
+  //   spinner.succeed("Brakeman is installed.")
+  // } else {
+  //   console.log("Brakeman is not installed. Installing...")
+  //   try {
+  //     installBrakeman();
+  //     spinner.succeed("Brakeman is now installed.")
+  //   } catch (e) {
+  //     console.log(e);
+  //     spinner.fail("Could not install Brakeman. Please install it using " + chalk.cyan("gem install brakeman") + ".");
+  //   }
+  // }
 
 
 
