@@ -174,7 +174,7 @@ function askToCommit() {
 function commitAfterInstall() {
   try {
     var addFiles = execSync("git add " + dotOmnilintDirectory + "/config");
-    console.log(addFiles.toString());
+    // console.log(addFiles.toString());
     if (addFiles) {
       try {
         var enclosingRepository = getEnclosingGitRepository();
@@ -189,8 +189,9 @@ function commitAfterInstall() {
             process.exit(0);
           }
         } catch (err) {
-          console.log("error at git commit");
-          console.log(err.stdout.toString());
+          // Silent error
+          // console.log("error at git commit");
+          // console.log(err.stdout.toString());
         }
         // } else {
         //   console.log(enclosingRepository + "/.git/COMMIT_EDITMSG exists");
