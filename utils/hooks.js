@@ -51,7 +51,7 @@ function install() {
   const moment = momentjs();
   const enclosingGitRepository = getEnclosingGitRepository();
 
-  // const spinner = ora("");
+  const spinner = ora("");
   //
   //
   // if(checkIfPrettierIsInstalled()) {
