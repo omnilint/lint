@@ -52,6 +52,7 @@ function install() {
   const enclosingGitRepository = getEnclosingGitRepository();
 
   const spinner = ora("");
+
   //
   //
   // if(checkIfPrettierIsInstalled()) {
@@ -148,11 +149,11 @@ function install() {
     enclosingGitRepository == "" ||
     enclosingGitRepository == " "
   ) {
-    // console.log();
-    // console.log("Can't find .git, skipping Git hooks installation");
-    // console.log(
-    //   "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall omnilint"
-    // );
+    console.log();
+    console.log("Can't find .git, skipping Git hooks installation");
+    console.log(
+      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall omnilint"
+    );
     console.log();
     process.exit(0);
   }
