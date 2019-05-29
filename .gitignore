@@ -63,5 +63,5 @@ typings/
 .rubocop.yml
 .eslintrc
 tsconfig.json
-.omnilint/tmp/
+.lint/tmp/
 .DS_Store
