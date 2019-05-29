@@ -92,7 +92,7 @@ const ROOT_PATH = os.homedir();
 // const localUsernamePath = `/.omnilint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
-const API_BASE_URL = "https://api.omnilint.com";
+const API_BASE_URL = "https://api.lint.dev";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
 // var executionStartTime;
@@ -592,7 +592,7 @@ function swapFiles(stagedFilePaths) {
 
 // Check if we are connected to internet
 function checkInternet(cb) {
-  dns.lookup("omnilint.com", function(err) {
+  dns.lookup("lint.dev", function(err) {
     if (err && err.code == "ENOTFOUND") {
       cb(false);
     } else {

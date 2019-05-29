@@ -8,7 +8,7 @@ const ROOT_PATH = os.homedir();
 // const localUsernamePath = `/.omnilint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
-const API_BASE_URL = "https://api.omnilint.com";
+const API_BASE_URL = "https://api.lint.dev";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
 function fetchUser(username, token) {

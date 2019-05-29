@@ -20,9 +20,9 @@ const {
   getTokenFromLocalDevice
 } = require("./user");
 
-const SITE_URL = "https://omnilint.com";
-const GIT_BASE_URL = "git@git.omnilint.com";
-const API_BASE_URL = "https://api.omnilint.com";
+const SITE_URL = "https://lint.dev";
+const GIT_BASE_URL = "git@git.lint.dev";
+const API_BASE_URL = "https://api.lint.dev";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
 function fetchOrganizations() {
