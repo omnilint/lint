@@ -12,7 +12,7 @@
   "license": "Apache-2.0",
   "preferGlobal": true,
   "bin": {
-    "omnilint": "./index.js"
+    "lint": "./index.js"
   },
   "dependencies": {
     "chalk": "^2.4.1",
