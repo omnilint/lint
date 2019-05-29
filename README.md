@@ -53,4 +53,4 @@ Print the list of available commands:
 $ lint --help
 ```
 ## Website
-[https://www.lint.com](https://www.lint.com)
+[https://lint.dev](https://lint.dev)
