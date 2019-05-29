@@ -76,7 +76,7 @@ function getDotOmnilintDirectory() {
     // console.log("You are not in a git repository.");
     return false;
   } else {
-    var dotOmnilintDirectory = enclosingGitRepository + "/.omnilint";
+    var dotOmnilintDirectory = enclosingGitRepository + "/.lint";
   }
   return dotOmnilintDirectory;
 }

@@ -5,7 +5,7 @@ const chalk = require("chalk");
 const request = require("request");
 
 const ROOT_PATH = os.homedir();
-// const localUsernamePath = `/.omnilint/refs/user`;
+// const localUsernamePath = `/.lint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
 const API_BASE_URL = "https://api.lint.dev";
@@ -29,7 +29,7 @@ function fetchUser(username, token) {
 function saveUsernameAndTokenOnLocalDevice(username, token) {
   var tmpPath = ROOT_PATH;
   if (fs.existsSync(tmpPath)) {
-    tmpPath = path.join(tmpPath, ".omnilint");
+    tmpPath = path.join(tmpPath, ".lint");
     if (!fs.existsSync(tmpPath)) {
       fs.mkdirSync(tmpPath);
     }
@@ -48,11 +48,11 @@ function saveUsernameAndTokenOnLocalDevice(username, token) {
 }
 
 function logout() {
-  var tmpPath = path.join(ROOT_PATH, ".omnilint", "refs", "user");
+  var tmpPath = path.join(ROOT_PATH, ".lint", "refs", "user");
   if (fs.existsSync(tmpPath)) {
     fs.unlinkSync(tmpPath);
   }
-  var tokenPath = path.join(ROOT_PATH, ".omnilint", "refs", "token");
+  var tokenPath = path.join(ROOT_PATH, ".lint", "refs", "token");
   if (fs.existsSync(tokenPath)) {
     fs.unlinkSync(tokenPath);
   }
@@ -60,7 +60,7 @@ function logout() {
 }
 
 function getUsernameFromLocalDevice() {
-  const dir = path.join(ROOT_PATH, ".omnilint", "refs", "user");
+  const dir = path.join(ROOT_PATH, ".lint", "refs", "user");
   if (fs.existsSync(dir)) {
     const username = fs.readFileSync(dir, "utf8").replace(/\r?\n|\r/g, "");
     return username;
@@ -70,7 +70,7 @@ function getUsernameFromLocalDevice() {
 }
 
 function getTokenFromLocalDevice() {
-  const dir = path.join(ROOT_PATH, ".omnilint", "refs", "token");
+  const dir = path.join(ROOT_PATH, ".lint", "refs", "token");
   if (fs.existsSync(dir)) {
     const token = fs.readFileSync(dir, "utf8").replace(/\r?\n|\r/g, "");
     return token;

@@ -16,7 +16,7 @@ const {
 const { parseOmnilintFile } = require("./filesHandler");
 
 const ROOT_PATH = os.homedir();
-// const localUsernamePath = `/.omnilint/refs/user`;
+// const localUsernamePath = `/.lint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
 const SITE_URL = "https://lint.dev";

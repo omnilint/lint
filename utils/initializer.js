@@ -64,7 +64,7 @@ function initializeAndCreateRepository(username, token) {
     // console.log(chalk.green(repo) + " already exists.");
     reportSpinner.succeed(chalk.green(repo) + " already exists on Omnilint.");
     // console.log(chalk.green(username) + "/" + chalk.green(repo) + " has already been initialized");
-    // console.log("To init again delete .omnilint file and run init");
+    // console.log("To init again delete .lint file and run init");
     process.exit(0);
   }
 
@@ -130,7 +130,7 @@ function writeOmnilintFile(repositoryName, repositories, username, token) {
         chalk.green(username + "/" + repositoryName) +
         " initialized successfully."
     );
-    // console.log(chalk.green(".omnilint/config") + " created");
+    // console.log(chalk.green(".lint/config") + " created");
     // commitAfterInstall();
     // askToCommit();
   }
@@ -160,7 +160,7 @@ function askToCommit() {
     {
       type: "confirm",
       name: "confirm",
-      message: "Do you want to commit " + chalk.green(".omnilint/config") + "?"
+      message: "Do you want to commit " + chalk.green(".lint/config") + "?"
     }
   ]).then(answers => {
     if (answers.confirm) {

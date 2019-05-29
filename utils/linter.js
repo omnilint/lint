@@ -89,7 +89,7 @@ const {
 } = require("./filesHandler");
 
 const ROOT_PATH = os.homedir();
-// const localUsernamePath = `/.omnilint/refs/user`;
+// const localUsernamePath = `/.lint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
 const API_BASE_URL = "https://api.lint.dev";
@@ -546,7 +546,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
             console.log(e);
             console.log(chalk.red("Commit Aborded. Fix your code first."));
             if (!keep) {
-              rimraf("./.omnilint/tmp/");
+              rimraf("./.lint/tmp/");
             }
             process.exit(1);
             // Expected output: "Success!"
@@ -616,9 +616,9 @@ function saveCommitAttemptId(commit_attempt_id) {
 }
 
 function readCommitAttempId() {
-  if (fs.existsSync("./.omnilint/tmp/commit_attempt_id")) {
+  if (fs.existsSync("./.lint/tmp/commit_attempt_id")) {
     const commit_attempt_id = fs.readFileSync(
-      "./.omnilint/tmp/commit_attempt_id"
+      "./.lint/tmp/commit_attempt_id"
     );
     return commit_attempt_id.toString();
   } else {
@@ -1657,9 +1657,9 @@ function preCommit(keep, time, truncate) {
 }
 
 function readPaths() {
-  if (fs.existsSync("./.omnilint/tmp/staged")) {
+  if (fs.existsSync("./.lint/tmp/staged")) {
     const paths = fs
-      .readFileSync("./.omnilint/tmp/staged")
+      .readFileSync("./.lint/tmp/staged")
       .toString()
       .split(",");
 
@@ -1671,9 +1671,9 @@ function readPaths() {
 }
 
 function readReport() {
-  if (fs.existsSync("./.omnilint/tmp/report")) {
+  if (fs.existsSync("./.lint/tmp/report")) {
     try {
-      const report = JSON.parse(fs.readFileSync("./.omnilint/tmp/report"));
+      const report = JSON.parse(fs.readFileSync("./.lint/tmp/report"));
       return report;
     } catch (e) {
       console.error("Can't find report file.");
@@ -1701,7 +1701,7 @@ function checkIfPolicyCheckPassed() {
       process.exit(1);
     }
     editCommitAttempt(repositoryUUID).then(body => {
-      rimraf("./.omnilint/tmp/");
+      rimraf("./.lint/tmp/");
       process.exit(1);
     });
   }
@@ -1733,13 +1733,13 @@ function postCommit() {
       .then(body => {
         // console.log("editCommitAttempt Success");
         // console.log(body);
-        rimraf("./.omnilint/tmp/");
+        rimraf("./.lint/tmp/");
       })
       .catch(error => {
         // console.log("editCommitAttempt Error");
 
         console.log(error);
-        rimraf("./.omnilint/tmp/");
+        rimraf("./.lint/tmp/");
 
         process.exit(1);
       });
