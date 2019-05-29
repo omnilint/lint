@@ -1,15 +1,15 @@
 {
   "name": "omnilint-cli",
   "version": "0.1.1",
-  "description": "Omnilint CLI.",
+  "description": "Lint.dev CLI.",
   "main": "index.js",
   "scripts": {
     "build": "nexe index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "Omnilint",
-  "license": "UNLICENSED",
+  "author": "Jimmy Douieb",
+  "license": "Apache-2.0",
   "preferGlobal": true,
   "bin": {
     "omnilint": "./index.js"
