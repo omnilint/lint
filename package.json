@@ -1,6 +1,6 @@
 {
-  "name": "omnilint-cli",
-  "version": "0.1.1",
+  "name": "lint",
+  "version": "0.6.0",
   "description": "Lint.dev CLI.",
   "main": "index.js",
   "scripts": {
@@ -28,5 +28,14 @@
     "request": "^2.87.0",
     "simple-git": "^1.96.0",
     "write-yaml": "^1.0.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lint-dev/lint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lint-dev/lint/issues"
+  },
+  "homepage": "https://github.com/lint-dev/lint#readme"
 }
