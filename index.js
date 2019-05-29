@@ -12,7 +12,6 @@ const fs = require("fs");
 
 const { init } = require("./utils/initializer");
 
-// const key = "14189dc35ae35e75ff74455ffe245cd9bc7803838fbfd5c773cdcd79b8a28bbd";
 
 const {
   getUsernameFromLocalDevice,
@@ -68,13 +67,13 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.6.0", "-v, --version");
+program.version("v0.6.3", "-v, --version");
 
 program
   .command("version")
   .description("Print Omnilint version.")
   .action(() => {
-    console.log("v0.6.0");
+    console.log("v0.6.3");
     process.exit(0);
   });
 
