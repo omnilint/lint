@@ -6,10 +6,6 @@ const chalk = require("chalk");
 const simpleGit = require("simple-git");
 var path = require("path");
 const fs = require("fs");
-
-// const eslint = require("eslint");
-// const simpleGit = require('simple-git')(workingDirPath);
-
 const { init } = require("./utils/initializer");
 
 
@@ -81,7 +77,6 @@ program
   .command("init")
   .description("Initializes Omnilint for current repository")
   .action(() => {
-    // console.log("Initializing Omnilint...");
     init();
   });
 
