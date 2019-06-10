@@ -63,13 +63,13 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.6.6", "-v, --version");
+program.version("v0.7.0", "-v, --version");
 
 program
   .command("version")
   .description("Print Lint version.")
   .action(() => {
-    console.log("v0.6.6");
+    console.log("v0.7.0");
     process.exit(0);
   });
 
