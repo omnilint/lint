@@ -13,11 +13,11 @@ const {
 } = require("../user")
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  isLintFilePresent,
+  getDotLintDirectory
 } = require("../filesHandler")
 
-const dotOmnilintDirectory = getDotOmnilintDirectory()
+const dotLintDirectory = getDotLintDirectory()
 
 
 function runPrettierOnProject(extenstion) {
@@ -59,7 +59,7 @@ function runPrettierOnStagedFiles(prettierFiles) {
   try {
     var cmd = execSync(
       "prettier --config " +
-        dotOmnilintDirectory +
+        dotLintDirectory +
         "/tmp/prettierrc " +
         "--write " +
         quotedAndCommaSeparated
@@ -90,7 +90,7 @@ function verifyIfFilesNeedPrettier() {
     console.log(quotedAndCommaSeparated)
     var res = execSync(
       "prettier --config " +
-        dotOmnilintDirectory +
+        dotLintDirectory +
         "/tmp/prettierrc --list-different " +
         quotedAndCommaSeparated
     )
@@ -226,13 +226,13 @@ function createPrettierConfig(rules) {
   // console.log(rules);
   var rulesSet = JSON.stringify(rules)
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory)
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory)
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp")
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp")
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/prettierrc", rulesSet)
+  fs.writeFileSync(dotLintDirectory + "/tmp/prettierrc", rulesSet)
   // verifyIfFilesNeedPrettier();
   // console.log("Prettier configuration file successfully updated.");
 }

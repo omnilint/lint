@@ -10,8 +10,8 @@ var CliTable = require("cli-table");
 
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory,
+  isLintFilePresent,
+  getDotLintDirectory,
   isLocalInstall
 } = require("./filesHandler");
 

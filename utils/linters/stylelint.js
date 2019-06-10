@@ -6,11 +6,11 @@ var _ = require("lodash");
 
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  isLintFilePresent,
+  getDotLintDirectory
 } = require("../filesHandler");
 
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 function checkIfStyleLintIsInstalled() {
   try {
@@ -140,13 +140,13 @@ function createStyleLintConfig(rules) {
   rules = { rules: rules };
   var json = JSON.stringify(rules);
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/.stylelintrc", json);
+  fs.writeFileSync(dotLintDirectory + "/tmp/.stylelintrc", json);
   // console.log("ESLint configuration file successfully updated.");
 }
 
@@ -413,7 +413,7 @@ function runStyleLint(styleLintFiles, autofix, commitAttempt, desiredFormat, tru
   // sortPolicyRules()
   var cmd =
     "stylelint --config " +
-    dotOmnilintDirectory +
+    dotLintDirectory +
     "/tmp/.stylelintrc " +
     styleLintFiles.join(" ") +
     " -f json";

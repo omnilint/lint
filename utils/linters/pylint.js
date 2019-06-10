@@ -6,11 +6,11 @@ var _ = require("lodash");
 
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  isLintFilePresent,
+  getDotLintDirectory
 } = require("../filesHandler");
 
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 function checkIfPythonIsInstalled() {
   try {
@@ -196,13 +196,13 @@ function selectFilesForPylint(stagedFilePaths) {
 function createPylintConfig(pylintRules) {
   var pylintRulesConfig = pylintRules;
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/.pylintrc", pylintRulesConfig);
+  fs.writeFileSync(dotLintDirectory + "/tmp/.pylintrc", pylintRulesConfig);
 }
 
 function sortErrorsToDisplay(file, truncate) {
@@ -409,7 +409,7 @@ function runPylintOntStagedFiles(
   // var cmd = "pylint --output-format json " + pythonFiles.join(" ");
   var cmd =
     'pylint --rcfile ' +
-    dotOmnilintDirectory +
+    dotLintDirectory +
     '/tmp/.pylintrc --output-format json "'
      + pythonFiles.join('" "') + '"';
 

@@ -14,10 +14,10 @@ const {
 } = require("../user");
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  isLintFilePresent,
+  getDotLintDirectory
 } = require("../filesHandler");
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 const yaml = require("js-yaml");
 
@@ -45,13 +45,13 @@ function runEslint(files, autofix, commitAttempt, desiredFormat, truncate) {
   if (autofix) {
     var cmd =
       'eslint --config ' +
-      dotOmnilintDirectory +
+      dotLintDirectory +
       '/tmp/eslintrc --fix --format json "' + files.join('" "') + '"'
     // console.log("Prepare to fix");
   } else {
     var cmd =
       'eslint --config ' +
-      dotOmnilintDirectory +
+      dotLintDirectory +
       '/tmp/eslintrc --format json "' + files.join('" "') + '"'
   }
   try {
@@ -339,13 +339,13 @@ function createESlintConfig(rules) {
   };
   json = JSON.stringify(json);
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/eslintrc", json);
+  fs.writeFileSync(dotLintDirectory + "/tmp/eslintrc", json);
   // console.log("ESLint configuration file successfully updated.");
 }
 

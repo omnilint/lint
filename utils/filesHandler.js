@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const { exec, execSync, spawn } = require("child_process");
 const yaml = require("js-yaml");
 
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 function getEnclosingGitRepository() {
   var gitRepository = "./.git";
@@ -43,10 +43,10 @@ function isLocalInstall() {
   }
 }
 
-function isOmnilintFilePresent() {
+function isLintFilePresent() {
   if (
-    fs.existsSync(dotOmnilintDirectory) &&
-    fs.existsSync(dotOmnilintDirectory + "/config")
+    fs.existsSync(dotLintDirectory) &&
+    fs.existsSync(dotLintDirectory + "/config")
   ) {
     return true;
   } else {
@@ -68,7 +68,7 @@ function rimraf(dir_path) {
   }
 }
 
-function getDotOmnilintDirectory() {
+function getDotLintDirectory() {
   // console.log(getEnclosingGitRepository());
   var enclosingGitRepository = getEnclosingGitRepository();
   if (!enclosingGitRepository) {
@@ -76,9 +76,9 @@ function getDotOmnilintDirectory() {
     // console.log("You are not in a git repository.");
     return false;
   } else {
-    var dotOmnilintDirectory = enclosingGitRepository + "/.lint";
+    var dotLintDirectory = enclosingGitRepository + "/.lint";
   }
-  return dotOmnilintDirectory;
+  return dotLintDirectory;
 }
 
 function copyFileSync(source, target) {
@@ -133,10 +133,10 @@ function copyRecursiveSync(source, target) {
   }
 }
 
-function parseOmnilintFile() {
-  if (isOmnilintFilePresent()) {
+function parseLintFile() {
+  if (isLintFilePresent()) {
     const repo = yaml.safeLoad(
-      fs.readFileSync(dotOmnilintDirectory + "/config")
+      fs.readFileSync(dotLintDirectory + "/config")
     );
     return repo;
   }
@@ -173,13 +173,13 @@ function getRelevantSource(file, lineStart) {
 
 module.exports = {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory,
+  isLintFilePresent,
+  getDotLintDirectory,
   isLocalInstall,
   rimraf,
   copyFileSync,
   copyFolderRecursiveSync,
   copyRecursiveSync,
-  parseOmnilintFile,
+  parseLintFile,
   getRelevantSource
 };

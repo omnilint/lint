@@ -9,10 +9,10 @@ const { prompt } = require("inquirer");
 const ora = require("ora");
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory,
+  isLintFilePresent,
+  getDotLintDirectory,
   isLocalInstall,
-  parseOmnilintFile
+  parseLintFile
 } = require("./filesHandler");
 
 const {
@@ -24,7 +24,7 @@ const {
   getRepositories,
   fetchRepositories,
   smartCloneRepository,
-  createRepositoryOnOmnilint
+  createRepositoryOnLint
 } = require("./repository");
 
 const { exec, execSync, spawn } = require("child_process");
@@ -34,7 +34,7 @@ const GIT_BASE_URL = "git@git.lint.dev";
 const API_BASE_URL = "https://api.lint.dev";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 function init() {
   const username = getUsernameFromLocalDevice();
@@ -54,15 +54,15 @@ function getFullPath(dirPath) {
 }
 
 function initializeAndCreateRepository(username, token) {
-  const reportSpinner = ora("Initializing Omnilint...");
+  const reportSpinner = ora("Initializing Lint...");
   reportSpinner.start();
 
-  // console.log("Initializing Omnilint...");
+  // console.log("Initializing Lint...");
 
-  if (isOmnilintFilePresent()) {
-    const repo = yaml.safeLoad(fs.readFileSync(dotOmnilintDirectory + "/config"));
+  if (isLintFilePresent()) {
+    const repo = yaml.safeLoad(fs.readFileSync(dotLintDirectory + "/config"));
     // console.log(chalk.green(repo) + " already exists.");
-    reportSpinner.succeed(chalk.green(repo) + " already exists on Omnilint.");
+    reportSpinner.succeed(chalk.green(repo) + " already exists on Lint.");
     // console.log(chalk.green(username) + "/" + chalk.green(repo) + " has already been initialized");
     // console.log("To init again delete .lint file and run init");
     process.exit(0);
@@ -98,9 +98,9 @@ function initializeAndCreateRepository(username, token) {
       if (body.length == 1) {
         // console.log("One repository found: " + chalk.green(body[0].uuid));
         reportSpinner.succeed("Repository found: " + chalk.green(body[0].uuid));
-        confirmWriteOmnilintFile(defaultRepositoryName, body, username, token);
+        confirmWriteLintFile(defaultRepositoryName, body, username, token);
       } else if (body.length == 0) {
-        // console.log("Repository not found on Omnilint.");fail
+        // console.log("Repository not found on Lint.");fail
         reportSpinner.stop();
         confirmRepoName(defaultRepositoryName);
       } else {
@@ -117,14 +117,14 @@ function initializeAndCreateRepository(username, token) {
     });
 }
 
-function writeOmnilintFile(repositoryName, repositories, username, token) {
+function writeLintFile(repositoryName, repositories, username, token) {
   yml = yaml.safeDump(username + "/" + repositoryName);
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/config")) {
-    fs.writeFileSync(dotOmnilintDirectory + "/config", yml);
+  if (!fs.existsSync(dotLintDirectory + "/config")) {
+    fs.writeFileSync(dotLintDirectory + "/config", yml);
     console.log(
       "Repository " +
         chalk.green(username + "/" + repositoryName) +
@@ -136,7 +136,7 @@ function writeOmnilintFile(repositoryName, repositories, username, token) {
   }
 }
 
-function confirmWriteOmnilintFile(repositoryName, repositories, username, token) {
+function confirmWriteLintFile(repositoryName, repositories, username, token) {
   // console.log(username)
   // console.log(username)
   prompt([
@@ -147,7 +147,7 @@ function confirmWriteOmnilintFile(repositoryName, repositories, username, token)
     }
   ]).then(answers => {
     if (answers.confirm) {
-      writeOmnilintFile(repositoryName, repositories, username, token);
+      writeLintFile(repositoryName, repositories, username, token);
     } else if (!answers.confirm) {
       console.log("Please enter a repository name:");
       confirmRepoName("");
@@ -173,7 +173,7 @@ function askToCommit() {
 
 function commitAfterInstall() {
   try {
-    var addFiles = execSync("git add " + dotOmnilintDirectory + "/config");
+    var addFiles = execSync("git add " + dotLintDirectory + "/config");
     // console.log(addFiles.toString());
     if (addFiles) {
       try {
@@ -183,7 +183,7 @@ function commitAfterInstall() {
         // if (!fs.existsSync(enclosingRepository + "/.git/COMMIT_EDITMSG")) {
         // console.log(enclosingRepository + "COMMIT_EDITMSG doesnt exist");
         try {
-          var commitFiles = execSync('git commit -m "Install Omnilint"');
+          var commitFiles = execSync('git commit -m "Install Lint"');
           if (commitFiles) {
             // console.log(commitFiles.toString());
             process.exit(0);
@@ -202,7 +202,7 @@ function commitAfterInstall() {
         //   if (gitStatus) {
         //     if (gitStatus.length > 0) {
         //       try {
-        //         var commitFiles = execSync('git commit -m "Install Omnilint"');
+        //         var commitFiles = execSync('git commit -m "Install Lint"');
         //         if (commitFiles) {
         //           console.log(commitFiles.toString());
         //           process.exit(0);
@@ -255,14 +255,14 @@ function confirmRepoName(defaultRepositoryName) {
     {
       type: "confirm",
       name: "autofix",
-      message: "Do you want Omnilint to automatically fix your code offenses ?",
+      message: "Do you want Lint to automatically fix your code offenses ?",
       default: false
     }
   ])
     .then(answers => {
       if (answers.name) {
         // console.log(answers.policy);
-        createRepositoryOnOmnilint(
+        createRepositoryOnLint(
           answers.name,
           answers.policy,
           answers.autofix
@@ -270,7 +270,7 @@ function confirmRepoName(defaultRepositoryName) {
           .then(body => {
             const username = getUsernameFromLocalDevice();
             const token = getTokenFromLocalDevice();
-            writeOmnilintFile(defaultRepositoryName, body, username, token);
+            writeLintFile(defaultRepositoryName, body, username, token);
           })
           .catch(function(e) {
             process.exit(1);
@@ -288,7 +288,7 @@ function confirmRepoName(defaultRepositoryName) {
 }
 
 function checkAccess(token) {
-  const repo = yaml.safeLoad(fs.readFileSync(dotOmnilintDirectory + "/config"));
+  const repo = yaml.safeLoad(fs.readFileSync(dotLintDirectory + "/config"));
   const repoUUID = repo.uuid;
   const url = `${API_BASE_URL}/${repoUUID}.json?user_token=${token}`;
   return new Promise((resolve, reject) => {

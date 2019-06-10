@@ -13,7 +13,7 @@ const {
   getTokenFromLocalDevice
 } = require("./user");
 
-const { parseOmnilintFile } = require("./filesHandler");
+const { parseLintFile } = require("./filesHandler");
 
 const ROOT_PATH = os.homedir();
 // const localUsernamePath = `/.lint/refs/user`;
@@ -39,7 +39,7 @@ function fetchRepositories(username, token) {
 }
 
 function fetchRepositoryKey() {
-  var repositoryUUID = parseOmnilintFile();
+  var repositoryUUID = parseLintFile();
   const token = getTokenFromLocalDevice();
 
   if (!repositoryUUID) {
@@ -113,14 +113,14 @@ function smartCloneRepository(repoPathOrSlug, localPath, options) {
     if (username && token) {
       let repoSplitted = repoPathOrSlug.split("/");
       if (repoSplitted.length === 1) {
-        // console.log('Looks like an Omnilint repository aaa. Checking on Omnilint...');
+        // console.log('Looks like an Lint repository aaa. Checking on Lint...');
         fetchRepository(repoPathOrSlug, username, token)
           .then(body => {
             // console.log('body', body)
             console.log(
               `Repository ${chalk.green(username)}/${chalk.green(
                 repoPathOrSlug
-              )} found on Omnilint...`
+              )} found on Lint...`
             );
             const gitUrl = `${GIT_BASE_URL}:${username}/${repoPathOrSlug}.git`;
             // console.log('gitUrl', gitUrl)
@@ -134,13 +134,13 @@ function smartCloneRepository(repoPathOrSlug, localPath, options) {
         let repoSplitted2 = repoPathOrSlug.split("@");
         let repoSplitted3 = repoPathOrSlug.split("://");
         if (repoSplitted2.length === 1 && repoSplitted3.length === 1) {
-          // console.log('Looks like an Omnilint repository aaa/bbb. Checking on Omnilint...');
+          // console.log('Looks like an Lint repository aaa/bbb. Checking on Lint...');
           fetchRepository(repoSplitted[1], repoSplitted[0], token)
             .then(body => {
               console.log(
                 'Repository "' +
                   chalk.green(repoPathOrSlug) +
-                  '" found on Omnilint...'
+                  '" found on Lint...'
               );
               const gitUrl = `${GIT_BASE_URL}:${repoSplitted[0]}/${
                 repoSplitted[1]
@@ -235,7 +235,7 @@ function findRepositoryInDatabase(repoName) {
   });
 }
 
-function createRepositoryOnOmnilint(
+function createRepositoryOnLint(
   repoName,
   policy,
   has_autofix
@@ -325,6 +325,6 @@ module.exports = {
   getRepositories,
   fetchRepository,
   smartCloneRepository,
-  createRepositoryOnOmnilint,
+  createRepositoryOnLint,
   fetchRepositoryKey
 };

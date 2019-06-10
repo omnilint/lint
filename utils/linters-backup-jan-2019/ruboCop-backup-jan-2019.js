@@ -16,10 +16,10 @@ const {
 } = require("../user");
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory
+  isLintFilePresent,
+  getDotLintDirectory
 } = require("../filesHandler");
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 const API_BASE_URL = "https://api.lint.dev";
 const DEV_API_BASE_URL = "http://localhost:3000";
@@ -53,13 +53,13 @@ function createRubocopConfig(rubocopRules) {
 
   // console.log(yml);
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/rubocop.yml", yml);
+  fs.writeFileSync(dotLintDirectory + "/tmp/rubocop.yml", yml);
 }
 
 function checkIfRubocopIsInstalled() {
@@ -152,7 +152,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
     if (autofix) {
       var cmd =
         "rubocop --config " +
-        dotOmnilintDirectory +
+        dotLintDirectory +
         // TODO: Fix autofix
         // "/tmp/rubocop.yml --color --fix --format json " +
         "/tmp/rubocop.yml --color --format json " +
@@ -163,7 +163,7 @@ function runRubocopJson(files, autofix, body, desiredFormat) {
 
       var cmd =
         "rubocop --config " +
-        dotOmnilintDirectory +
+        dotLintDirectory +
         "/tmp/rubocop.yml --color --format json " +
         files.join(" ");
     }

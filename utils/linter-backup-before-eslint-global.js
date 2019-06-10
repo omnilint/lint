@@ -56,14 +56,14 @@ const {
 
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory,
+  isLintFilePresent,
+  getDotLintDirectory,
   isLocalInstall,
   rimraf,
   copyFileSync,
   copyFolderRecursiveSync,
   copyRecursiveSync,
-  parseOmnilintFile
+  parseLintFile
 } = require("./filesHandler");
 
 const ROOT_PATH = os.homedir();
@@ -77,27 +77,27 @@ const DEV_API_BASE_URL = "http://localhost:3000";
 var executionStartTime = new Date();
 
 function savePaths(paths) {
-  const dotOmnilintDirectory = getDotOmnilintDirectory();
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  const dotLintDirectory = getDotLintDirectory();
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/staged", paths);
+  fs.writeFileSync(dotLintDirectory + "/tmp/staged", paths);
 }
 
 function saveReport(report) {
-  const dotOmnilintDirectory = getDotOmnilintDirectory();
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  const dotLintDirectory = getDotLintDirectory();
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
   var stringifiedReport = JSON.stringify(report);
   // console.log(stringifiedReport);
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/report", stringifiedReport);
+  fs.writeFileSync(dotLintDirectory + "/tmp/report", stringifiedReport);
 }
 
 // Use of eslint with lint-staged//
@@ -114,7 +114,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
   // repoOwner = "reyemneirda";
   // repoName = "todolist";
 
-  const repositoryUUID = parseOmnilintFile();
+  const repositoryUUID = parseLintFile();
   // const repositoryUUID = "reyemneirda/react-tic-tac-toe";
   // console.log('repositoryUUID');
   // console.log(repositoryUUID);
@@ -489,22 +489,22 @@ function lintingPreCommit(desiredFormat, keep, time) {
 
 function swapFiles(stagedFilePaths) {
   var paths = stagedFilePaths;
-  var dotOmnilintDirectory = getDotOmnilintDirectory();
+  var dotLintDirectory = getDotLintDirectory();
   var enclosingRepository = getEnclosingGitRepository();
   paths.forEach(path => {
-    if (!fs.existsSync(dotOmnilintDirectory + "/tmp/plain/")) {
-      fs.mkdirSync(dotOmnilintDirectory + "/tmp/plain/");
+    if (!fs.existsSync(dotLintDirectory + "/tmp/plain/")) {
+      fs.mkdirSync(dotLintDirectory + "/tmp/plain/");
     }
-    copyRecursiveSync(path, dotOmnilintDirectory + "/tmp/plain/");
-    // copyFolderRecursiveSync(path, dotOmnilintDirectory + "/tmp/plain/")
+    copyRecursiveSync(path, dotLintDirectory + "/tmp/plain/");
+    // copyFolderRecursiveSync(path, dotLintDirectory + "/tmp/plain/")
     // var pathWithoutLastDirectory = path.substring(0, path.lastIndexOf('/'))
     // if (fs.lstatSync(pathWithoutLastDirectory).isDirectory()) {
-    //   copyFolderRecursiveSync(pathWithoutLastDirectory, dotOmnilintDirectory +
+    //   copyFolderRecursiveSync(pathWithoutLastDirectory, dotLintDirectory +
     //     "/tmp/plain/")
     // } else {
     //   copyFileSync(
     //     path,
-    //     dotOmnilintDirectory +
+    //     dotLintDirectory +
     //       "/tmp/plain/"
     //   );
     // }
@@ -523,15 +523,15 @@ function checkInternet(cb) {
 }
 
 function saveCommitAttemptId(commit_attempt_id) {
-  const dotOmnilintDirectory = getDotOmnilintDirectory();
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  const dotLintDirectory = getDotLintDirectory();
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
   fs.writeFileSync(
-    dotOmnilintDirectory + "/tmp/commit_attempt_id",
+    dotLintDirectory + "/tmp/commit_attempt_id",
     commit_attempt_id
   );
 }
@@ -778,8 +778,8 @@ function lintStaged(
       // console.log(prettierFiles);
       console.log("");
 
-      const dotOmnilintDirectory = getDotOmnilintDirectory();
-      var configFile = dotOmnilintDirectory + "/tmp/prettierrc";
+      const dotLintDirectory = getDotLintDirectory();
+      var configFile = dotLintDirectory + "/tmp/prettierrc";
       try {
         var prettier_fails = 0;
         prettierFiles.forEach(filePath => {
@@ -852,10 +852,10 @@ function lintStaged(
       // javascriptReports = runEslint(jsFiles, autofix, body, desiredFormat);
       // var linting = eslintCli.executeOnFiles(jsFiles);
 
-      const dotOmnilintDirectory = getDotOmnilintDirectory();
+      const dotLintDirectory = getDotLintDirectory();
       const enclosingGitRepository = getEnclosingGitRepository();
       var configFile = JSON.parse(
-        fs.readFileSync(dotOmnilintDirectory + "/tmp/eslintrc")
+        fs.readFileSync(dotLintDirectory + "/tmp/eslintrc")
       );
 
       var linter = new eslint.Linter();
@@ -1331,7 +1331,7 @@ function checkIfPolicyCheckPassed() {
   var report = readReport();
   if (report !== undefined && !report.passed) {
     console.log("");
-    const repositoryUUID = parseOmnilintFile();
+    const repositoryUUID = parseLintFile();
     if (!repositoryUUID) {
       console.log(
         "Please init repository first by running " +
@@ -1352,7 +1352,7 @@ function prepareCommitMsg() {
 }
 
 function postCommit() {
-  const repositoryUUID = parseOmnilintFile();
+  const repositoryUUID = parseLintFile();
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +

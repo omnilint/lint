@@ -6,13 +6,13 @@ const chalk = require("chalk");
 
 const {
   getEnclosingGitRepository,
-  isOmnilintFilePresent,
-  getDotOmnilintDirectory,
+  isLintFilePresent,
+  getDotLintDirectory,
   getRelevantSource
 } = require("../filesHandler");
 const ora = require("ora");
 
-const dotOmnilintDirectory = getDotOmnilintDirectory();
+const dotLintDirectory = getDotLintDirectory();
 
 function installErbLint() {
   try {
@@ -56,7 +56,7 @@ function enableRule(policy_rule) {
 }
 
 function createErbLintConfig() {
-  var rubocopConfigPath = dotOmnilintDirectory + "/tmp/rubocop.yml";
+  var rubocopConfigPath = dotLintDirectory + "/tmp/rubocop.yml";
   var configContent = {
     linters: {
       Rubocop: {
@@ -73,13 +73,13 @@ function createErbLintConfig() {
   // console.log("yml");
   // console.log(yml);
 
-  if (!fs.existsSync(dotOmnilintDirectory)) {
-    fs.mkdirSync(dotOmnilintDirectory);
+  if (!fs.existsSync(dotLintDirectory)) {
+    fs.mkdirSync(dotLintDirectory);
   }
-  if (!fs.existsSync(dotOmnilintDirectory + "/tmp")) {
-    fs.mkdirSync(dotOmnilintDirectory + "/tmp");
+  if (!fs.existsSync(dotLintDirectory + "/tmp")) {
+    fs.mkdirSync(dotLintDirectory + "/tmp");
   }
-  fs.writeFileSync(dotOmnilintDirectory + "/tmp/.erb-lint.yml", yml);
+  fs.writeFileSync(dotLintDirectory + "/tmp/.erb-lint.yml", yml);
 }
 
 function checkIfErbLintIsInstalled() {
@@ -322,7 +322,7 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
 
 function runErbLint(files, commitAttempt, truncate) {
   // console.log("");
-  var cmd = 'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 erblint --config ' + dotOmnilintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
+  var cmd = 'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 erblint --config ' + dotLintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
   var statusCode = 0;
   try {
     // console.log("merde1");

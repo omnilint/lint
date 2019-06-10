@@ -22,7 +22,7 @@ const {
   getRepositories,
   // fetchRepository,
   smartCloneRepository,
-  createRepositoryOnOmnilint
+  createRepositoryOnLint
 } = require("./utils/repository");
 
 const {
@@ -67,7 +67,7 @@ program.version("v0.6.6", "-v, --version");
 
 program
   .command("version")
-  .description("Print Omnilint version.")
+  .description("Print Lint version.")
   .action(() => {
     console.log("v0.6.6");
     process.exit(0);
@@ -75,14 +75,14 @@ program
 
 program
   .command("init")
-  .description("Initializes Omnilint for current repository")
+  .description("Initializes Lint for current repository")
   .action(() => {
     init();
   });
 
 program
   .command("install")
-  .description("Install Omnilint")
+  .description("Install Lint")
   .action(() => {
     console.log("Installing Lint...");
     install();
@@ -90,9 +90,9 @@ program
 
 program
   .command("uninstall")
-  .description("Uninstall Omnilint")
+  .description("Uninstall Lint")
   .action(() => {
-    console.log("Uninstalling Omnilint...");
+    console.log("Uninstalling Lint...");
     uninstall();
   });
 
@@ -147,7 +147,7 @@ program
         {
           type: "confirm",
           name: "confirm",
-          message: "Are you sure you want to log out from Omnilint?"
+          message: "Are you sure you want to log out from Lint?"
         }
       ]).then(answers => {
         if (answers.confirm) {
@@ -360,7 +360,7 @@ program
 
 program
   .command("publish")
-  .description("Add current repository to Omnilint")
+  .description("Add current repository to Lint")
   .action(() => {
     const defaultRepositoryName = process
       .cwd()
@@ -378,7 +378,7 @@ program
     ])
       .then(answers => {
         if (answers.name) {
-          createRepositoryOnOmnilint(answers.name, false)
+          createRepositoryOnLint(answers.name, false)
             .then(body => {
               process.exit(0);
             })
@@ -405,7 +405,7 @@ program
 
 program
   .command("clone <repoPath> [localPath, [options]]")
-  .description("Creates an Omnilint account")
+  .description("Creates an Lint account")
   .action((repoPath, localPath, options) => {
     smartCloneRepository(repoPath, localPath, options);
   });
