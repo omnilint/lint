@@ -125,7 +125,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green("omnilint init") +
+        chalk.green(" init") +
         "."
     );
     process.exit(1);
@@ -1335,7 +1335,7 @@ function checkIfPolicyCheckPassed() {
     if (!repositoryUUID) {
       console.log(
         "Please init repository first by running " +
-          chalk.green("omnilint init") +
+          chalk.green(" init") +
           "."
       );
       process.exit(1);
@@ -1356,7 +1356,7 @@ function postCommit() {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green("omnilint init") +
+        chalk.green(" init") +
         "."
     );
     process.exit(1);

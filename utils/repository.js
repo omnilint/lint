@@ -240,7 +240,7 @@ function createRepositoryOnLint(
   policy,
   has_autofix
 ) {
-  var spinner = ora("Adding repository to omnilint");
+  var spinner = ora("Adding repository to ");
   spinner.start();
   return new Promise((resolve, reject) => {
     const currentUser = getUsernameFromLocalDevice();
@@ -249,7 +249,6 @@ function createRepositoryOnLint(
       console.log("Please Sign In");
       process.exit(0);
     }
-    // const token = "v5NnNqL3C9bQyrzUfzDxTnmvztPr8PMheTebeF8zr7VKozq1uQ";
     const url = `${API_BASE_URL}/${currentUser}/repositories.json?user_token=${token}`;
     request.post(
       url,
@@ -262,7 +261,7 @@ function createRepositoryOnLint(
             deploy_to: "none",
             has_autofix: has_autofix,
             policy_id: policy,
-            git_host: "omnilint",
+            git_host: "",
             git_address: `git@git.lint.dev:${currentUser.toLowerCase()}/${repoName.toLowerCase()}.git`
           }
         }
@@ -277,8 +276,8 @@ function createRepositoryOnLint(
         if (response) {
           // console.log(response);
           if (!error && response.statusCode == 201) {
-            // console.log("Repository added to omnilint");
-            spinner.succeed("Repository added to omnilint");
+            // console.log("Repository added to ");
+            spinner.succeed("Repository added to ");
 
             var stringify = JSON.stringify(body);
             // console.log(body);

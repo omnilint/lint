@@ -147,7 +147,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green("omnilint init") +
+        chalk.green(" init") +
         "."
     );
     process.exit(1);
@@ -863,10 +863,10 @@ function arr_diff(a1, a2) {
 
 function getCliVersion() {
   try {
-    var result = execSync("which omnilint")
+    var result = execSync("which ")
     if (result) {
 
-      return execSync("npx omnilint -v").toString()
+      return execSync("npx  -v").toString()
     }
   } catch (e) {
 
@@ -1402,7 +1402,7 @@ function lintStaged(
       formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
       not_inspected_files: notInspectedFiles,
-      omnilint_version: cliVersion,
+      _version: cliVersion,
       node_version: nodeVersion,
       npm_version: npmVersion,
       ruby_version: rubyVersion,
@@ -1695,7 +1695,7 @@ function checkIfPolicyCheckPassed() {
     if (!repositoryUUID) {
       console.log(
         "Please init repository first by running " +
-          chalk.green("omnilint init") +
+          chalk.green(" init") +
           "."
       );
       process.exit(1);
@@ -1716,7 +1716,7 @@ function postCommit() {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green("omnilint init") +
+        chalk.green(" init") +
         "."
     );
     process.exit(1);
