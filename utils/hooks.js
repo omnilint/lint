@@ -263,21 +263,21 @@ function getHooksDirectory() {
 
 function formatPreCommitMsgHook() {
   let hook =
-    '#!/bin/bash\n\nlocalPath="./node_modules//"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -a $localPath ]; then\n\t$localPath "pre-commit"\nelif [ $globalPath ]; then\n\t$globalPath "pre-commit"\nelse\n\techo "Can\'t find Lint, skipping hook"\n\techo "You can reinstall it using \'npm install  --save-dev\' or delete this hook"\nfi\n';
+    '#!/bin/bash\n\nlocalPath="./node_modules/omnilint/"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -a $localPath ]; then\n\t$localPath "pre-commit"\nelif [ $globalPath ]; then\n\t$globalPath "pre-commit"\nelse\n\techo "Can\'t find Omnilint, skipping hook"\n\techo "You can reinstall it using \'npm install --save-dev lint\' or delete this hook"\nfi\n';
   // let hook = '#!/bin/bash\n\nlocalPath="./node_modules//"\nglobalPath=$(which )\ngitParams="$*"\nif [ -a $localPath ]; then\n$localPath "lint-staged" "-f" "simple"\nelif [ $globalPath ]; then\n$globalPath "lint-staged" "-f" "simple"\nelse\necho "Can\'t find Lint, skipping hook"\necho "You can reinstall it using \'npm install  --save-dev\' or delete this hook\"\nfi\n';
   return hook;
 }
 
 function formatPrepareCommitMsgHook() {
   let hook =
-    '#!/bin/bash\n\nlocalPath="./node_modules//"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -a $localPath ]; then\n\t$localPath "prepare-commit-msg"\nelif [ $globalPath ]; then\n\t$globalPath "prepare-commit-msg"\nelse\n\techo "Can\'t find Lint, skipping hook"\n\techo "You can reinstall it using \'npm install  --save-dev\' or delete this hook"\nfi\n';
+    '#!/bin/bash\n\nlocalPath="./node_modules/omnilint/"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -a $localPath ]; then\n\t$localPath "prepare-commit-msg"\nelif [ $globalPath ]; then\n\t$globalPath "prepare-commit-msg"\nelse\n\techo "Can\'t find Omnilint, skipping hook"\n\techo "You can reinstall it using \'npm install --save-dev lint\' or delete this hook"\nfi\n';
   // let hook = '#!/bin/bash\n\nlocalPath="./node_modules//"\nglobalPath=$(which )\ngitParams="$*"\nif [ -a $localPath ]; then\n$localPath "lint-staged" "-f" "simple"\nelif [ $globalPath ]; then\n$globalPath "lint-staged" "-f" "simple"\nelse\necho "Can\'t find Lint, skipping hook"\necho "You can reinstall it using \'npm install  --save-dev\' or delete this hook\"\nfi\n';
   return hook;
 }
 
 function formatPostCommitHook() {
   let hook =
-    '#!/bin/bash\n\nlocalPath="./node_modules//"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -f $localPath ]; then\n\t$localPath "post-commit" "$gitParams"\nelif [ $globalPath ]; then\n\t$globalPath "post-commit" "$gitParams"\nelse\n\techo "Can\'t find Lint, skipping hook"\n\techo "You can reinstall it using \'npm install  --save-dev\' or delete this hook"\nfi\n';
+    '#!/bin/bash\n\nlocalPath="./node_modules/omnilint/"\nglobalPath=$(which )\ngitParams="$*"\n\nif [ -f $localPath ]; then\n\t$localPath "post-commit" "$gitParams"\nelif [ $globalPath ]; then\n\t$globalPath "post-commit" "$gitParams"\nelse\n\techo "Can\'t find Omnilint, skipping hook"\n\techo "You can reinstall it using \'npm install --save-dev lint\' or delete this hook"\nfi\n';
   return hook;
 }
 
