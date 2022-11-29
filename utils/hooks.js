@@ -152,7 +152,7 @@ function install() {
     console.log();
     console.log("Can't find .git, skipping Git hooks installation");
     console.log(
-      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall "
+      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall Omnilint"
     );
     console.log();
     process.exit(0);
@@ -213,7 +213,7 @@ function removeLintHook(hooksDirectory, hook) {
     console.log();
     console.log("Can't find .git, skipping Git hooks removal");
     console.log(
-      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall "
+      "Please check that you're in a cloned repository or run 'git init' to create an empty Git repository and reinstall Omnilint."
     );
     console.log();
     return false;
