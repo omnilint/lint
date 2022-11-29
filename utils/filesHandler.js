@@ -135,7 +135,7 @@ function copyRecursiveSync(source, target) {
 
 function parseLintFile() {
   if (isLintFilePresent()) {
-    const repo = yaml.safeLoad(
+    const repo = yaml.load(
       fs.readFileSync(dotLintDirectory + "/config")
     );
     return repo;

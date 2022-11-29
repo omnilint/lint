@@ -60,7 +60,7 @@ function initializeAndCreateRepository(username, token) {
   // console.log("Initializing Lint...");
 
   if (isLintFilePresent()) {
-    const repo = yaml.safeLoad(fs.readFileSync(dotLintDirectory + "/config"));
+    const repo = yaml.load(fs.readFileSync(dotLintDirectory + "/config"));
     // console.log(chalk.green(repo) + " already exists.");
     reportSpinner.succeed(chalk.green(repo) + " already exists on Lint.");
     // console.log(chalk.green(username) + "/" + chalk.green(repo) + " has already been initialized");
@@ -288,7 +288,7 @@ function confirmRepoName(defaultRepositoryName) {
 }
 
 function checkAccess(token) {
-  const repo = yaml.safeLoad(fs.readFileSync(dotLintDirectory + "/config"));
+  const repo = yaml.load(fs.readFileSync(dotLintDirectory + "/config"));
   const repoUUID = repo.uuid;
   const url = `${API_BASE_URL}/${repoUUID}.json?user_token=${token}`;
   return new Promise((resolve, reject) => {
