@@ -1,5 +1,5 @@
 
-![Omnilint Logo](https://www.omnilint.com/images/logo/logo-shield-circle-only-simple.svg)
+![Omnilint Logo](https://www.omnilint.com/images/logo/logo-simple-with-text.svg)
 
 ---
 
