@@ -21,7 +21,7 @@ const {
 } = require("../filesHandler");
 const dotLintDirectory = getDotLintDirectory();
 
-const API_BASE_URL = "https://api.lint.dev";
+const API_BASE_URL = "https://api.omnilint.com";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
 function checkIfRubyIsInstalled() {

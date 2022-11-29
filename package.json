@@ -1,7 +1,7 @@
 {
   "name": "lint",
   "version": "0.7.0",
-  "description": "Lint.dev CLI.",
+  "description": "Omnilint CLI.",
   "main": "index.js",
   "scripts": {
     "build": "nexe index.js",
@@ -32,10 +32,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lint-dev/lint.git"
+    "url": "git+https://github.com/omnilint/lint.git"
   },
   "bugs": {
-    "url": "https://github.com/lint-dev/lint/issues"
+    "url": "https://github.com/omnilint/lint/issues"
   },
-  "homepage": "https://lint.dev"
+  "homepage": "https://omnilint.com"
 }

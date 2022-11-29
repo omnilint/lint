@@ -29,9 +29,9 @@ const {
 
 const { exec, execSync, spawn } = require("child_process");
 
-const SITE_URL = "https://lint.dev";
-const GIT_BASE_URL = "git@git.lint.dev";
-const API_BASE_URL = "https://api.lint.dev";
+const SITE_URL = "https://omnilint.com";
+const GIT_BASE_URL = "git@git.omnilint.com";
+const API_BASE_URL = "https://api.omnilint.com";
 const DEV_API_BASE_URL = "http://localhost:3000";
 
 const dotLintDirectory = getDotLintDirectory();

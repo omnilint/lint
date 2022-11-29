@@ -1,25 +1,25 @@
 
-![Lint.dev Logo](https://lint.dev/images/logo/logo-shield-circle-only-simple.svg)
+![Omnilint Logo](https://omnilint.com/images/logo/logo-shield-circle-only-simple.svg)
 
 ---
 
 ## Installation (local)
-Install Lint.dev in your devDependencies (recommanded):
+Install Omnilint in your devDependencies (recommanded):
 ```sh
 $ cd path/to/repository
 $ npm install -D lint
 ```
 ### NPX
-You can use NPX to run Lint.dev commands from inside your repository:
+You can use NPX to run Omnilint commands from inside your repository:
 ```sh
 $ npx lint [COMMAND]
 ```
-To install Lint.dev's git hooks:
+To install Omnilint's git hooks:
 ```sh
 $ npx lint install
 ```
 ## Installation (global)
-You can install Lint.dev globally:
+You can install Omnilint globally:
 ```sh
 $ npm install -g lint
 ```
@@ -27,18 +27,18 @@ So you can use it like this:
 ```sh
 $ lint [COMMAND]
 ```
-To install Lint.dev's git hooks:
+To install Omnilint's git hooks:
 ```sh
 $ cd path/to/repository
 $ lint install
 ```
 ## Sign Up
-Create your free Lint.dev account:
+Create your free Omnilint account:
 ```sh
 $ lint signup
 ```
 ## Log In
-Log in with your existing Lint.dev account:
+Log in with your existing Omnilint account:
 ```sh
 $ lint login
 ```
@@ -53,4 +53,4 @@ Print the list of available commands:
 $ lint --help
 ```
 ## Website
-[https://lint.dev](https://lint.dev)
+[https://omnilint.com](https://omnilint.com)
