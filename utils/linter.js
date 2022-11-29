@@ -160,8 +160,8 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
       console.log("Not connected to the Internet.");
       process.exit(1);
     }
-    // var stagedFilePaths = getStagedFiles(time);
-    var stagedFilePaths = getStagedFilesAddedAndModifiedOnly(time);
+    var stagedFilePaths = getStagedFiles(time);
+    // var stagedFilePaths = getStagedFilesAddedAndModifiedOnly(time);
     // console.log(stagedFilePaths);
 
     var removedFiles = getDeletedStagedFiles();
@@ -602,6 +602,9 @@ function checkInternet(cb) {
 }
 
 function saveCommitAttemptId(commit_attempt_id) {
+  console.log('saveCommitAttemptId called')
+  console.log('commit_attempt_id')
+  console.log(commit_attempt_id)
   const dotLintDirectory = getDotLintDirectory();
   if (!fs.existsSync(dotLintDirectory)) {
     fs.mkdirSync(dotLintDirectory);
@@ -611,7 +614,7 @@ function saveCommitAttemptId(commit_attempt_id) {
   }
   fs.writeFileSync(
     dotLintDirectory + "/tmp/commit_attempt_id",
-    commit_attempt_id
+    commit_attempt_id.toString()
   );
 }
 
@@ -647,7 +650,7 @@ function createCommitAttempt(repositoryUUID) {
     const url = `${API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
     // const url = `${DEV_API_BASE_URL}/${repositoryUUID}/commit_attempts.json?user_token=${token}`;
 
-    // console.log(url);
+    console.log(url);
     request.post(
       url,
       {
@@ -759,8 +762,8 @@ function getStagedFiles(time) {
     //     .slice(0, -1);
     // }
     var git_staged_result = execSync(
-      // "git status -s"
-      "git diff --name-only --cached"
+      "git status -s"
+      // "git diff --name-only --cached"
     );
     // console.log('git_staged_result');
     // console.log(git_staged_result.toString());
@@ -772,10 +775,10 @@ function getStagedFiles(time) {
         .slice(0, -1);
       // .substring(3);
       // Remove first 3 characters at the begining of each file to get rid of the A, M, D etc.
-      // stagedFilePaths.forEach((file, index) => {
-      //   // stagedFilePaths[index] = file.substring(3);
-      //   console.log(stagedFilePaths[index]);
-      // });
+      stagedFilePaths.forEach((file, index) => {
+        stagedFilePaths[index] = file.substring(3);
+        // console.log(stagedFilePaths[index]);
+      });
     }
     // console.log('stagedFilePaths');
     // console.log(stagedFilePaths);
@@ -952,6 +955,7 @@ function lintStaged(
   styleLintCompatibleFiles,
   truncate
 ) {
+
   return new Promise((resolve, reject) => {
     var report = {};
 
@@ -960,14 +964,14 @@ function lintStaged(
     var npmVersion = getNpmVersion()
     var rubyVersion = getRubyVersion()
     var shellCommand = fetchShellCommand()
-    // var pythonVersion = getPythonVersion()
+    var pythonVersion = getPythonVersion()
 
 
-    // console.log("cliVersion", cliVersion);
-    // console.log("nodeVersion", nodeVersion);
-    // console.log("npmVersion", npmVersion);
-    // console.log("rubyVersion", rubyVersion);
-    // console.log("pythonVersion", pythonVersion);
+    console.log("cliVersion", cliVersion);
+    console.log("nodeVersion", nodeVersion);
+    console.log("npmVersion", npmVersion);
+    console.log("rubyVersion", rubyVersion);
+    console.log("pythonVersion", pythonVersion);
 
 
 
@@ -1040,8 +1044,8 @@ function lintStaged(
       // );
       console.log(chalk.bold.cyan("Running Prettier..."));
       // console.log("");
-      // console.log("About to make " + prettierFiles.length + " file(s) prettier.");
-      // console.log(prettierFiles);
+      console.log("About to make " + prettierFiles.length + " file(s) prettier.");
+      console.log(prettierFiles);
       console.log("");
 
       const dotLintDirectory = getDotLintDirectory();
