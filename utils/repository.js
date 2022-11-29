@@ -19,7 +19,7 @@ const ROOT_PATH = os.homedir();
 // const localUsernamePath = `/.lint/refs/user`;
 // const usernameDir = path.join(ROOT_PATH, localUsernamePath);
 
-const SITE_URL = "https://omnilint.com";
+const SITE_URL = "https://www.omnilint.com";
 const GIT_BASE_URL = "git@git.omnilint.com";
 const API_BASE_URL = "https://api.omnilint.com";
 const DEV_API_BASE_URL = "http://localhost:3000";

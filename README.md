@@ -1,5 +1,5 @@
 
-![Omnilint Logo](https://omnilint.com/images/logo/logo-shield-circle-only-simple.svg)
+![Omnilint Logo](https://www.omnilint.com/images/logo/logo-shield-circle-only-simple.svg)
 
 ---
 
@@ -53,4 +53,4 @@ Print the list of available commands:
 $ lint --help
 ```
 ## Website
-[https://omnilint.com](https://omnilint.com)
+[https://www.omnilint.com](https://www.omnilint.com)

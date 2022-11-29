@@ -29,7 +29,7 @@ const {
 
 const { exec, execSync, spawn } = require("child_process");
 
-const SITE_URL = "https://omnilint.com";
+const SITE_URL = "https://www.omnilint.com";
 const GIT_BASE_URL = "git@git.omnilint.com";
 const API_BASE_URL = "https://api.omnilint.com";
 const DEV_API_BASE_URL = "http://localhost:3000";
