@@ -41,6 +41,7 @@ const {
 const { install, uninstall } = require("./utils/hooks");
 
 const {
+  runEslint,
   createESlintConfig,
   parseOutPoutForRuleCheckAsTable,
   installEslint,
@@ -63,13 +64,13 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.7.0", "-v, --version");
+program.version("v0.8.3", "-v, --version");
 
 program
   .command("version")
   .description("Print Lint version.")
   .action(() => {
-    console.log("v0.7.0");
+    console.log("v0.8.3");
     process.exit(0);
   });
 
@@ -82,17 +83,17 @@ program
 
 program
   .command("install")
-  .description("Install Lint")
+  .description("Install Omnilint")
   .action(() => {
-    console.log("Installing Lint...");
+    console.log("Installing Omnilint...");
     install();
   });
 
 program
   .command("uninstall")
-  .description("Uninstall Lint")
+  .description("Uninstall Omnilint")
   .action(() => {
-    console.log("Uninstalling Lint...");
+    console.log("Uninstalling Omnilint...");
     uninstall();
   });
 
@@ -147,7 +148,7 @@ program
         {
           type: "confirm",
           name: "confirm",
-          message: "Are you sure you want to log out from Lint?"
+          message: "Are you sure you want to log out from Omnilint?"
         }
       ]).then(answers => {
         if (answers.confirm) {
@@ -268,6 +269,7 @@ program
   .command("staged-files")
   .description("Get staged files.")
   .action(() => {
+    console.log('staged-files');
     var stagedFilePaths = getStagedFiles();
     stagedFilePaths.forEach((file, index) => {
       console.log(stagedFilePaths[index]);
@@ -405,7 +407,7 @@ program
 
 program
   .command("clone <repoPath> [localPath, [options]]")
-  .description("Creates an Lint account")
+  .description("Creates an Omnilint account")
   .action((repoPath, localPath, options) => {
     smartCloneRepository(repoPath, localPath, options);
   });
