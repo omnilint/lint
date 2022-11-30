@@ -48,7 +48,7 @@ function enableRule(policy_rule) {
 function createRubocopConfig(rubocopRules) {
   // console.log(rubocopRules);
 
-  var yml = yaml.safeDump(rubocopRules);
+  var yml = yaml.dump(rubocopRules);
   // console.log("yml");
 
   // console.log(yml);

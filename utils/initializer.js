@@ -118,7 +118,7 @@ function initializeAndCreateRepository(username, token) {
 }
 
 function writeLintFile(repositoryName, repositories, username, token) {
-  yml = yaml.safeDump(username + "/" + repositoryName);
+  yml = yaml.dump(username + "/" + repositoryName);
 
   if (!fs.existsSync(dotLintDirectory)) {
     fs.mkdirSync(dotLintDirectory);

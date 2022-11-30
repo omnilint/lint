@@ -69,7 +69,7 @@ function createErbLintConfig() {
     }
   }
 
-  var yml = yaml.safeDump(configContent);
+  var yml = yaml.dump(configContent);
 
   // console.log("yml");
   // console.log(yml);
