@@ -288,12 +288,13 @@ function runBrakeman(files, truncate) {
     console.log("Ruby is installed");
   } else {
     console.log("Ruby is not installed");
-    return 1;
+    // return 1;
   }
   if(checkIfBrakemanIsInstalled()) {
     console.log("Brakeman is installed");
   } else {
     console.log("Brakeman is not installed");
+    console.log("Install it using " + chalk.bold.cyan("lint install-brakeman") + " or " + chalk.bold.cyan("gem install brakeman") + " or ");
     return 1;
   }
 
