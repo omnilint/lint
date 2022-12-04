@@ -255,7 +255,7 @@ function confirmRepoName(defaultRepositoryName) {
     {
       type: "confirm",
       name: "autofix",
-      message: "Do you want Lint to automatically fix your code offenses ?",
+      message: "Do you want Omnilint to automatically fix your code offenses ?",
       default: false
     }
   ])

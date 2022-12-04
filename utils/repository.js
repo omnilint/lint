@@ -175,7 +175,7 @@ function getRepositories() {
         printRepositories(repositories);
       })
       .catch(err => {
-        console.log(chalk.red("Upable to fetch repositories.")); // remote
+        console.log(chalk.red("Unable to fetch repositories.")); // remote
         console.log(err); // remote
       });
   } else {

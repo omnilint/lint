@@ -76,7 +76,7 @@ program
 
 program
   .command("init")
-  .description("Initializes Lint for current repository")
+  .description("Initializes Omnilint for current repository")
   .action(() => {
     init();
   });

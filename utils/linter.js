@@ -146,9 +146,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
 
   if (!repositoryUUID) {
     console.log(
-      "Please init repository first by running " +
-        chalk.green(" init") +
-        "."
+      "Please init repository first by running " + chalk.green("lint init") + "."
     );
     process.exit(1);
   }
@@ -866,7 +864,7 @@ function arr_diff(a1, a2) {
 
 function getCliVersion() {
   try {
-    var result = execSync("which ")
+    var result = execSync("which lint")
     if (result) {
 
       return execSync("npx  -v").toString()
@@ -1697,11 +1695,7 @@ function checkIfPolicyCheckPassed() {
     console.log("");
     const repositoryUUID = parseLintFile();
     if (!repositoryUUID) {
-      console.log(
-        "Please init repository first by running " +
-          chalk.green(" init") +
-          "."
-      );
+      console.log( "Please init repository first by running " + chalk.green("lint init") + "." );
       process.exit(1);
     }
     editCommitAttempt(repositoryUUID).then(body => {
@@ -1718,11 +1712,7 @@ function prepareCommitMsg() {
 function postCommit() {
   const repositoryUUID = parseLintFile();
   if (!repositoryUUID) {
-    console.log(
-      "Please init repository first by running " +
-        chalk.green(" init") +
-        "."
-    );
+    console.log( "Please init repository first by running " + chalk.green("lint init") + "." );
     process.exit(1);
   }
   checkInternet(function(isConnected) {

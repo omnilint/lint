@@ -125,7 +125,7 @@ function lintingPreCommit(desiredFormat, keep, time) {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green(" init") +
+        chalk.green("lint init") +
         "."
     );
     process.exit(1);
