@@ -75,14 +75,6 @@ const {
 program.version("v0.8.7", "-v, --version");
 
 program
-  .command("version")
-  .description("Print Omnilint version.")
-  .action(() => {
-    console.log("v0.8.7");
-    process.exit(0);
-  });
-
-program
   .command("init")
   .description("Initializes Omnilint for current repository")
   .action(() => {
