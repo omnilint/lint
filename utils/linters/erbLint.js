@@ -322,6 +322,20 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
 
 function runErbLint(files, commitAttempt, truncate) {
   // console.log("");
+
+  if(checkIfRubyIsInstalled()) {
+    console.log("Ruby is installed");
+  } else {
+    console.log("Ruby is not installed");
+  }
+  if(checkIfErbLintIsInstalled()) {
+    console.log("ERB Lint is installed");
+  } else {
+    console.log("ERB Lint is not installed");
+    console.log("Install it using " + chalk.bold.cyan("lint install-erblint") + " or " + chalk.bold.cyan("gem install erb_lint") + " or ");
+    return 1;
+  }
+
   var cmd = 'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 erblint --config ' + dotLintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
   var statusCode = 0;
   try {
