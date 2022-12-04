@@ -284,6 +284,19 @@ function runBrakeman(files, truncate) {
   // files.forEach(function(file) {
   //   file.replace(/"/g, "\'")
   // })
+  if(checkIfRubyIsInstalled()) {
+    console.log("Ruby is installed");
+  } else {
+    console.log("Ruby is not installed");
+    return 1;
+  }
+  if(checkIfBrakemanIsInstalled()) {
+    console.log("Brakeman is installed");
+  } else {
+    console.log("Brakeman is not installed");
+    return 1;
+  }
+
   var cmd = 'brakeman -f json --only-files "' + files.join(",") + '"';
   var output;
   try {
@@ -307,8 +320,8 @@ function runBrakeman(files, truncate) {
     }
   } catch (e) {
     if (e) {
-      // console.log(e);
-
+      console.log("Error launching Brakeman");
+      console.log(e.stdout);
     }
     if (e.status === 4) {
       console.log("");
@@ -317,7 +330,7 @@ function runBrakeman(files, truncate) {
       return
     } else {
       if (e.stdout) {
-        // console.log(e.stdout);
+        console.log(e.stdout);
         output = JSON.parse(e.stdout.toString());
       }
       // console.log(output);
