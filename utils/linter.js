@@ -867,7 +867,7 @@ function getCliVersion() {
     var result = execSync("which lint")
     if (result) {
 
-      return execSync("npx  -v").toString()
+      return execSync("npx lint -v").toString()
     }
   } catch (e) {
 
@@ -1404,7 +1404,7 @@ function lintStaged(
       formatted_files: filesMadePrettier,
       inspected_files: inspectedFiles,
       not_inspected_files: notInspectedFiles,
-      _version: cliVersion,
+      omnilint_version: cliVersion,
       node_version: nodeVersion,
       npm_version: npmVersion,
       ruby_version: rubyVersion,

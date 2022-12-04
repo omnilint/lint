@@ -1335,7 +1335,7 @@ function checkIfPolicyCheckPassed() {
     if (!repositoryUUID) {
       console.log(
         "Please init repository first by running " +
-          chalk.green(" init") +
+          chalk.green("omnilint init") +
           "."
       );
       process.exit(1);
@@ -1356,7 +1356,7 @@ function postCommit() {
   if (!repositoryUUID) {
     console.log(
       "Please init repository first by running " +
-        chalk.green(" init") +
+        chalk.green("omnilint init") +
         "."
     );
     process.exit(1);

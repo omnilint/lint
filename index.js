@@ -304,7 +304,7 @@ program
   .command("lint [files...]")
   .description("Lint current respository")
   .action(files => {
-    // console.log("###  lint called ###");
+    // console.log("### omnilint lint called ###");
     // console.log(files);
     // lint(files);
     runEslint(files);
