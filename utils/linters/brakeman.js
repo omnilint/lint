@@ -284,12 +284,12 @@ function runBrakeman(files, truncate) {
   // files.forEach(function(file) {
   //   file.replace(/"/g, "\'")
   // })
-  if(checkIfRubyIsInstalled()) {
-    console.log("Ruby is installed");
-  } else {
-    console.log("Ruby is not installed");
-    // return 1;
-  }
+  // if(checkIfRubyIsInstalled()) {
+  //   console.log("Ruby is installed");
+  // } else {
+  //   console.log("Ruby is not installed");
+  //   // return 1;
+  // }
   if(checkIfBrakemanIsInstalled()) {
     console.log("Brakeman is installed");
   } else {

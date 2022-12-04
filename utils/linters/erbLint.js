@@ -3,6 +3,7 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 var _ = require("lodash");
 const chalk = require("chalk");
+const { prompt } = require("inquirer");
 
 const {
   getEnclosingGitRepository,
@@ -124,7 +125,10 @@ function selectFilesForErbLint(stagedFilePaths) {
 }
 
 function parseErbLintOutput(output, statusCode) {
-  // console.log(output);
+  console.log('--- parseErbLintOutput called--- ');
+  console.log('output');
+  console.log(output);
+  console.log('------------------------------- ');
   var result = output.split("\n");
   result.shift();
   result.shift();
@@ -260,12 +264,22 @@ function sortErrorsToDisplay(fileReport, truncate) {
 }
 
 function parseOutPoutForRuleCheckAsText(offenses, truncate) {
+  console.log( "--- parseOutPoutForRuleCheckAsText called ---" );
+  console.log('offenses');
+  console.log(offenses);
+  console.log( "-------------------------" );
+  console.log('truncate');
+  console.log(truncate);
+  console.log( "-------------------------" );
   var output = _.mapValues(_.groupBy(offenses, "file_path"));
+  console.log('output');
+  console.log(output);
+  console.log( "-------------------------" );
   var parseableOutput = Object.keys(output);
-
+  console.log("parseableOutput");
+  console.log(parseableOutput);
+  console.log( "-------------------------" );
   const spinner = ora("No offense, bravo!");
-  // console.log("parseOutPoutForRuleCheckAsText");
-  // console.log(parseableOutput);
 
   parseableOutput.forEach(function(file) {
     console.log("");
@@ -273,9 +287,7 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
     var relativePath = file;
 
     console.log("- " + chalk.green(relativePath));
-    console.log(
-      "--------------------------------------------------------------------------------------"
-    );
+    console.log( "-----------------------------------------------------------" );
     // console.log(output);
 
     if (output[file]) {
@@ -323,20 +335,37 @@ function parseOutPoutForRuleCheckAsText(offenses, truncate) {
 function runErbLint(files, commitAttempt, truncate) {
   // console.log("");
 
-  if(checkIfRubyIsInstalled()) {
-    console.log("Ruby is installed");
-  } else {
-    console.log("Ruby is not installed");
-  }
+  // if(checkIfRubyIsInstalled()) {
+  //   console.log("Ruby is installed");
+  // } else {
+  //   console.log("Ruby is not installed");
+  // }
   if(checkIfErbLintIsInstalled()) {
     console.log("ERB Lint is installed");
   } else {
     console.log("ERB Lint is not installed");
     console.log("Install it using " + chalk.bold.cyan("lint install-erblint") + " or " + chalk.bold.cyan("gem install erb_lint") + " or ");
+
+    // prompt([
+    //   {
+    //     type: "confirm",
+    //     name: "confirm",
+    //     message: "Do you want to install ERB Lint ?"
+    //   }
+    // ]).then(answers => {
+    //   if (answers.confirm) {
+    //     installErbLint();
+    //   } else if (!answers.confirm) {
+    //     process.exit(0);
+    //   }
+    // });
+
     return 1;
   }
 
   var cmd = 'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 erblint --config ' + dotLintDirectory + '/tmp/.erb-lint.yml "' + files.join('" "') + '"';
+  console.log('');
+  console.log(cmd);
   var statusCode = 0;
   try {
     // console.log("merde1");

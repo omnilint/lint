@@ -16,7 +16,7 @@
     "omnilint": "./index.js"
   },
   "dependencies": {
-    "chalk": "^2.4.1",
+    "chalk": "^2.4.2",
     "cli-table": "^0.3.1",
     "commander": "^2.17.1",
     "inquirer": "^6.1.0",
