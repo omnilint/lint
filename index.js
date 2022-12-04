@@ -53,6 +53,14 @@ const {
 } = require("./utils/linters/eslint");
 
 const {
+  installBrakeman
+} = require("./utils/linters/brakeman");
+
+const {
+  installErbLint
+} = require("./utils/linters/erbLint");
+
+const {
   checkInstalledPackages,
   installRubocop
 } = require("./utils/linters/rubocop");
@@ -236,6 +244,21 @@ program
   .action(() => {
     installEslint();
   });
+
+program
+  .command("install-erblint")
+  .description("Install ERB Lint")
+  .action(() => {
+    installErbLint();
+  });
+
+program
+  .command("install-brakeman")
+  .description("Install Brakeman")
+  .action(() => {
+    installBrakeman();
+  });
+
 
 program
   .command("check eslint")
