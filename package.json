@@ -4,9 +4,9 @@
   "description": "Omnilint - Omniscient code linter.",
   "main": "index.js",
   "scripts": {
-    "build": "nexe index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "echo \"Error: no postinstall specified\" && exit 1",
   },
   "author": "Jimmy Douieb",
   "license": "Apache-2.0",
