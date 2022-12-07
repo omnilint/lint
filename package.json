@@ -4,9 +4,9 @@
   "description": "Omnilint - Omniscient code linter.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "postinstall": "echo \"Welcome to Omnilint\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "echo \"*** Welcome to Omnilint ***\""
   },
   "author": "Jimmy Douieb",
   "license": "Apache-2.0",
