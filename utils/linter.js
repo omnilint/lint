@@ -177,7 +177,7 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
       process.exit(0);
       return;
     } else {
-      spinner.succeed(stagedFilePaths.length + " staged files");
+      // spinner.succeed(stagedFilePaths.length + " staged files");
 
       spinner.start();
       setTimeout(() => {
@@ -442,8 +442,8 @@ function lintingPreCommit(desiredFormat, keep, time, truncate) {
           //   useEslintrc: false,
           //   rules: eslintRules
           // });
-        } else {
-          console.log("No policy rules.");
+        // } else {
+        //   console.log("No policy rules.");
         }
 
         // console.log(eslintRules);
@@ -600,9 +600,9 @@ function checkInternet(cb) {
 }
 
 function saveCommitAttemptId(commit_attempt_id) {
-  console.log('saveCommitAttemptId called')
-  console.log('commit_attempt_id')
-  console.log(commit_attempt_id)
+  // console.log('saveCommitAttemptId called')
+  // console.log('commit_attempt_id')
+  // console.log(commit_attempt_id)
   const dotLintDirectory = getDotLintDirectory();
   if (!fs.existsSync(dotLintDirectory)) {
     fs.mkdirSync(dotLintDirectory);
@@ -781,6 +781,8 @@ function getStagedFiles(time) {
     // console.log('stagedFilePaths');
     // console.log(stagedFilePaths);
 
+    // console.log('');
+
     // stagedFilePaths.forEach(file => {
     //   console.log(file);
     // });
@@ -795,10 +797,13 @@ function getStagedFiles(time) {
         );
       } else {
         if (stagedFilePaths.length == 1) {
-          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged file.");
+          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged file:");
         } else {
-          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files.");
+          stagedFilesSpinner.succeed(stagedFilePaths.length + " staged files:");
         }
+        stagedFilePaths.forEach(file => {
+          console.log(' - ' + file.replace(/['"]+/g, ''));
+        });
       }
     } else {
       stagedFilesSpinner.stop();
@@ -965,11 +970,11 @@ function lintStaged(
     var pythonVersion = getPythonVersion()
 
 
-    console.log("cliVersion", cliVersion);
-    console.log("nodeVersion", nodeVersion);
-    console.log("npmVersion", npmVersion);
-    console.log("rubyVersion", rubyVersion);
-    console.log("pythonVersion", pythonVersion);
+    // console.log("cliVersion", cliVersion);
+    // console.log("nodeVersion", nodeVersion);
+    // console.log("npmVersion", npmVersion);
+    // console.log("rubyVersion", rubyVersion);
+    // console.log("pythonVersion", pythonVersion);
 
 
 
@@ -1456,6 +1461,7 @@ function postReport(report, time) {
         }
       },
       function(error, response, policy_check) {
+        // console.log(response)
         if (response) {
           if (!error && response.statusCode === 201) {
             if (time) {
@@ -1464,6 +1470,7 @@ function postReport(report, time) {
               );
             } else {
               reportSpinner.succeed("Report saved.");
+              console.log(response.body.url)
             }
             // console.log( chalk.grey("Execution time: " + (new Date() - executionStartTime) + "ms.") );
 

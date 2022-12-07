@@ -54,15 +54,15 @@ function getFullPath(dirPath) {
 }
 
 function initializeAndCreateRepository(username, token) {
-  const reportSpinner = ora("Initializing Lint...");
+  const reportSpinner = ora("Initializing Omnilint...");
   reportSpinner.start();
 
-  // console.log("Initializing Lint...");
+  // console.log("Initializing Omnilint...");
 
   if (isLintFilePresent()) {
     const repo = yaml.load(fs.readFileSync(dotLintDirectory + "/config"));
     // console.log(chalk.green(repo) + " already exists.");
-    reportSpinner.succeed(chalk.green(repo) + " already exists on Lint.");
+    reportSpinner.succeed(chalk.green(repo) + " already exists on Omnilint.");
     // console.log(chalk.green(username) + "/" + chalk.green(repo) + " has already been initialized");
     // console.log("To init again delete .lint file and run init");
     process.exit(0);
@@ -100,7 +100,7 @@ function initializeAndCreateRepository(username, token) {
         reportSpinner.succeed("Repository found: " + chalk.green(body[0].uuid));
         confirmWriteLintFile(defaultRepositoryName, body, username, token);
       } else if (body.length == 0) {
-        // console.log("Repository not found on Lint.");fail
+        // console.log("Repository not found on Omnilint.");fail
         reportSpinner.stop();
         confirmRepoName(defaultRepositoryName);
       } else {
@@ -183,7 +183,7 @@ function commitAfterInstall() {
         // if (!fs.existsSync(enclosingRepository + "/.git/COMMIT_EDITMSG")) {
         // console.log(enclosingRepository + "COMMIT_EDITMSG doesnt exist");
         try {
-          var commitFiles = execSync('git commit -m "Install Lint"');
+          var commitFiles = execSync('git commit -m "Install Omnilint"');
           if (commitFiles) {
             // console.log(commitFiles.toString());
             process.exit(0);
@@ -202,7 +202,7 @@ function commitAfterInstall() {
         //   if (gitStatus) {
         //     if (gitStatus.length > 0) {
         //       try {
-        //         var commitFiles = execSync('git commit -m "Install Lint"');
+        //         var commitFiles = execSync('git commit -m "Install Omnilint"');
         //         if (commitFiles) {
         //           console.log(commitFiles.toString());
         //           process.exit(0);
