@@ -1,6 +1,6 @@
 {
   "name": "lint",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Omnilint CLI - Collaborative, authoritative cloud-based code linter..",
   "main": "index.js",
   "scripts": {
