@@ -64,7 +64,7 @@ const {
 } = require("./utils/linters/prettier");
 
 // ********** Version **********
-program.version("v0.8.15", "-v, --version");
+program.version("v0.8.16", "-v, --version");
 
 program
   .command("init")
