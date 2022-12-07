@@ -1,10 +1,11 @@
 
-![Omnilint Logo](https://www.omnilint.com/images/logo/logo-simple-with-text-inverse.png)
+![Omnilint logo](./assets/images/logo-dark.png#gh-dark-mode-only)
+![Omnilint logo](./assets/images/logo-light.png#gh-light-mode-only)
 
 ---
 
 ## Installation (local)
-Install Omnilint in your devDependencies (recommanded):
+Install Omnilint into your devDependencies:
 ```sh
 $ cd path/to/repository
 $ npm install -D lint
