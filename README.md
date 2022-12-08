@@ -1,38 +1,83 @@
-
 ![Omnilint logo](./assets/images/logo-dark.png#gh-dark-mode-only)
 ![Omnilint logo](./assets/images/logo-light.png#gh-light-mode-only)
 
 ---
 
-## Installation (local)
-Install Omnilint into your devDependencies:
+# Installation (global)
+Install globally:
 ```sh
-$ cd path/to/repository
-$ npm install -D lint
+$ npm i -g lint
 ```
-### NPX
-You can use NPX to run Omnilint commands from inside your repository:
+## Usage (global)
+
+Get inside your repository:
 ```sh
-$ npx lint [COMMAND]
+$ cd /path/to/repo
 ```
-To install Omnilint's git hooks:
-```sh
-$ npx lint install
-```
-## Installation (global)
-You can install Omnilint globally:
-```sh
-$ npm install -g lint
-```
-So you can use it like this:
+Use it globally
 ```sh
 $ lint [COMMAND]
 ```
-To install Omnilint's git hooks:
+Start new repository:
+```sh
+$ lint init
+```
+Lint files linted by git:
+```sh
+$ lint
+```
+To install git hooks:
 ```sh
 $ cd path/to/repository
-$ lint install
+$ lint install:hooks
 ```
+
+---
+
+## Installation (local)
+Install into your devDependencies:
+```sh
+$ npm i -D lint
+```
+### Usage (local)
+Use it with NPX from inside your repository:
+
+```sh
+$ npx lint [COMMAND]
+```
+
+To install git hooks:
+```sh
+$ npx lint install:hooks
+```
+
+
+```
+Usage: lint [options] [command]
+
+Options:
+  -v, --version          output the version number
+  -h, --help             output usage information
+
+Commands:
+  init                   Initializes current repository
+  install:hooks          Install git hooks
+  install:eslint         Install ESLint
+  install:erblint        Install ERB Lint
+  install:brakeman       Install Brakeman
+  install:rubocop        Install Rubocop
+  install:stylelint      Install StyleLint
+  lint:staged [options]  Lint Staged files
+  pre-commit [options]   Simulates pre-commit git hook actions.
+  prepare-commit-msg     Triggers 'prepare-commit-msg' hook actions.
+  post-commit            Triggers 'post-commit' hook actions.
+  prettify <extenstion>  Run Prettier on project.
+  login                  Sign in on local device.
+  logout                 Sign out from local device.
+  signup                 Creates an account
+  whoami                 Get current user status
+```
+
 ## Sign Up
 Create your free Omnilint account:
 ```sh
