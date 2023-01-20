@@ -4,29 +4,41 @@
 ---
 
 # Installation (global)
+
 Install globally:
+
 ```sh
 $ npm i -g lint
 ```
+
 ## Usage (global)
 
 Get inside your repository:
+
 ```sh
 $ cd /path/to/repo
 ```
+
 Use it globally
+
 ```sh
 $ lint [COMMAND]
 ```
+
 Start new repository:
+
 ```sh
 $ lint init
 ```
+
 Lint files linted by git:
+
 ```sh
 $ lint
 ```
+
 To install git hooks:
+
 ```sh
 $ cd path/to/repository
 $ lint install:hooks
@@ -35,11 +47,15 @@ $ lint install:hooks
 ---
 
 ## Installation (local)
+
 Install into your devDependencies:
+
 ```sh
 $ npm i -D lint
 ```
+
 ### Usage (local)
+
 Use it with NPX from inside your repository:
 
 ```sh
@@ -47,10 +63,10 @@ $ npx lint [COMMAND]
 ```
 
 To install git hooks:
+
 ```sh
 $ npx lint install:hooks
 ```
-
 
 ```
 Usage: lint [options] [command]
@@ -79,24 +95,37 @@ Commands:
 ```
 
 ## Sign Up
+
 Create your free Omnilint account:
+
 ```sh
 $ lint signup
 ```
+
 ## Log In
+
 Log in with your existing Omnilint account:
+
 ```sh
 $ lint login
 ```
+
 ## Version
+
 Print the CLI version:
+
 ```sh
 $ lint version
 ```
+
 ## Help
+
 Print the list of available commands:
+
 ```sh
 $ lint --help
 ```
+
 ## Website
+
 [https://www.omnilint.com](https://www.omnilint.com)

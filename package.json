@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "echo \"*** Welcome to Omnilint ***\""
+    "postinstall": "echo \"*** Welcome to Omnilint ***\"",
+    "prettier": "prettier --write ./**"
   },
   "author": "Jimmy Douieb",
   "license": "Apache-2.0",
@@ -37,5 +38,8 @@
   "bugs": {
     "url": "https://github.com/omnilint/lint/issues"
   },
-  "homepage": "https://www.omnilint.com"
+  "homepage": "https://www.omnilint.com",
+  "devDependencies": {
+    "base-prettier-config": "^1.3.1"
+  }
 }
